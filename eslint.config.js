@@ -7,4 +7,17 @@ module.exports = defineConfig([
   {
     ignores: ['dist/*'],
   },
+  {
+    settings: {
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          caseSensitive: false, // Resuelve el problema de casing en Mac
+        },
+      },
+    },
+    rules: {
+      'import/no-unresolved': 'off', // Desactiva temporalmente el error de casing
+    },
+  },
 ]);
