@@ -2,15 +2,12 @@
 
 # dependencies
 node_modules/
-.vscode/
-package-lock.json
 
 # Expo
 .expo/
 dist/
 web-build/
 expo-env.d.ts
-app.json
 
 # Native
 .kotlin/
@@ -20,7 +17,6 @@ app.json
 *.p12
 *.key
 *.mobileprovision
-.prettierrc.js
 
 # Metro
 .metro-health-check*
