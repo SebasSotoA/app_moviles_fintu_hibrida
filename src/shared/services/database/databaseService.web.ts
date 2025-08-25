@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  DatabaseAccount,
-  DatabaseCategory,
-  DatabaseTransaction,
-  DatabaseTransfer,
-  IDatabaseService
+    DatabaseAccount,
+    DatabaseCategory,
+    DatabaseTransaction,
+    DatabaseTransfer,
+    IDatabaseService
 } from './index';
 
 class WebDatabaseService implements IDatabaseService {
