@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
     Dimensions,
@@ -7,8 +8,11 @@ import {
     View,
 } from 'react-native';
 import { CalculatorState } from '../types/transaction';
+import breakpoints from '../src/shared/styles/breakpoints'
 
 const { width } = Dimensions.get('window');
+
+const isTablet = width >= breakpoints.tablet;
 
 interface CalculatorProps {
   onAmountChange: (amount: string) => void;
@@ -85,7 +89,7 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
         display: String(newValue),
         previousValue: null,
         currentOperation: null,
-        waitingForOperand: true,
+        waitingForOperand: false // Cambiamos a false para permitir edición
       });
       onAmountChange(String(newValue));
     }
@@ -116,6 +120,14 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
     onAmountChange('0');
   };
 
+  const handleBackspace = () => {
+    if (state.waitingForOperand) return;
+    setState(prev => ({
+      ...prev,
+      display: prev.display.length > 1 ? prev.display.slice(0, -1) : '0',
+    }));
+  };
+
   // Actualizar el valor cuando cambie el display
   React.useEffect(() => {
     if (!state.waitingForOperand) {
@@ -144,10 +156,18 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
   );
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        isTablet && styles.calculatorContainer,
+      ]}
+    >
       {/* Display del resultado */}
       <View style={styles.displayContainer}>
-        <Text style={styles.displayText}>{state.display}</Text>
+        <Text style={styles.displayText} numberOfLines={1} ellipsizeMode="head">{state.display}</Text>
+        <TouchableOpacity onPress={handleBackspace} style={styles.backspaceButton}>
+          <Ionicons name="backspace-outline" size={28} color="#30353D" />
+        </TouchableOpacity>
       </View>
 
       {/* Teclado */}
@@ -213,8 +233,6 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
   );
 }
 
-const buttonSize = (width - 80) / 4 - 10;
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F8F9FA',
@@ -222,12 +240,20 @@ const styles = StyleSheet.create({
     padding: 16,
     marginVertical: 20,
   },
+  calculatorContainer : {
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
+  },
   displayContainer: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     marginBottom: 16,
-    alignItems: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     borderWidth: 2,
     borderColor: '#E9ECEF',
   },
@@ -235,18 +261,23 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: '#30353D',
+    flex: 1,
+    textAlign: 'right',
+    marginRight: 10,
+  },
+  backspaceButton: {
+    padding: 5,
   },
   keypad: {
     gap: 12,
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     gap: 12,
   },
   button: {
-    width: buttonSize,
-    height: buttonSize,
+    flex: 1,
+    aspectRatio: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     justifyContent: 'center',
