@@ -139,6 +139,16 @@ class WebDatabaseService implements IDatabaseService {
 
   async createAccount(account: Omit<DatabaseAccount, 'createdAt' | 'updatedAt'>): Promise<void> {
     const data = await this.getData();
+    // Nombre y símbolo deben ser únicos.
+    const normalizedName = account.name.trim().toLowerCase();
+    const nameExists = (data.accounts || []).some((a: any) => String(a.name).trim().toLowerCase() === normalizedName);
+    if (nameExists) {
+      throw new Error('DUPLICATE_ACCOUNT_NAME');
+    }
+    const symbolExists = (data.accounts || []).some((a: any) => a.symbol === account.symbol);
+    if (symbolExists) {
+      throw new Error('DUPLICATE_ACCOUNT_SYMBOL');
+    }
     const now = new Date().toISOString();
     data.accounts.push({
       ...account,
@@ -152,6 +162,19 @@ class WebDatabaseService implements IDatabaseService {
     const data = await this.getData();
     const accountIndex = data.accounts.findIndex((acc: any) => acc.id === id);
     if (accountIndex !== -1) {
+      const existing = data.accounts[accountIndex];
+      const nextName = (updates.name ?? existing.name) as string;
+      const nextSymbol = (updates.symbol ?? existing.symbol) as string;
+      const normalizedNextName = String(nextName).trim().toLowerCase();
+      // Verificar que no hayan duplicados, nombre y símbolo.
+      const nameExists = (data.accounts || []).some((a: any) => a.id !== id && String(a.name).trim().toLowerCase() === normalizedNextName);
+      if (nameExists) {
+        throw new Error('DUPLICATE_ACCOUNT_NAME');
+      }
+      const symbolExists = (data.accounts || []).some((a: any) => a.id !== id && a.symbol === nextSymbol);
+      if (symbolExists) {
+        throw new Error('DUPLICATE_ACCOUNT_SYMBOL');
+      }
       const now = new Date().toISOString();
       data.accounts[accountIndex] = {
         ...data.accounts[accountIndex],

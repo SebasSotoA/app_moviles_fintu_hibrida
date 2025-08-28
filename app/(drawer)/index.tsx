@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
-import { router, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -11,6 +11,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
+  Platform,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -41,6 +43,7 @@ interface CategoryData {
 export default function Home() {
   const navigation = useNavigation();
   const { currentAccount, isLoading, getTransactionStats, accounts, setCurrentAccount } = useApp();
+  const params = useLocalSearchParams();
   const [activeType, setActiveType] = useState<TransactionType>('GASTOS');
   const [activePeriod, setActivePeriod] = useState<FilterPeriod>('Día');
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -61,6 +64,20 @@ export default function Home() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Mostrar mensaje de éxito si venimos de crear cuenta desde Inicio
+  useEffect(() => {
+    const accountCreated = params.accountCreated as string | undefined;
+    if (accountCreated === 'true') {
+      if (Platform.OS === 'web') {
+        window.alert('Cuenta creada exitosamente');
+      } else {
+        Alert.alert('Éxito', 'Cuenta creada exitosamente');
+      }
+      // Limpiar la URL para evitar repetir el mensaje
+      router.replace('/(drawer)');
+    }
+  }, [params.accountCreated]);
 
   // Cargar estadísticas cuando cambien los filtros
   useEffect(() => {
@@ -591,7 +608,7 @@ export default function Home() {
                style={styles.newAccountButton}
                onPress={() => {
                  setShowAccountSelector(false);
-                 router.push('/(drawer)/new-account');
+                 router.push({ pathname: '/(drawer)/new-account', params: { returnPath: '/(drawer)' } });
                }}
              >
                <Ionicons name="add" size={20} color="#FFFFFF" />

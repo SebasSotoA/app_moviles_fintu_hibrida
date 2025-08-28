@@ -42,7 +42,7 @@ export default function Cuentas() {
   };
 
   const handleAddAccount = () => {
-    router.push('/(drawer)/new-account');
+    router.push({ pathname: '/(drawer)/new-account', params: { returnPath: '/(drawer)/cuentas' } });
   };
 
   const handleTransfer = () => {

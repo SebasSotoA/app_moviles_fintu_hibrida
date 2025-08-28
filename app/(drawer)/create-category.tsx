@@ -123,7 +123,8 @@ export default function CreateCategory() {
       } else {
         await addCategory(newCategory);
       }
-      // Clear form before navigating away to avoid stale state if component is reused
+      
+      // resetear para evitar el stale state
       resetForm();
       
       // Navegar según returnPath si viene definido
