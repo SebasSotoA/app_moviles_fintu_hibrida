@@ -239,6 +239,33 @@ class WebDatabaseService implements IDatabaseService {
     }
   }
 
+  async deleteCategory(id: string): Promise<void> {
+    const data = await this.getData();
+    const categoryIndex = (data.categories || []).findIndex((cat: any) => cat.id === id);
+    if (categoryIndex === -1) return;
+
+    const now = new Date().toISOString();
+
+    // Revertir el efecto de las transacciones asociadas en los balances de cuentas
+    const affectedTransactions = (data.transactions || []).filter((tx: any) => tx.categoryId === id);
+    for (const tx of affectedTransactions) {
+      const accIndex = (data.accounts || []).findIndex((acc: any) => acc.id === tx.accountId);
+      if (accIndex !== -1) {
+        const delta = tx.type === 'INGRESO' ? -tx.amount : tx.amount; // revertir el impacto original
+        data.accounts[accIndex].balance += delta;
+        data.accounts[accIndex].updatedAt = now;
+      }
+    }
+
+    // Eliminar transacciones asociadas a la categoría
+    data.transactions = (data.transactions || []).filter((tx: any) => tx.categoryId !== id);
+
+    // Eliminar la categoría
+    data.categories = (data.categories || []).filter((cat: any) => cat.id !== id);
+
+    await this.saveData(data);
+  }
+
   async getTransactions(): Promise<DatabaseTransaction[]> {
     const data = await this.getData();
     return data.transactions || [];

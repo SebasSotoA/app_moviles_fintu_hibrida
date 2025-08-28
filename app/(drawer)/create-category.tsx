@@ -29,13 +29,17 @@ const ICONS = [
 const COLORS = ['#FF6B6B', '#4CAF50', '#3A7691', '#FF9F43', '#845EC2', '#30353D'];
 
 export default function CreateCategory() {
-  const { addCategory, updateCategory, categories } = useApp();
+  const { addCategory, updateCategory, deleteCategory, categories } = useApp();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [type, setType] = useState(params.type as 'GASTO' | 'INGRESO' || 'GASTO');
   const [selectedIcon, setSelectedIcon] = useState(ICONS[0]);
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const editingId = params.categoryId as string | undefined;
 
   // Cross-platform alert (uses window.alert on web)
   const showAlert = useCallback((title: string, message: string) => {
@@ -84,7 +88,6 @@ export default function CreateCategory() {
 
     // Prevent duplicate names in the same type (case-insensitive). Allow if different type.
     const normalizedName = name.trim().toLowerCase();
-    const editingId = params.categoryId as string | undefined;
     const duplicate = categories.some((c) =>
       c.type === type && c.name.trim().toLowerCase() === normalizedName && c.id !== editingId
     );
@@ -100,16 +103,16 @@ export default function CreateCategory() {
         color: selectedColor,
         type
       };
-
+      
       if (editingId) {
         await updateCategory(editingId, newCategory);
       } else {
         await addCategory(newCategory);
       }
-      
+
       // resetear para evitar el stale state
       resetForm();
-      
+
       // Navegar según returnPath si viene definido
       const returnPath = params.returnPath as string | undefined;
       if (returnPath) {
@@ -140,7 +143,32 @@ export default function CreateCategory() {
       }
     }
   };
-  
+
+  const handleDelete = async () => {
+    if (!editingId) return;
+    try {
+      setIsDeleting(true);
+      await deleteCategory(editingId);
+      setShowDeleteConfirm(false);
+      if (Platform.OS === 'web') {
+        window.alert('Categoría eliminada correctamente');
+      } else {
+        Alert.alert('Éxito', 'Categoría eliminada correctamente');
+      }
+      router.back();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      if (Platform.OS === 'web') {
+        window.alert('No se pudo eliminar la categoría');
+      } else {
+        Alert.alert('Error', 'No se pudo eliminar la categoría');
+      }
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirmInput('');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#30353D" />
@@ -234,7 +262,56 @@ export default function CreateCategory() {
         >
           <Text style={styles.createButtonText}>{params.categoryId ? 'Guardar Cambios' : 'Crear Categoría'}</Text>
         </TouchableOpacity>
+
+        {editingId && (
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setShowDeleteConfirm(true)}
+          >
+            <Text style={styles.deleteButtonText}>Eliminar categoría</Text>
+          </TouchableOpacity>
+        )}
       </SafeAreaView>
+
+      {showDeleteConfirm && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModal}>
+            <Text style={styles.modalTitle}>Eliminar categoría</Text>
+            <Text style={styles.confirmText}>
+              Esta acción eliminará la categoría y todo su historial de transacciones asociadas. Esta acción no se puede deshacer.
+            </Text>
+            <Text style={styles.confirmInstruction}>
+              Para confirmar, escribe exactamente: DE ACUERDO
+            </Text>
+            <TextInput
+              style={styles.confirmInput}
+              placeholder="DE ACUERDO"
+              placeholderTextColor="#ADADAD"
+              value={deleteConfirmInput}
+              onChangeText={setDeleteConfirmInput}
+              autoCapitalize="characters"
+            />
+            <View style={styles.confirmActions}>
+              <TouchableOpacity
+                style={[styles.confirmButton, styles.cancelButton]}
+                onPress={() => { setShowDeleteConfirm(false); setDeleteConfirmInput(''); }}
+                disabled={isDeleting}
+              >
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.confirmButton, styles.deleteConfirmButton,
+                  (deleteConfirmInput.trim().toUpperCase() !== 'DE ACUERDO' || isDeleting) && styles.disabledDeleteButton
+                ]}
+                onPress={handleDelete}
+                disabled={deleteConfirmInput.trim().toUpperCase() !== 'DE ACUERDO' || isDeleting}
+              >
+                <Text style={styles.deleteConfirmButtonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -391,5 +468,89 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: '#ADADAD',
+  },
+  deleteButton: {
+    backgroundColor: '#FCE7E9',
+    borderWidth: 1,
+    borderColor: '#F28B94',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    paddingVertical: 14,
+    borderRadius: 25,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    color: '#D7263D',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmModal: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    width: '85%',
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#30353D',
+  },
+  confirmText: {
+    fontSize: 14,
+    color: '#30353D',
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  confirmInstruction: {
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 8,
+  },
+  confirmInput: {
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+    borderRadius: 10,
+    padding: 12,
+    backgroundColor: '#F8F9FA',
+    marginBottom: 14,
+  },
+  confirmActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+  },
+  confirmButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  cancelButton: {
+    backgroundColor: '#ECECEC',
+  },
+  cancelButtonText: {
+    color: '#30353D',
+    fontWeight: '600',
+  },
+  deleteConfirmButton: {
+    backgroundColor: '#D7263D',
+  },
+  disabledDeleteButton: {
+    backgroundColor: '#F5A5B0',
+  },
+  deleteConfirmButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
 });
