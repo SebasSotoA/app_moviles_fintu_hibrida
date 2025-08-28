@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router, useNavigation } from 'expo-router';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     Alert,
@@ -10,26 +10,32 @@ import {
     TextInput,
     TouchableOpacity,
     View,
+    Platform,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
+import type { DatabaseAccount } from '../../src/shared/services/database';
 
 export default function Transfer() {
-  const navigation = useNavigation();
   const { accounts, currentAccount, refreshData } = useApp();
   const insets = useSafeAreaInsets();
   
-  const [fromAccount, setFromAccount] = useState(currentAccount);
-  const [toAccount, setToAccount] = useState(null);
+  const [fromAccount, setFromAccount] = useState<DatabaseAccount | null>(currentAccount ?? null);
+  const [toAccount, setToAccount] = useState<DatabaseAccount | null>(null);
   const [amount, setAmount] = useState('');
-  const [comment, setComment] = useState('');
   const [showFromAccountSelector, setShowFromAccountSelector] = useState(false);
   const [showToAccountSelector, setShowToAccountSelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  // Actualizar cuenta de origen cuando cambie la cuenta actual
+  // Derivados para validación visual
+  const parsedAmount = parseFloat(amount) || 0;
+  const isOverBalance = !!fromAccount && parsedAmount > fromAccount.balance;
+  // Nota: la validación de misma divisa se hace en validateTransfer y en el listado de destino
+
+  // Sincronizar cuenta de origen cuando cambie la cuenta actual
   useEffect(() => {
-    if (currentAccount && !fromAccount) {
+    if (currentAccount) {
       setFromAccount(currentAccount);
     }
   }, [currentAccount]);
@@ -54,6 +60,11 @@ export default function Transfer() {
       return false;
     }
 
+    if (fromAccount.currency !== toAccount.currency) {
+      Alert.alert('Error', 'Solo puedes transferir entre cuentas de la misma divisa');
+      return false;
+    }
+
     const transferAmount = parseFloat(amount);
     if (!transferAmount || transferAmount <= 0) {
       Alert.alert('Error', 'Ingresa un monto válido mayor a 0');
@@ -73,9 +84,15 @@ export default function Transfer() {
     return true;
   };
 
-  const handleTransfer = async () => {
-    if (!validateTransfer()) return;
+  const resetTransferForm = () => {
+    setAmount('');
+    setToAccount(null);
+    setShowFromAccountSelector(false);
+    setShowToAccountSelector(false);
+    setIsLoading(false);
+  };
 
+  const performTransfer = async () => {
     try {
       setIsLoading(true);
 
@@ -86,32 +103,37 @@ export default function Transfer() {
       
       await databaseService.createTransfer({
         id: transferId,
-        fromAccountId: fromAccount.id,
-        toAccountId: toAccount.id,
+        fromAccountId: fromAccount!.id,
+        toAccountId: toAccount!.id,
         amount: parseFloat(amount),
         date: new Date().toISOString(),
-        comment: comment.trim() || null,
       });
 
       // Refrescar datos
       await refreshData();
 
-      Alert.alert(
-        'Transferencia Exitosa',
-        `Se transfirieron ${parseFloat(amount).toLocaleString('es-CO')} ${fromAccount.currency} de ${fromAccount.name} a ${toAccount.name}`,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              if (router.canGoBack()) {
-                router.back();
-              } else {
-                router.push('/(drawer)/cuentas');
+      const successMsg = `Se transfirieron ${parseFloat(amount).toLocaleString('es-CO')} ${fromAccount!.currency} de ${fromAccount!.name} a ${toAccount!.name}`;
+
+      // Limpiar formulario antes de navegar
+      resetTransferForm();
+      if (Platform.OS === 'web') {
+        // En web, Alert no soporta callbacks; usamos window.alert y navegamos inmediatamente
+        window.alert(`Transferencia Exitosa\n\n${successMsg}`);
+        router.replace('/(drawer)/cuentas');
+      } else {
+        Alert.alert(
+          'Transferencia Exitosa',
+          successMsg,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                router.replace('/(drawer)/cuentas');
               }
             }
-          }
-        ]
-      );
+          ]
+        );
+      }
     } catch (error) {
       console.error('Error creating transfer:', error);
       Alert.alert('Error', 'No se pudo realizar la transferencia. Intenta nuevamente.');
@@ -119,6 +141,13 @@ export default function Transfer() {
       setIsLoading(false);
     }
   };
+
+  const handleTransfer = () => {
+    if (!validateTransfer()) return;
+    setShowConfirm(true);
+  };
+
+  
 
   const goBack = () => {
     if (router.canGoBack()) {
@@ -244,26 +273,16 @@ export default function Transfer() {
               />
               <Text style={styles.currencyLabel}>{fromAccount?.currency || 'COP'}</Text>
             </View>
-            {fromAccount && parseFloat(amount) > 0 && (
+            {fromAccount && parsedAmount > 0 && !isOverBalance && (
               <Text style={styles.balanceInfo}>
-                Saldo restante: {(fromAccount.balance - parseFloat(amount)).toLocaleString('es-CO')} {fromAccount.currency}
+                Saldo restante: {(fromAccount.balance - parsedAmount).toLocaleString('es-CO')} {fromAccount.currency}
               </Text>
             )}
-          </View>
-
-          {/* Campo de comentario */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Comentario (opcional)</Text>
-            <TextInput
-              style={styles.commentInput}
-              placeholder="Motivo de la transferencia..."
-              placeholderTextColor="#ADADAD"
-              value={comment}
-              onChangeText={setComment}
-              multiline
-              numberOfLines={3}
-              maxLength={200}
-            />
+            {fromAccount && parsedAmount > 0 && isOverBalance && (
+              <Text style={styles.errorText}>
+                No es posible realizar la transferencia: monto excede el saldo disponible
+              </Text>
+            )}
           </View>
 
         </ScrollView>
@@ -272,10 +291,10 @@ export default function Transfer() {
         <TouchableOpacity 
           style={[
             styles.transferButton,
-            (!fromAccount || !toAccount || parseFloat(amount) <= 0 || isLoading) && styles.disabledButton
+            (!fromAccount || !toAccount || parsedAmount <= 0 || isLoading) && styles.disabledButton
           ]}
           onPress={handleTransfer}
-          disabled={!fromAccount || !toAccount || parseFloat(amount) <= 0 || isLoading}
+          disabled={!fromAccount || !toAccount || parsedAmount <= 0 || isLoading}
         >
           {isLoading ? (
             <Text style={styles.transferButtonText}>Transfiriendo...</Text>
@@ -349,33 +368,70 @@ export default function Transfer() {
             </View>
 
             <ScrollView style={styles.accountsList} showsVerticalScrollIndicator={false}>
-              {getAvailableToAccounts().map((account) => (
-                <TouchableOpacity
-                  key={account.id}
-                  style={[
-                    styles.accountItem,
-                    toAccount?.id === account.id && styles.selectedAccountItem
-                  ]}
-                  onPress={() => {
-                    setToAccount(account);
-                    setShowToAccountSelector(false);
-                  }}
-                >
-                  <View style={styles.accountItemLeft}>
-                    <Text style={styles.accountItemSymbol}>{account.symbol}</Text>
-                    <View style={styles.accountItemInfo}>
-                      <Text style={styles.accountItemName}>{account.name}</Text>
-                      <Text style={styles.accountItemBalance}>
-                        Balance: {account.balance.toLocaleString('es-CO')} {account.currency}
-                      </Text>
+              {getAvailableToAccounts().map((account) => {
+                const isSame = !fromAccount || account.currency === fromAccount.currency;
+                return (
+                  <TouchableOpacity
+                    key={account.id}
+                    style={[
+                      styles.accountItem,
+                      toAccount?.id === account.id && styles.selectedAccountItem,
+                      !isSame && styles.disabledAccountItem,
+                    ]}
+                    disabled={!isSame}
+                    onPress={() => {
+                      if (!isSame) return;
+                      setToAccount(account);
+                      setShowToAccountSelector(false);
+                    }}
+                  >
+                    <View style={styles.accountItemLeft}>
+                      <Text style={styles.accountItemSymbol}>{account.symbol}</Text>
+                      <View style={styles.accountItemInfo}>
+                        <Text style={styles.accountItemName}>{account.name}</Text>
+                        <Text style={styles.accountItemBalance}>
+                          Balance: {account.balance.toLocaleString('es-CO')} {account.currency}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                  {toAccount?.id === account.id && (
-                    <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
-                  )}
-                </TouchableOpacity>
-              ))}
+                    {toAccount?.id === account.id && (
+                      <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
+          </View>
+        </View>
+      )}
+
+      {/* Modal de confirmación */}
+      {showConfirm && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModal}>
+            <Text style={styles.modalTitle}>Confirmar transferencia</Text>
+            <Text style={styles.confirmText}>
+              ¿Seguro de que quieres transferir {parseFloat(amount).toLocaleString('es-CO')} {fromAccount?.currency} desde {fromAccount?.name} hasta {toAccount?.name}?
+            </Text>
+            <View style={styles.confirmActions}>
+              <TouchableOpacity
+                style={[styles.confirmButton, styles.cancelButton]}
+                onPress={() => setShowConfirm(false)}
+                disabled={isLoading}
+              >
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.confirmButton, styles.acceptButton]}
+                onPress={async () => {
+                  setShowConfirm(false);
+                  await performTransfer();
+                }}
+                disabled={isLoading}
+              >
+                <Text style={styles.acceptButtonText}>Aceptar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       )}
@@ -425,11 +481,18 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
+  disabledAccountItem: {
+    opacity: 0.5,
+  },
+  accountSummary: {
+    flex: 1,
+    alignItems: 'center',
+  },
   summaryCard: {
     backgroundColor: '#F8F9FA',
     borderRadius: 16,
-    padding: 20,
-    marginVertical: 20,
+    padding: 16,
+    marginTop: 16,
     borderWidth: 1,
     borderColor: '#E9ECEF',
   },
@@ -437,11 +500,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  accountSummary: {
-    flex: 1,
-    alignItems: 'center',
   },
   accountSummarySymbol: {
     fontSize: 32,
@@ -547,6 +605,13 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 8,
     textAlign: 'right',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#FF4D4F',
+    marginTop: 8,
+    textAlign: 'right',
+    fontWeight: '600',
   },
   commentInput: {
     borderWidth: 1,
@@ -663,6 +728,45 @@ const styles = StyleSheet.create({
   accountItemBalance: {
     fontSize: 14,
     color: '#666666',
+  },
+  // Confirm modal styles
+  confirmModal: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    width: '85%',
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+  },
+  confirmText: {
+    fontSize: 14,
+    color: '#30353D',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  confirmActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+  },
+  confirmButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  cancelButton: {
+    backgroundColor: '#ECECEC',
+  },
+  acceptButton: {
+    backgroundColor: '#3A7691',
+  },
+  cancelButtonText: {
+    color: '#30353D',
+    fontWeight: '600',
+  },
+  acceptButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
 });
 

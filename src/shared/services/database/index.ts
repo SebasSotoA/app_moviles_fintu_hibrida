@@ -41,7 +41,6 @@ export interface DatabaseTransfer {
   toAccountId: string;
   amount: number;
   date: string;
-  comment?: string;
   createdAt: string;
   updatedAt: string;
 }

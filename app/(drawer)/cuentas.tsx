@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -19,18 +19,26 @@ export default function Cuentas() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { accounts, currentAccount, setCurrentAccount, isLoading } = useApp();
-  const [totalBalance, setTotalBalance] = useState(0);
 
   useEffect(() => {
-    calculateTotalBalance();
+    // Placeholder: could load additional data here if needed when accounts change
   }, [accounts]);
 
-  const calculateTotalBalance = () => {
-    const total = accounts
-      .filter(account => account.includeInTotal)
-      .reduce((sum, account) => sum + account.balance, 0);
-    setTotalBalance(total);
-  };
+  const totalsByCurrency = React.useMemo(() => {
+    const map = new Map<string, { total: number; count: number }>();
+    accounts.forEach(acc => {
+      if (!acc.includeInTotal) return;
+      const curr = acc.currency;
+      const prev = map.get(curr) || { total: 0, count: 0 };
+      map.set(curr, { total: prev.total + acc.balance, count: prev.count + 1 });
+    });
+    return Array.from(map.entries());
+  }, [accounts]);
+
+  const totalsSummary = React.useMemo(() => {
+    const parts = totalsByCurrency.map(([currency, info]) => `${info.total.toLocaleString('es-CO')} ${currency} 💸`);
+    return parts.length > 0 ? parts.join(' + ') : '0';
+  }, [totalsByCurrency]);
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
@@ -128,12 +136,10 @@ export default function Cuentas() {
       <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           
-          {/* Saldo total */}
+          {/* Saldo total (concatenado por divisa) */}
           <View style={styles.totalSection}>
             <Text style={styles.totalLabel}>Saldo Total</Text>
-            <Text style={styles.totalAmount}>
-              {totalBalance.toLocaleString('es-CO')} COP
-            </Text>
+            <Text style={styles.totalAmount}>{totalsSummary}</Text>
             <Text style={styles.totalSubtext}>
               {accounts.filter(acc => acc.includeInTotal).length} cuentas incluidas
             </Text>
@@ -259,6 +265,29 @@ const styles = StyleSheet.create({
   totalSubtext: {
     fontSize: 12,
     color: '#999999',
+  },
+  currencyRow: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ECECEC',
+  },
+  currencyCode: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#30353D',
+  },
+  currencyTotal: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#3A7691',
+  },
+  currencyCount: {
+    fontSize: 12,
+    color: '#666666',
   },
   actionButtons: {
     flexDirection: 'row',
