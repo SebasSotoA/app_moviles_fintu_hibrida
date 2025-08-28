@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 import {
     DatabaseAccount,
     DatabaseCategory,
@@ -35,6 +36,11 @@ class WebDatabaseService implements IDatabaseService {
     
     // Fallback a AsyncStorage (móvil)
     try {
+      // Agregar un delay para Android
+      if (Platform.OS === 'android') {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      
       const data = await AsyncStorage.getItem(this.storageKey);
       if (!data) {
         return defaultData;
@@ -68,7 +74,12 @@ class WebDatabaseService implements IDatabaseService {
   }
 
   async init(): Promise<void> {
-    await this.insertDefaultData();
+    try {
+      await this.insertDefaultData();
+    } catch (error) {
+      console.warn('Database init failed, continuing with defaults:', error);
+      // Continuar con datos por defecto si falla la inicialización
+    }
   }
 
   private async insertDefaultData(): Promise<void> {

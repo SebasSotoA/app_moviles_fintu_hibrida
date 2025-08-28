@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { DatabaseAccount, DatabaseCategory, databaseService, DatabaseTransaction } from '../services/database';
 
 interface AppContextType {
@@ -44,11 +45,19 @@ export function AppProvider({ children }: AppProviderProps) {
   const initializeApp = async () => {
     try {
       setIsLoading(true);
+      
+      // Agregar un delay para asegurar que AsyncStorage esté listo en Android
+      if (Platform.OS === 'android') {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
       await databaseService.init();
       await refreshData();
       setIsInitialized(true);
     } catch (error) {
       console.error('Error initializing app:', error);
+      // En caso de error, intentar continuar con datos por defecto
+      setIsInitialized(true);
     } finally {
       setIsLoading(false);
     }

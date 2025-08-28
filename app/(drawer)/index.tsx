@@ -42,7 +42,7 @@ interface CategoryData {
 
 export default function Home() {
   const navigation = useNavigation();
-  const { currentAccount, getTransactionStats, accounts, setCurrentAccount } = useApp();
+  const { currentAccount, getTransactionStats, accounts, setCurrentAccount, isLoading, isInitialized } = useApp();
   const params = useLocalSearchParams();
   const [activeType, setActiveType] = useState<TransactionType>('GASTOS');
   const [activePeriod, setActivePeriod] = useState<FilterPeriod>('Día');
@@ -349,6 +349,20 @@ export default function Home() {
       <Text style={styles.categoryPercentage}>{category.percentage}%</Text>
     </TouchableOpacity>
   );
+
+  // Mostrar pantalla de carga mientras se inicializa la app
+  if (isLoading || !isInitialized) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+        <View style={[styles.statusBarArea, { height: insets.top }]} />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#3A7691" />
+          <Text style={styles.loadingText}>Inicializando aplicación...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -985,6 +999,14 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginBottom: 4,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+
+
   accountNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
