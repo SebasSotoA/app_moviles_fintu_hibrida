@@ -17,8 +17,6 @@ export interface DatabaseCategory {
   icon: string;
   color: string;
   type: 'GASTO' | 'INGRESO';
-  isMonthlyExpense: boolean;
-  monthlyAmount?: number;
   createdAt: string;
   updatedAt: string;
 }

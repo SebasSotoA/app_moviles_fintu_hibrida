@@ -36,8 +36,6 @@ export default function CreateCategory() {
   const [type, setType] = useState(params.type as 'GASTO' | 'INGRESO' || 'GASTO');
   const [selectedIcon, setSelectedIcon] = useState(ICONS[0]);
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
-  const [monthlyExpense, setMonthlyExpense] = useState(false);
-  const [monthlyAmount, setMonthlyAmount] = useState('');
 
   // Cross-platform alert (uses window.alert on web)
   const showAlert = useCallback((title: string, message: string) => {
@@ -62,15 +60,6 @@ export default function CreateCategory() {
       if (typeof params.icon === 'string') setSelectedIcon(params.icon);
       if (typeof params.color === 'string') setSelectedColor(params.color);
       if (typeof params.type === 'string') setType(params.type as 'GASTO' | 'INGRESO');
-      if (typeof params.isMonthlyExpense === 'string') {
-        setMonthlyExpense(params.isMonthlyExpense === 'true');
-      } else if (typeof params.isMonthlyExpense === 'boolean') {
-        setMonthlyExpense(!!params.isMonthlyExpense);
-      }
-      if (params.monthlyAmount !== undefined) {
-        const val = Array.isArray(params.monthlyAmount) ? params.monthlyAmount[0] : (params.monthlyAmount as any);
-        setMonthlyAmount(val !== undefined && val !== null ? String(val) : '');
-      }
     }
   }, [
     params.categoryId,
@@ -78,8 +67,6 @@ export default function CreateCategory() {
     params.icon,
     params.color,
     params.type,
-    params.isMonthlyExpense,
-    params.monthlyAmount,
   ]);
 
   const resetForm = useCallback(() => {
@@ -87,8 +74,6 @@ export default function CreateCategory() {
     setType((params.type as 'GASTO' | 'INGRESO') || 'GASTO');
     setSelectedIcon(ICONS[0]);
     setSelectedColor(COLORS[0]);
-    setMonthlyExpense(false);
-    setMonthlyAmount('');
   }, [params.type]);
 
   const handleCreate = async () => {
@@ -113,9 +98,7 @@ export default function CreateCategory() {
         name: name.trim(),
         icon: selectedIcon,
         color: selectedColor,
-        type,
-        isMonthlyExpense: monthlyExpense,
-        monthlyAmount: monthlyExpense && monthlyAmount ? parseFloat(monthlyAmount) : undefined,
+        type
       };
 
       if (editingId) {
@@ -242,30 +225,6 @@ export default function CreateCategory() {
               ))}
             </View>
           </View>
-
-          {type === 'GASTO' && (
-            <View style={styles.section}>
-              <View style={styles.monthlyExpenseHeader}>
-                <Text style={styles.sectionTitle}>Gasto programado</Text>
-                <TouchableOpacity
-                  style={[styles.switch, monthlyExpense && styles.switchActive]}
-                  onPress={() => setMonthlyExpense(!monthlyExpense)}
-                >
-                  <View style={[styles.switchKnob, monthlyExpense && styles.switchKnobActive]} />
-                </TouchableOpacity>
-              </View>
-              
-              {monthlyExpense && (
-                <TextInput
-                  style={styles.input}
-                  value={monthlyAmount}
-                  onChangeText={setMonthlyAmount}
-                  placeholder="Monto mensual"
-                  keyboardType="numeric"
-                />
-              )}
-            </View>
-          )}
         </ScrollView>
 
         <TouchableOpacity 
