@@ -70,7 +70,7 @@ export interface IDatabaseService {
   createTransfer(transfer: Omit<DatabaseTransfer, 'createdAt' | 'updatedAt'>): Promise<void>;
   
   // Estadísticas
-  getTransactionStats(startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO'): Promise<any[]>;
+  getTransactionStats(startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO', accountId?: string): Promise<any[]>;
 }
 
 // Re-exportar el servicio de localStorage para todas las plataformas

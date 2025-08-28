@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -65,7 +65,15 @@ export default function Home() {
   // Cargar estadísticas cuando cambien los filtros
   useEffect(() => {
     loadCategoryStats();
-  }, [activeType, activePeriod, currentDate]);
+  }, [activeType, activePeriod, currentDate, currentAccount?.id]);
+
+  // Recargar cuando la pantalla toma foco (p. ej., al volver de crear transacción)
+  useFocusEffect(
+    React.useCallback(() => {
+      loadCategoryStats();
+      return () => {};
+    }, [activeType, activePeriod, currentDate, currentAccount?.id])
+  );
 
   const loadCategoryStats = async () => {
     if (!currentAccount) return;
@@ -76,7 +84,8 @@ export default function Home() {
       const stats = await getTransactionStats(
         startDate, 
         endDate, 
-        activeType === 'GASTOS' ? 'GASTO' : 'INGRESO'
+        activeType === 'GASTOS' ? 'GASTO' : 'INGRESO',
+        currentAccount.id
       );
 
       // Calcular total y porcentajes

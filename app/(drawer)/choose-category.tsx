@@ -38,6 +38,21 @@ export default function ChooseCategory() {
     router.back();
   };
 
+  // Add this function to handle navigation to create category
+  const handleCreateCategory = () => {
+    router.push({
+      pathname: '/(drawer)/create-category',
+      params: {
+        type: transactionType,
+        amount,
+        date,
+        note,
+        accountId
+      }
+    });
+  };
+
+  // Modify handleConfirm to ensure proper navigation
   const handleConfirm = async () => {
     if (!selectedCategory) {
       Alert.alert('Error', 'Por favor selecciona una categoría');
@@ -51,7 +66,6 @@ export default function ChooseCategory() {
 
     setIsLoading(true);
     try {
-      // Guardar la transacción en la base de datos
       await addTransaction({
         accountId: accountId,
         categoryId: selectedCategory,
@@ -61,21 +75,17 @@ export default function ChooseCategory() {
         note: note || undefined,
       });
 
-      // Mostrar confirmación y volver al Home
       const categoryName = filteredCategories.find(c => c.id === selectedCategory)?.name;
-      Alert.alert(
-        '¡Transacción guardada!',
-        `${transactionType}: ${parseFloat(amount).toLocaleString('es-CO')} ${currentAccount.currency}\nCategoría: ${categoryName}${note ? `\nNota: ${note}` : ''}`,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // Volver al Home
-              router.push('/(drawer)');
-            },
-          },
-        ]
-      );
+      
+      // Replace the Alert with immediate navigation and then show the alert
+      router.replace('/(drawer)/');
+      setTimeout(() => {
+        Alert.alert(
+          '¡Transacción guardada!',
+          `${transactionType}: ${parseFloat(amount).toLocaleString('es-CO')} ${currentAccount.currency}\nCategoría: ${categoryName}${note ? `\nNota: ${note}` : ''}`
+        );
+      }, 100);
+      
     } catch (error) {
       console.error('Error saving transaction:', error);
       Alert.alert('Error', 'No se pudo guardar la transacción. Inténtalo de nuevo.');
@@ -157,7 +167,10 @@ export default function ChooseCategory() {
           </View>
 
           {/* Opción de crear nueva categoría */}
-          <TouchableOpacity style={styles.createCategoryButton}>
+          <TouchableOpacity 
+            style={styles.createCategoryButton}
+            onPress={handleCreateCategory}
+          >
             <Ionicons name="add-circle-outline" size={24} color="#3A7691" />
             <Text style={styles.createCategoryText}>Crear Nueva Categoría</Text>
           </TouchableOpacity>

@@ -17,7 +17,7 @@ interface AppContextType {
   addCategory: (category: Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   setCurrentAccount: (accountId: string) => void;
   refreshData: () => Promise<void>;
-  getTransactionStats: (startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO') => Promise<any[]>;
+  getTransactionStats: (startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO', accountId?: string) => Promise<any[]>;
   getTransactionsByDateRange: (startDate: string, endDate: string) => Promise<DatabaseTransaction[]>;
 }
 
@@ -62,9 +62,14 @@ export function AppProvider({ children }: AppProviderProps) {
       setAccounts(accountsData);
       setCategories(categoriesData);
       
-      // Establecer cuenta actual (primera cuenta o la principal)
-      if (accountsData.length > 0 && !currentAccount) {
-        setCurrentAccountState(accountsData[0]);
+      // Sincronizar la cuenta actual con los datos más recientes
+      if (accountsData.length > 0) {
+        if (!currentAccount) {
+          setCurrentAccountState(accountsData[0]);
+        } else {
+          const updated = accountsData.find(acc => acc.id === currentAccount.id);
+          if (updated) setCurrentAccountState(updated);
+        }
       }
     } catch (error) {
       console.error('Error refreshing data:', error);
@@ -120,9 +125,9 @@ export function AppProvider({ children }: AppProviderProps) {
     }
   };
 
-  const getTransactionStats = async (startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO') => {
+  const getTransactionStats = async (startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO', accountId?: string) => {
     try {
-      return await databaseService.getTransactionStats(startDate, endDate, type);
+      return await databaseService.getTransactionStats(startDate, endDate, type, accountId);
     } catch (error) {
       console.error('Error getting transaction stats:', error);
       return [];

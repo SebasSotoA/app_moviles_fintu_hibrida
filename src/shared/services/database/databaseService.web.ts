@@ -245,10 +245,10 @@ class WebDatabaseService implements IDatabaseService {
     await this.saveData(data);
   }
 
-  async getTransactionStats(startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO'): Promise<any[]> {
+  async getTransactionStats(startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO', accountId?: string): Promise<any[]> {
     const data = await this.getData();
     const transactions = (data.transactions || []).filter((tx: any) => 
-      tx.date >= startDate && tx.date <= endDate && (!type || tx.type === type)
+      tx.date >= startDate && tx.date <= endDate && (!type || tx.type === type) && (!accountId || tx.accountId === accountId)
     );
 
     const categories = data.categories || [];

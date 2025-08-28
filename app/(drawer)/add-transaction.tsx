@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useNavigation } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -28,11 +29,27 @@ export default function AddTransaction() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(currentAccount);
   const [showAccountSelector, setShowAccountSelector] = useState(false);
+  const [calcResetKey, setCalcResetKey] = useState(0);
 
   // Actualizar cuenta seleccionada cuando cambie la cuenta actual
   useEffect(() => {
     setSelectedAccount(currentAccount);
   }, [currentAccount]);
+
+  // Limpiar el formulario cada vez que esta pantalla gana foco
+  useFocusEffect(
+    React.useCallback(() => {
+      setSelectedDate(new Date());
+      setTransactionType('GASTO');
+      setAmount('0');
+      setNote('');
+      setSelectedAccount(currentAccount);
+      setShowDatePicker(false);
+      setShowAccountSelector(false);
+      setCalcResetKey(prev => prev + 1); // Forzar remount del componente Calculator
+      return () => {};
+    }, [currentAccount?.id])
+  );
 
   const formatDate = (date: Date) => {
     const days = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
@@ -207,6 +224,7 @@ export default function AddTransaction() {
 
           {/* Teclado numérico personalizado */}
           <Calculator 
+            key={calcResetKey}
             onAmountChange={setAmount}
             initialValue={amount}
           />
