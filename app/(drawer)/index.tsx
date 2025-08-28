@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -12,6 +12,8 @@ import {
     Text,
     TouchableOpacity,
     View,
+  Alert,
+  Platform,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -43,6 +45,7 @@ interface CategoryData {
 export default function Home() {
   const navigation = useNavigation();
   const { currentAccount, getTransactionStats, accounts, setCurrentAccount } = useApp();
+  const params = useLocalSearchParams();
   const params = useLocalSearchParams();
   const [activeType, setActiveType] = useState<TransactionType>('GASTOS');
   const [activePeriod, setActivePeriod] = useState<FilterPeriod>('Día');
