@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router, useNavigation } from 'expo-router';
-import React, { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import {
     Alert,
+    Platform,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -33,9 +34,9 @@ const COLOR_OPTIONS = [
 ];
 
 export default function NewAccount() {
-  const navigation = useNavigation();
-  const { addAccount } = useApp();
+  const { addAccount, accounts } = useApp();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams();
   
   const [accountName, setAccountName] = useState('');
   const [initialBalance, setInitialBalance] = useState('');
@@ -46,20 +47,55 @@ export default function NewAccount() {
   const [showCurrencySelector, setShowCurrencySelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Cross-platform alert (uses window.alert on web)
+  const showAlert = useCallback((title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}: ${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  }, []);
+
   const validateForm = () => {
     if (!accountName.trim()) {
-      Alert.alert('Error', 'El nombre de la cuenta es obligatorio');
+      showAlert('Error', 'El nombre de la cuenta es obligatorio');
       return false;
     }
     
     const balance = parseFloat(initialBalance) || 0;
     if (balance < 0) {
-      Alert.alert('Error', 'El balance inicial no puede ser negativo');
+      showAlert('Error', 'El balance inicial no puede ser negativo');
+      return false;
+    }
+
+    // Duplicate name (case-insensitive)
+    const normalizedName = accountName.trim().toLowerCase();
+    const nameExists = accounts.some(a => a.name.trim().toLowerCase() === normalizedName);
+    if (nameExists) {
+      showAlert('Nombre duplicado', 'Ya existe una cuenta con ese nombre. Usa otro nombre.');
+      return false;
+    }
+
+    // Duplicate emoji/symbol exact match
+    const symbolExists = accounts.some(a => a.symbol === selectedSymbol);
+    if (symbolExists) {
+      showAlert('Símbolo duplicado', 'Ese emoji ya está en uso por otra cuenta. Elige otro.');
       return false;
     }
 
     return true;
   };
+
+  const resetForm = useCallback(() => {
+    setAccountName('');
+    setInitialBalance('');
+    setSelectedSymbol('💰');
+    setSelectedColor('#3A7691');
+    setSelectedCurrency('COP');
+    setIncludeInTotal(true);
+    setShowCurrencySelector(false);
+    setIsLoading(false);
+  }, []);
 
   const handleCreateAccount = async () => {
     if (!validateForm()) return;
@@ -76,25 +112,32 @@ export default function NewAccount() {
         includeInTotal: includeInTotal,
       });
 
-      Alert.alert(
-        'Éxito',
-        'Cuenta creada exitosamente',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              if (router.canGoBack()) {
-                router.back();
-              } else {
-                router.push('/(drawer)/cuentas');
-              }
-            }
-          }
-        ]
-      );
+      resetForm();
+
+      // Navegar según returnPath si viene definido; si no, a cuentas
+      const returnPath = params.returnPath as string | undefined;
+      if (returnPath) {
+        if (returnPath === '/(drawer)') {
+          router.replace({ pathname: returnPath, params: { accountCreated: 'true' } });
+        } else {
+          router.replace({ pathname: returnPath });
+        }
+      } else {
+        router.replace('/(drawer)/cuentas');
+      }
     } catch (error) {
       console.error('Error creating account:', error);
-      Alert.alert('Error', 'No se pudo crear la cuenta. Intenta nuevamente.');
+      if (error instanceof Error) {
+        if (error.message === 'DUPLICATE_ACCOUNT_NAME') {
+          showAlert('Nombre duplicado', 'Ya existe una cuenta con ese nombre. Usa otro nombre.');
+        } else if (error.message === 'DUPLICATE_ACCOUNT_SYMBOL') {
+          showAlert('Símbolo duplicado', 'Ese emoji ya está en uso por otra cuenta. Elige otro.');
+        } else {
+          showAlert('Error', 'No se pudo crear la cuenta. Intenta nuevamente.');
+        }
+      } else {
+        showAlert('Error', 'No se pudo crear la cuenta. Intenta nuevamente.');
+      }
     } finally {
       setIsLoading(false);
     }

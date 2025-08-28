@@ -17,8 +17,6 @@ export interface DatabaseCategory {
   icon: string;
   color: string;
   type: 'GASTO' | 'INGRESO';
-  isMonthlyExpense: boolean;
-  monthlyAmount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -41,7 +39,6 @@ export interface DatabaseTransfer {
   toAccountId: string;
   amount: number;
   date: string;
-  comment?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -60,6 +57,8 @@ export interface IDatabaseService {
   getCategories(): Promise<DatabaseCategory[]>;
   getCategoriesByType(type: 'GASTO' | 'INGRESO'): Promise<DatabaseCategory[]>;
   createCategory(category: Omit<DatabaseCategory, 'createdAt' | 'updatedAt'>): Promise<void>;
+  updateCategory(id: string, updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void>;
+  deleteCategory(id: string): Promise<void>;
   
   // Transacciones
   getTransactions(): Promise<DatabaseTransaction[]>;

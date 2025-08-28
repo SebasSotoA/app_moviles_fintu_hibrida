@@ -139,6 +139,16 @@ class WebDatabaseService implements IDatabaseService {
 
   async createAccount(account: Omit<DatabaseAccount, 'createdAt' | 'updatedAt'>): Promise<void> {
     const data = await this.getData();
+    // Nombre y símbolo deben ser únicos.
+    const normalizedName = account.name.trim().toLowerCase();
+    const nameExists = (data.accounts || []).some((a: any) => String(a.name).trim().toLowerCase() === normalizedName);
+    if (nameExists) {
+      throw new Error('DUPLICATE_ACCOUNT_NAME');
+    }
+    const symbolExists = (data.accounts || []).some((a: any) => a.symbol === account.symbol);
+    if (symbolExists) {
+      throw new Error('DUPLICATE_ACCOUNT_SYMBOL');
+    }
     const now = new Date().toISOString();
     data.accounts.push({
       ...account,
@@ -152,6 +162,19 @@ class WebDatabaseService implements IDatabaseService {
     const data = await this.getData();
     const accountIndex = data.accounts.findIndex((acc: any) => acc.id === id);
     if (accountIndex !== -1) {
+      const existing = data.accounts[accountIndex];
+      const nextName = (updates.name ?? existing.name) as string;
+      const nextSymbol = (updates.symbol ?? existing.symbol) as string;
+      const normalizedNextName = String(nextName).trim().toLowerCase();
+      // Verificar que no hayan duplicados, nombre y símbolo.
+      const nameExists = (data.accounts || []).some((a: any) => a.id !== id && String(a.name).trim().toLowerCase() === normalizedNextName);
+      if (nameExists) {
+        throw new Error('DUPLICATE_ACCOUNT_NAME');
+      }
+      const symbolExists = (data.accounts || []).some((a: any) => a.id !== id && a.symbol === nextSymbol);
+      if (symbolExists) {
+        throw new Error('DUPLICATE_ACCOUNT_SYMBOL');
+      }
       const now = new Date().toISOString();
       data.accounts[accountIndex] = {
         ...data.accounts[accountIndex],
@@ -174,12 +197,72 @@ class WebDatabaseService implements IDatabaseService {
 
   async createCategory(category: Omit<DatabaseCategory, 'createdAt' | 'updatedAt'>): Promise<void> {
     const data = await this.getData();
+    // Mismo nombre y tipo de categoría al mismo tiempo no es permitido.
+    const normalizedName = category.name.trim().toLowerCase();
+    const duplicate = (data.categories || []).some((c: any) =>
+      c.type === category.type && String(c.name).trim().toLowerCase() === normalizedName
+    );
+    if (duplicate) {
+      throw new Error('DUPLICATE_CATEGORY');
+    }
     const now = new Date().toISOString();
     data.categories.push({
       ...category,
       createdAt: now,
       updatedAt: now
     });
+    await this.saveData(data);
+  }
+
+  async updateCategory(id: string, updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+    const data = await this.getData();
+    const categoryIndex = (data.categories || []).findIndex((cat: any) => cat.id === id);
+    if (categoryIndex !== -1) {
+      const existing = data.categories[categoryIndex];
+      const nextType = updates.type ?? existing.type;
+      const nextName = (updates.name ?? existing.name) as string;
+      // Mismo nombre y tipo de categoría al mismo tiempo no es permitido.
+      const normalizedName = String(nextName).trim().toLowerCase();
+      const duplicate = (data.categories || []).some((c: any) =>
+        c.id !== id && c.type === nextType && String(c.name).trim().toLowerCase() === normalizedName
+      );
+      if (duplicate) {
+        throw new Error('DUPLICATE_CATEGORY');
+      }
+      const now = new Date().toISOString();
+      data.categories[categoryIndex] = {
+        ...data.categories[categoryIndex],
+        ...updates,
+        updatedAt: now,
+      };
+      await this.saveData(data);
+    }
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    const data = await this.getData();
+    const categoryIndex = (data.categories || []).findIndex((cat: any) => cat.id === id);
+    if (categoryIndex === -1) return;
+
+    const now = new Date().toISOString();
+
+    // Revertir el efecto de las transacciones asociadas en los balances de cuentas
+    const affectedTransactions = (data.transactions || []).filter((tx: any) => tx.categoryId === id);
+    for (const tx of affectedTransactions) {
+      const accIndex = (data.accounts || []).findIndex((acc: any) => acc.id === tx.accountId);
+      if (accIndex !== -1) {
+        const delta = tx.type === 'INGRESO' ? -tx.amount : tx.amount; // revertir el impacto original
+        data.accounts[accIndex].balance += delta;
+        data.accounts[accIndex].updatedAt = now;
+      }
+    }
+
+    // Eliminar transacciones asociadas a la categoría
+    data.transactions = (data.transactions || []).filter((tx: any) => tx.categoryId !== id);
+
+    // Eliminar la categoría
+    data.categories = (data.categories || []).filter((cat: any) => cat.id !== id);
+
     await this.saveData(data);
   }
 
