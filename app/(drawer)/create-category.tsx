@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -28,7 +29,7 @@ const ICONS = [
 const COLORS = ['#FF6B6B', '#4CAF50', '#3A7691', '#FF9F43', '#845EC2', '#30353D'];
 
 export default function CreateCategory() {
-  const { addCategory, updateCategory } = useApp();
+  const { addCategory, updateCategory, categories } = useApp();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
@@ -37,6 +38,16 @@ export default function CreateCategory() {
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [monthlyExpense, setMonthlyExpense] = useState(false);
   const [monthlyAmount, setMonthlyAmount] = useState('');
+
+  // Cross-platform alert (uses window.alert on web)
+  const showAlert = useCallback((title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      // window is available on web
+      window.alert(`${title}: ${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  }, []);
 
   // Ensure the form's type matches the caller's intent (GASTO/INGRESO)
   useEffect(() => {
@@ -82,7 +93,18 @@ export default function CreateCategory() {
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'El nombre de la categoría es requerido');
+      showAlert('Error', 'El nombre de la categoría es requerido');
+      return;
+    }
+
+    // Prevent duplicate names in the same type (case-insensitive). Allow if different type.
+    const normalizedName = name.trim().toLowerCase();
+    const editingId = params.categoryId as string | undefined;
+    const duplicate = categories.some((c) =>
+      c.type === type && c.name.trim().toLowerCase() === normalizedName && c.id !== editingId
+    );
+    if (duplicate) {
+      showAlert('Nombre duplicado', `Ya existe una categoría ${type === 'GASTO' ? 'de gasto' : 'de ingreso'} con ese nombre.`);
       return;
     }
 
@@ -96,7 +118,6 @@ export default function CreateCategory() {
         monthlyAmount: monthlyExpense && monthlyAmount ? parseFloat(monthlyAmount) : undefined,
       };
 
-      const editingId = params.categoryId as string | undefined;
       if (editingId) {
         await updateCategory(editingId, newCategory);
       } else {
@@ -127,8 +148,12 @@ export default function CreateCategory() {
       }
 
     } catch (error) {
-      console.error('Error creating category:', error);
-      Alert.alert('Error', 'No se pudo crear la categoría');
+      console.error('Error creating/updating category:', error);
+      if (error instanceof Error && error.message === 'DUPLICATE_CATEGORY') {
+        showAlert('Nombre duplicado', `Ya existe una categoría ${type === 'GASTO' ? 'de gasto' : 'de ingreso'} con ese nombre.`);
+      } else {
+        showAlert('Error', 'No se pudo guardar la categoría');
+      }
     }
   };
   

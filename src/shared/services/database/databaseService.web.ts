@@ -174,6 +174,14 @@ class WebDatabaseService implements IDatabaseService {
 
   async createCategory(category: Omit<DatabaseCategory, 'createdAt' | 'updatedAt'>): Promise<void> {
     const data = await this.getData();
+    // Mismo nombre y tipo de categoría al mismo tiempo no es permitido.
+    const normalizedName = category.name.trim().toLowerCase();
+    const duplicate = (data.categories || []).some((c: any) =>
+      c.type === category.type && String(c.name).trim().toLowerCase() === normalizedName
+    );
+    if (duplicate) {
+      throw new Error('DUPLICATE_CATEGORY');
+    }
     const now = new Date().toISOString();
     data.categories.push({
       ...category,
@@ -187,6 +195,17 @@ class WebDatabaseService implements IDatabaseService {
     const data = await this.getData();
     const categoryIndex = (data.categories || []).findIndex((cat: any) => cat.id === id);
     if (categoryIndex !== -1) {
+      const existing = data.categories[categoryIndex];
+      const nextType = updates.type ?? existing.type;
+      const nextName = (updates.name ?? existing.name) as string;
+      // Mismo nombre y tipo de categoría al mismo tiempo no es permitido.
+      const normalizedName = String(nextName).trim().toLowerCase();
+      const duplicate = (data.categories || []).some((c: any) =>
+        c.id !== id && c.type === nextType && String(c.name).trim().toLowerCase() === normalizedName
+      );
+      if (duplicate) {
+        throw new Error('DUPLICATE_CATEGORY');
+      }
       const now = new Date().toISOString();
       data.categories[categoryIndex] = {
         ...data.categories[categoryIndex],
