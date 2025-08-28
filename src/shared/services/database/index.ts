@@ -60,6 +60,7 @@ export interface IDatabaseService {
   getCategories(): Promise<DatabaseCategory[]>;
   getCategoriesByType(type: 'GASTO' | 'INGRESO'): Promise<DatabaseCategory[]>;
   createCategory(category: Omit<DatabaseCategory, 'createdAt' | 'updatedAt'>): Promise<void>;
+  updateCategory(id: string, updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void>;
   
   // Transacciones
   getTransactions(): Promise<DatabaseTransaction[]>;

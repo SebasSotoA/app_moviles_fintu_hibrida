@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   StyleSheet,
@@ -28,7 +28,7 @@ const ICONS = [
 const COLORS = ['#FF6B6B', '#4CAF50', '#3A7691', '#FF9F43', '#845EC2', '#30353D'];
 
 export default function CreateCategory() {
-  const { addCategory } = useApp();
+  const { addCategory, updateCategory } = useApp();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
@@ -37,6 +37,48 @@ export default function CreateCategory() {
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [monthlyExpense, setMonthlyExpense] = useState(false);
   const [monthlyAmount, setMonthlyAmount] = useState('');
+
+  // Ensure the form's type matches the caller's intent (GASTO/INGRESO)
+  useEffect(() => {
+    setType((params.type as 'GASTO' | 'INGRESO') || 'GASTO');
+  }, [params.type]);
+
+  // If editing, prefill fields from params
+  useEffect(() => {
+    const editingId = params.categoryId as string | undefined;
+    if (editingId) {
+      if (typeof params.name === 'string') setName(params.name);
+      if (typeof params.icon === 'string') setSelectedIcon(params.icon);
+      if (typeof params.color === 'string') setSelectedColor(params.color);
+      if (typeof params.type === 'string') setType(params.type as 'GASTO' | 'INGRESO');
+      if (typeof params.isMonthlyExpense === 'string') {
+        setMonthlyExpense(params.isMonthlyExpense === 'true');
+      } else if (typeof params.isMonthlyExpense === 'boolean') {
+        setMonthlyExpense(!!params.isMonthlyExpense);
+      }
+      if (params.monthlyAmount !== undefined) {
+        const val = Array.isArray(params.monthlyAmount) ? params.monthlyAmount[0] : (params.monthlyAmount as any);
+        setMonthlyAmount(val !== undefined && val !== null ? String(val) : '');
+      }
+    }
+  }, [
+    params.categoryId,
+    params.name,
+    params.icon,
+    params.color,
+    params.type,
+    params.isMonthlyExpense,
+    params.monthlyAmount,
+  ]);
+
+  const resetForm = useCallback(() => {
+    setName('');
+    setType((params.type as 'GASTO' | 'INGRESO') || 'GASTO');
+    setSelectedIcon(ICONS[0]);
+    setSelectedColor(COLORS[0]);
+    setMonthlyExpense(false);
+    setMonthlyAmount('');
+  }, [params.type]);
 
   const handleCreate = async () => {
     if (!name.trim()) {
@@ -54,19 +96,35 @@ export default function CreateCategory() {
         monthlyAmount: monthlyExpense && monthlyAmount ? parseFloat(monthlyAmount) : undefined,
       };
 
-      await addCategory(newCategory);
+      const editingId = params.categoryId as string | undefined;
+      if (editingId) {
+        await updateCategory(editingId, newCategory);
+      } else {
+        await addCategory(newCategory);
+      }
+      // Clear form before navigating away to avoid stale state if component is reused
+      resetForm();
       
-      // Instead of router.back(), explicitly navigate to choose-category
-      router.replace({
-        pathname: '/(drawer)/choose-category',
-        params: {
-          type: params.type,
-          amount: params.amount,
-          date: params.date,
-          note: params.note,
-          accountId: params.accountId
+      // Navegar según returnPath si viene definido
+      const returnPath = params.returnPath as string | undefined;
+      if (returnPath) {
+        if (returnPath === '/(drawer)/choose-category') {
+          router.replace({
+            pathname: returnPath,
+            params: {
+              type: params.type,
+              amount: params.amount,
+              date: params.date,
+              note: params.note,
+              accountId: params.accountId,
+            },
+          });
+        } else {
+          router.replace({ pathname: returnPath });
         }
-      });
+      } else {
+        router.back();
+      }
 
     } catch (error) {
       console.error('Error creating category:', error);
@@ -84,7 +142,7 @@ export default function CreateCategory() {
           <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Crear Categoría</Text>
+          <Text style={styles.headerTitle}>{params.categoryId ? 'Editar Categoría' : 'Crear Categoría'}</Text>
         </View>
         <View style={styles.placeholder} />
       </View>
@@ -189,7 +247,7 @@ export default function CreateCategory() {
           onPress={handleCreate}
           disabled={!name}
         >
-          <Text style={styles.createButtonText}>Crear Categoría</Text>
+          <Text style={styles.createButtonText}>{params.categoryId ? 'Guardar Cambios' : 'Crear Categoría'}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>

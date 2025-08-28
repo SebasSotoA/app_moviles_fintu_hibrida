@@ -47,7 +47,8 @@ export default function ChooseCategory() {
         amount,
         date,
         note,
-        accountId
+        accountId,
+        returnPath: '/(drawer)/choose-category'
       }
     });
   };

@@ -1,10 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions } from '@react-navigation/native';
-import { useNavigation } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -36,11 +35,26 @@ export default function Categorias() {
   };
 
   const handleCreateCategory = (type: 'GASTO' | 'INGRESO') => {
-    Alert.alert('Próximamente', `Funcionalidad de crear categoría de ${type.toLowerCase()} en desarrollo`);
+    router.push({
+      pathname: '/(drawer)/create-category',
+      params: { type, returnPath: '/(drawer)/categorias' }
+    });
   };
 
   const handleEditCategory = (category: any) => {
-    Alert.alert('Próximamente', `Funcionalidad de editar categoría "${category.name}" en desarrollo`);
+    router.push({
+      pathname: '/(drawer)/create-category',
+      params: {
+        categoryId: category.id,
+        name: category.name,
+        icon: category.icon,
+        color: category.color,
+        type: category.type,
+        isMonthlyExpense: String(!!category.isMonthlyExpense),
+        monthlyAmount: category.monthlyAmount !== undefined && category.monthlyAmount !== null ? String(category.monthlyAmount) : '',
+        returnPath: '/(drawer)/categorias',
+      },
+    });
   };
 
   const renderCategoryItem = (category: any, isLast: boolean = false) => (

@@ -15,6 +15,7 @@ interface AppContextType {
   addTransaction: (transaction: Omit<DatabaseTransaction, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   addAccount: (account: Omit<DatabaseAccount, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   addCategory: (category: Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateCategory: (id: string, updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
   setCurrentAccount: (accountId: string) => void;
   refreshData: () => Promise<void>;
   getTransactionStats: (startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO', accountId?: string) => Promise<any[]>;
@@ -49,6 +50,19 @@ export function AppProvider({ children }: AppProviderProps) {
       console.error('Error initializing app:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const updateCategory = async (
+    id: string,
+    updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>
+  ) => {
+    try {
+      await databaseService.updateCategory(id, updates);
+      await refreshData();
+    } catch (error) {
+      console.error('Error updating category:', error);
+      throw error;
     }
   };
 
@@ -152,6 +166,7 @@ export function AppProvider({ children }: AppProviderProps) {
     addTransaction,
     addAccount,
     addCategory,
+    updateCategory,
     setCurrentAccount,
     refreshData,
     getTransactionStats,

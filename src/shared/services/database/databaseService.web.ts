@@ -183,6 +183,20 @@ class WebDatabaseService implements IDatabaseService {
     await this.saveData(data);
   }
 
+  async updateCategory(id: string, updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+    const data = await this.getData();
+    const categoryIndex = (data.categories || []).findIndex((cat: any) => cat.id === id);
+    if (categoryIndex !== -1) {
+      const now = new Date().toISOString();
+      data.categories[categoryIndex] = {
+        ...data.categories[categoryIndex],
+        ...updates,
+        updatedAt: now,
+      };
+      await this.saveData(data);
+    }
+  }
+
   async getTransactions(): Promise<DatabaseTransaction[]> {
     const data = await this.getData();
     return data.transactions || [];
