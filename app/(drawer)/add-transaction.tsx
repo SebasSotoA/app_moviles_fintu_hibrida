@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router, useNavigation } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -10,7 +9,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 // Removido DateTimePicker - no compatible con Expo Go
@@ -19,8 +18,7 @@ import { useApp } from '../../src/shared/context/AppProvider';
 import { TransactionType } from '../../types/transaction';
 
 export default function AddTransaction() {
-  const navigation = useNavigation();
-  const { currentAccount, accounts, setCurrentAccount } = useApp();
+  const { currentAccount, accounts } = useApp();
   const insets = useSafeAreaInsets();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [transactionType, setTransactionType] = useState<TransactionType>('GASTO');
@@ -30,26 +28,25 @@ export default function AddTransaction() {
   const [selectedAccount, setSelectedAccount] = useState(currentAccount);
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [calcResetKey, setCalcResetKey] = useState(0);
+  
+
 
   // Actualizar cuenta seleccionada cuando cambie la cuenta actual
   useEffect(() => {
     setSelectedAccount(currentAccount);
   }, [currentAccount]);
 
-  // Limpiar el formulario cada vez que esta pantalla gana foco
-  useFocusEffect(
-    React.useCallback(() => {
-      setSelectedDate(new Date());
-      setTransactionType('GASTO');
-      setAmount('0');
-      setNote('');
-      setSelectedAccount(currentAccount);
-      setShowDatePicker(false);
-      setShowAccountSelector(false);
-      setCalcResetKey(prev => prev + 1); // Forzar remount del componente Calculator
-      return () => {};
-    }, [currentAccount?.id])
-  );
+  // Limpiar el formulario cuando cambie la cuenta
+  useEffect(() => {
+    setSelectedDate(new Date());
+    setTransactionType('GASTO');
+    setAmount('0');
+    setNote('');
+    setSelectedAccount(currentAccount);
+    setShowDatePicker(false);
+    setShowAccountSelector(false);
+    setCalcResetKey(prev => prev + 1); // Forzar remount del componente Calculator
+  }, [currentAccount?.id]);
 
   const formatDate = (date: Date) => {
     const days = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
@@ -102,6 +99,8 @@ export default function AddTransaction() {
       router.push('/(drawer)/');
     }
   };
+
+
 
   return (
     <View style={styles.container}>
@@ -221,6 +220,8 @@ export default function AddTransaction() {
               numberOfLines={3}
             />
           </View>
+
+
 
           {/* Teclado numérico personalizado */}
           <Calculator 
@@ -465,6 +466,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     minHeight: 80,
   },
+
   continueButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -566,7 +568,7 @@ const styles = StyleSheet.create({
   todayButton: {
     backgroundColor: '#F8F9FA',
     borderWidth: 1,
-    borderColor: '#3A7691',
+    borderColor: '#E9ECEF',
   },
   todayButtonText: {
     color: '#3A7691',

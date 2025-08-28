@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import { DrawerActions, useFocusEffect } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect, useCallback } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
+  Alert,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -23,8 +23,9 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Circle, Path } from 'react-native-svg';
 import WelcomeModal from '../../components/WelcomeModal';
 import { useApp } from '../../src/shared/context/AppProvider';
+import { getAllCategoriesStats } from '../../src/shared/services/transactions';
 
-const { width } = Dimensions.get('window');
+
 
 type TransactionType = 'GASTOS' | 'INGRESOS';
 type FilterPeriod = 'Día' | 'Semana' | 'Mes' | 'Año' | 'Período';
@@ -40,7 +41,7 @@ interface CategoryData {
 
 export default function Home() {
   const navigation = useNavigation();
-  const { currentAccount, isLoading, getTransactionStats, accounts, setCurrentAccount } = useApp();
+  const { currentAccount, getTransactionStats, accounts, setCurrentAccount } = useApp();
   const [activeType, setActiveType] = useState<TransactionType>('GASTOS');
   const [activePeriod, setActivePeriod] = useState<FilterPeriod>('Día');
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -48,6 +49,10 @@ export default function Home() {
   const [categoryStats, setCategoryStats] = useState<CategoryData[]>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [showAccountSelector, setShowAccountSelector] = useState(false);
+  
+  // Nuevo estado para estadísticas de categorías con transacciones
+  const [categoriesWithTransactions, setCategoriesWithTransactions] = useState<any[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const insets = useSafeAreaInsets();
   
   // Valores animados para el deslizamiento
@@ -65,12 +70,14 @@ export default function Home() {
   // Cargar estadísticas cuando cambien los filtros
   useEffect(() => {
     loadCategoryStats();
+    loadCategoriesWithTransactions();
   }, [activeType, activePeriod, currentDate, currentAccount?.id]);
 
   // Recargar cuando la pantalla toma foco (p. ej., al volver de crear transacción)
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       loadCategoryStats();
+      loadCategoriesWithTransactions();
       return () => {};
     }, [activeType, activePeriod, currentDate, currentAccount?.id])
   );
@@ -105,6 +112,20 @@ export default function Home() {
       setCategoryStats([]);
     } finally {
       setIsLoadingStats(false);
+    }
+  };
+
+  // Nueva función para cargar estadísticas de categorías con transacciones
+  const loadCategoriesWithTransactions = async () => {
+    setIsLoadingCategories(true);
+    try {
+      const stats = await getAllCategoriesStats();
+      setCategoriesWithTransactions(stats);
+    } catch (error) {
+      console.error('Error loading categories with transactions:', error);
+      setCategoriesWithTransactions([]);
+    } finally {
+      setIsLoadingCategories(false);
     }
   };
 
@@ -289,6 +310,10 @@ export default function Home() {
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
+  };
+
+  const handleAddTransaction = () => {
+    router.push('/(drawer)/add-transaction');
   };
 
   const renderCategoryCard = (category: CategoryData) => (
@@ -524,6 +549,78 @@ export default function Home() {
               <Text style={styles.emptyCategoriesText}>
                 No hay {activeType.toLowerCase()} registrados para este período
               </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Nueva sección: Categorías con Transacciones */}
+        <View style={styles.transactionsSection}>
+          <Text style={styles.transactionsTitle}>
+            Historial de Transacciones por Categoría
+          </Text>
+          {isLoadingCategories ? (
+            <View style={styles.loadingTransactions}>
+              <ActivityIndicator size="small" color="#3A7691" />
+              <Text style={styles.loadingText}>Cargando transacciones...</Text>
+            </View>
+          ) : categoriesWithTransactions.length > 0 ? (
+            <View style={styles.transactionsGrid}>
+              {categoriesWithTransactions
+                .filter(cat => cat.type === (activeType === 'GASTOS' ? 'GASTO' : 'INGRESO'))
+                .map((category) => (
+                  <TouchableOpacity
+                    key={category.id}
+                    style={styles.transactionCard}
+                    onPress={() => {
+                      // Aquí podrías navegar al detalle de la categoría
+                      Alert.alert(
+                        category.name,
+                        `Total: ${category.total.toLocaleString('es-CO')} COP\nTransacciones: ${category.count}`
+                      );
+                    }}
+                  >
+                    <View style={styles.transactionCardLeft}>
+                      <View style={[styles.transactionIcon, { backgroundColor: category.color }]}>
+                        <Ionicons name={category.icon as any} size={24} color="#FFFFFF" />
+                      </View>
+                      <View style={styles.transactionInfo}>
+                        <Text style={styles.transactionName}>{category.name}</Text>
+                        <Text style={styles.transactionCount}>
+                          {category.count} transacción{category.count !== 1 ? 'es' : ''}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.transactionCardRight}>
+                      <Text style={[
+                        styles.transactionAmount,
+                        activeType === 'GASTOS' ? styles.expenseAmount : styles.incomeAmount
+                      ]}>
+                        {activeType === 'GASTOS' ? '-' : '+'}
+                        {Math.abs(category.total).toLocaleString('es-CO')} COP
+                      </Text>
+                      {category.lastTransaction && (
+                        <Text style={styles.lastTransactionDate}>
+                          Última: {new Date(category.lastTransaction.date).toLocaleDateString('es-CO')}
+                        </Text>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          ) : (
+            <View style={styles.emptyTransactions}>
+              <Ionicons name="receipt-outline" size={40} color="#CCCCCC" />
+              <Text style={styles.emptyTransactionsText}>
+                No hay transacciones registradas en categorías
+              </Text>
+              <TouchableOpacity
+                style={styles.addFirstTransactionButton}
+                onPress={handleAddTransaction}
+              >
+                <Text style={styles.addFirstTransactionButtonText}>
+                  Crear primera transacción
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -904,6 +1001,123 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#30353D',
     marginLeft: 12,
+  },
+  
+  // Estilos para la nueva sección de transacciones
+  transactionsSection: {
+    marginBottom: 100,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  transactionsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 15,
+  },
+  loadingTransactions: {
+    paddingVertical: 30,
+    alignItems: 'center',
+    gap: 10,
+  },
+  transactionsGrid: {
+    flexDirection: 'column',
+  },
+  transactionCard: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  transactionCardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  transactionIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  transactionInfo: {
+    flex: 1,
+  },
+  transactionName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 4,
+  },
+  transactionCount: {
+    fontSize: 12,
+    color: '#666666',
+  },
+  transactionCardRight: {
+    alignItems: 'flex-end',
+  },
+  transactionAmount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  expenseAmount: {
+    color: '#FF6B6B',
+  },
+  incomeAmount: {
+    color: '#4ECDC4',
+  },
+  lastTransactionDate: {
+    fontSize: 10,
+    color: '#999999',
+  },
+  emptyTransactions: {
+    paddingVertical: 30,
+    alignItems: 'center',
+    gap: 10,
+  },
+  emptyTransactionsText: {
+    fontSize: 14,
+    color: '#CCCCCC',
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  addFirstTransactionButton: {
+    backgroundColor: '#3A7691',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginTop: 10,
+  },
+  addFirstTransactionButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   newButton: {
     position: 'absolute',
