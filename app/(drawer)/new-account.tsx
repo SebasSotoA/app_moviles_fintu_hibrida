@@ -1,19 +1,29 @@
-import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
-    Alert,
-    Platform,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Platform,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
+
+// Mapa de íconos locales usando los mismos nombres de Ionicons
+const ICONS: Record<string, any> = {
+  'arrow-back': require('../../assets/icons/arrow-back.svg'),
+  'chevron-down': require('../../assets/icons/chevron-down.svg'),
+  'checkmark': require('../../assets/icons/checkmark.svg'),
+  'add': require('../../assets/icons/add.svg'),
+  'close': require('../../assets/icons/close.svg'),
+  'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
+};
 
 const CURRENCY_OPTIONS = [
   { code: 'COP', name: 'Peso Colombiano', symbol: '$' },
@@ -167,7 +177,11 @@ export default function NewAccount() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+          <Image
+            source={ICONS['arrow-back']}
+            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Nueva Cuenta</Text>
@@ -220,7 +234,11 @@ export default function NewAccount() {
                 onPress={() => setShowCurrencySelector(true)}
               >
                 <Text style={styles.currencyButtonText}>{selectedCurrency}</Text>
-                <Ionicons name="chevron-down" size={16} color="#3A7691" />
+                <Image
+                  source={ICONS['chevron-down']}
+                  style={{ width: 16, height: 16, tintColor: '#3A7691' }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -259,7 +277,11 @@ export default function NewAccount() {
                   onPress={() => setSelectedColor(color)}
                 >
                   {selectedColor === color && (
-                    <Ionicons name="checkmark" size={20} color="#FFFFFF" />
+                    <Image
+                      source={ICONS['checkmark']}
+                      style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                      resizeMode="contain"
+                    />
                   )}
                 </TouchableOpacity>
               ))}
@@ -274,7 +296,11 @@ export default function NewAccount() {
             >
               <View style={[styles.checkbox, includeInTotal && styles.checkedCheckbox]}>
                 {includeInTotal && (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                  <Image
+                    source={ICONS['checkmark']}
+                    style={{ width: 16, height: 16, tintColor: '#FFFFFF' }}
+                    resizeMode="contain"
+                  />
                 )}
               </View>
               <Text style={styles.checkboxLabel}>Incluir en balance total</Text>
@@ -300,7 +326,11 @@ export default function NewAccount() {
           ) : (
             <>
               <Text style={styles.createButtonText}>Crear Cuenta</Text>
-              <Ionicons name="add" size={20} color="#FFFFFF" />
+              <Image
+                source={ICONS['add']}
+                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                resizeMode="contain"
+              />
             </>
           )}
         </TouchableOpacity>
@@ -316,7 +346,11 @@ export default function NewAccount() {
                 onPress={() => setShowCurrencySelector(false)}
                 style={styles.closeButton}
               >
-                <Ionicons name="close" size={24} color="#666" />
+                <Image
+                  source={ICONS['close']}
+                  style={{ width: 24, height: 24, tintColor: '#666' }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
 
@@ -338,7 +372,11 @@ export default function NewAccount() {
                     <Text style={styles.currencyItemName}>{currency.name}</Text>
                   </View>
                   {selectedCurrency === currency.code && (
-                    <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
+                    <Image
+                      source={ICONS['checkmark-circle']}
+                      style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                      resizeMode="contain"
+                    />
                   )}
                 </TouchableOpacity>
               ))}

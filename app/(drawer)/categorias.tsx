@@ -1,15 +1,15 @@
-import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
@@ -20,6 +20,15 @@ export default function Categorias() {
   const { categories, isLoading } = useApp();
   const [expenseCategories, setExpenseCategories] = useState<any[]>([]);
   const [incomeCategories, setIncomeCategories] = useState<any[]>([]);
+
+  // Mapa de íconos locales
+  const ICONS: Record<string, any> = {
+    'list-outline': require('../../assets/icons/list-outline.svg'),
+    'menu': require('../../assets/icons/menu.svg'),
+    'chevron-forward': require('../../assets/icons/chevron-forward.svg'),
+    'add-circle-outline': require('../../assets/icons/add-circle-outline.svg'),
+    'remove-circle-outline': require('../../assets/icons/remove-circle-outline.svg'),
+  };
 
   useEffect(() => {
     // Separar categorías por tipo
@@ -67,7 +76,11 @@ export default function Categorias() {
       onPress={() => handleEditCategory(category)}
     >
       <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
-        <Ionicons name={category.icon as any} size={24} color="#FFFFFF" />
+        <Image
+          source={ICONS[category.icon] || ICONS['list-outline']}
+          style={{ width: 24, height: 24, tintColor: '#FFFFFF' }}
+          resizeMode="contain"
+        />
       </View>
       
       <View style={styles.categoryInfo}>
@@ -85,7 +98,11 @@ export default function Categorias() {
             <Text style={styles.monthlyBadgeText}>Mensual</Text>
           </View>
         )}
-        <Ionicons name="chevron-forward" size={20} color="#CCCCCC" />
+        <Image
+          source={ICONS['chevron-forward']}
+          style={{ width: 20, height: 20, tintColor: '#CCCCCC' }}
+          resizeMode="contain"
+        />
       </View>
     </TouchableOpacity>
   );
@@ -108,16 +125,20 @@ export default function Categorias() {
             style={styles.createCategoryButton}
             onPress={() => handleCreateCategory(type)}
           >
-            <Ionicons name="add-circle-outline" size={24} color="#3A7691" />
+            <Image
+              source={ICONS['add-circle-outline']}
+              style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+              resizeMode="contain"
+            />
             <Text style={styles.createCategoryText}>Crear nueva categoría</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.emptyCategorySection}>
-          <Ionicons 
-            name={type === 'GASTO' ? 'remove-circle-outline' : 'add-circle-outline'} 
-            size={40} 
-            color="#CCCCCC" 
+          <Image
+            source={type === 'GASTO' ? ICONS['remove-circle-outline'] : ICONS['add-circle-outline']}
+            style={{ width: 40, height: 40, tintColor: '#CCCCCC' }}
+            resizeMode="contain"
           />
           <Text style={styles.emptyCategoryText}>
             No tienes categorías de {type.toLowerCase()} creadas
@@ -154,7 +175,11 @@ export default function Categorias() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
-          <Ionicons name="menu" size={35} color="#FFFFFF" />
+          <Image
+            source={ICONS['menu']}
+            style={{ width: 35, height: 35, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Categorías</Text>

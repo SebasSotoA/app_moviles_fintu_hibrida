@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -10,10 +9,28 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { TransactionType } from '../../types/transaction';
+
+// Mapa de íconos locales con nombres exactos de Ionicons
+const ICONS: Record<string, any> = {
+  'arrow-back': require('../../assets/icons/arrow-back.svg'),
+  'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
+  'add-circle-outline': require('../../assets/icons/add-circle-outline.svg'),
+  'checkmark': require('../../assets/icons/checkmark.svg'),
+  'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
+  'cart-outline': require('../../assets/icons/cart-outline.svg'),
+  'car-outline': require('../../assets/icons/car-outline.svg'),
+  'home-outline': require('../../assets/icons/home-outline.svg'),
+  'restaurant-outline': require('../../assets/icons/restaurant-outline.svg'),
+  'medical-outline': require('../../assets/icons/medical-outline.svg'),
+  'bus-outline': require('../../assets/icons/bus-outline.svg'),
+  'airplane-outline': require('../../assets/icons/airplane-outline.svg'),
+  'list-outline': require('../../assets/icons/list-outline.svg'),
+};
 
 export default function ChooseCategory() {
   const insets = useSafeAreaInsets();
@@ -105,11 +122,19 @@ export default function ChooseCategory() {
       onPress={() => setSelectedCategory(category.id)}
     >
       <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
-        <Ionicons name={category.icon as any} size={28} color="#FFFFFF" />
+        <Image
+          source={ICONS[category.icon as string]}
+          style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+          resizeMode="contain"
+        />
       </View>
       <Text style={styles.categoryName}>{category.name}</Text>
       {selectedCategory === category.id && (
-        <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
+        <Image
+          source={ICONS['checkmark-circle']}
+          style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+          resizeMode="contain"
+        />
       )}
     </TouchableOpacity>
   );
@@ -124,7 +149,11 @@ export default function ChooseCategory() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+          <Image
+            source={ICONS['arrow-back']}
+            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>
@@ -172,7 +201,11 @@ export default function ChooseCategory() {
             style={styles.createCategoryButton}
             onPress={handleCreateCategory}
           >
-            <Ionicons name="add-circle-outline" size={24} color="#3A7691" />
+            <Image
+              source={ICONS['add-circle-outline']}
+              style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+              resizeMode="contain"
+            />
             <Text style={styles.createCategoryText}>Crear Nueva Categoría</Text>
           </TouchableOpacity>
 
@@ -197,7 +230,11 @@ export default function ChooseCategory() {
               ]}>
                 Confirmar
               </Text>
-              <Ionicons name="checkmark" size={20} color="#FFFFFF" />
+              <Image
+                source={ICONS['checkmark']}
+                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                resizeMode="contain"
+              />
             </>
           )}
         </TouchableOpacity>

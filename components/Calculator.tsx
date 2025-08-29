@@ -1,11 +1,11 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-    Dimensions,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
 } from 'react-native';
 import { CalculatorState } from '../types/transaction';
 import breakpoints from '../src/shared/styles/breakpoints'
@@ -13,6 +13,11 @@ import breakpoints from '../src/shared/styles/breakpoints'
 const { width } = Dimensions.get('window');
 
 const isTablet = width >= breakpoints.tablet;
+
+// Mapa de íconos locales con nombres exactos de Ionicons
+const ICONS: Record<string, any> = {
+  'backspace-outline': require('../assets/icons/backspace-outline.svg'),
+};
 
 interface CalculatorProps {
   onAmountChange: (amount: string) => void;
@@ -110,16 +115,6 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
     }
   };
 
-  const handleClear = () => {
-    setState({
-      display: '0',
-      previousValue: null,
-      currentOperation: null,
-      waitingForOperand: false,
-    });
-    onAmountChange('0');
-  };
-
   const handleBackspace = () => {
     if (state.waitingForOperand) return;
     setState(prev => ({
@@ -166,7 +161,11 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
       <View style={styles.displayContainer}>
         <Text style={styles.displayText} numberOfLines={1} ellipsizeMode="head">{state.display}</Text>
         <TouchableOpacity onPress={handleBackspace} style={styles.backspaceButton}>
-          <Ionicons name="backspace-outline" size={28} color="#30353D" />
+          <Image
+            source={ICONS['backspace-outline']}
+            style={{ width: 28, height: 28, tintColor: '#30353D' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
       </View>
 

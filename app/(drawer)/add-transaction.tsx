@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -10,6 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 // Removido DateTimePicker - no compatible con Expo Go
@@ -28,8 +28,6 @@ export default function AddTransaction() {
   const [selectedAccount, setSelectedAccount] = useState(currentAccount);
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [calcResetKey, setCalcResetKey] = useState(0);
-  
-
 
   // Actualizar cuenta seleccionada cuando cambie la cuenta actual
   useEffect(() => {
@@ -100,7 +98,15 @@ export default function AddTransaction() {
     }
   };
 
-
+    // Mapa de íconos locales (SVG) - misma lógica que en _layout.tsx
+    const ICONS: Record<string, any> = {
+      'arrow-back': require('../../assets/icons/arrow-back.svg'),
+      'calendar-outline': require('../../assets/icons/calendar-outline.svg'),
+      'chevron-down': require('../../assets/icons/chevron-down.svg'),
+      'arrow-forward': require('../../assets/icons/arrow-forward.svg'),
+      'close': require('../../assets/icons/close.svg'),
+      'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
+    };  
 
   return (
     <View style={styles.container}>
@@ -112,7 +118,11 @@ export default function AddTransaction() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+          <Image
+            source={ICONS['arrow-back']}
+            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Añadir Transacción</Text>
@@ -132,7 +142,11 @@ export default function AddTransaction() {
               onPress={showDatepicker}
             >
               <Text style={styles.dateText}>{formatDate(selectedDate)}</Text>
-              <Ionicons name="calendar-outline" size={24} color="#3A7691" />
+              <Image
+                source={ICONS['calendar-outline']}
+                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           </View>
 
@@ -154,7 +168,11 @@ export default function AddTransaction() {
                   </Text>
                 </View>
               </View>
-              <Ionicons name="chevron-down" size={24} color="#3A7691" />
+              <Image
+                source={ICONS['chevron-down']}
+                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           </View>
 
@@ -247,7 +265,11 @@ export default function AddTransaction() {
           ]}>
             Continuar
           </Text>
-          <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
+          <Image
+            source={ICONS['arrow-forward']}
+            style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
       </SafeAreaView>
 
@@ -314,7 +336,11 @@ export default function AddTransaction() {
                 onPress={() => setShowAccountSelector(false)}
                 style={styles.closeButton}
               >
-                <Ionicons name="close" size={24} color="#666" />
+                <Image
+                  source={ICONS['close']}
+                  style={{ width: 24, height: 24, tintColor: '#666666' }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
 
@@ -341,7 +367,11 @@ export default function AddTransaction() {
                     </View>
                   </View>
                   {selectedAccount?.id === account.id && (
-                    <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
+                    <Image
+                      source={ICONS['checkmark-circle']}
+                      style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                      resizeMode="contain"
+                    />
                   )}
                 </TouchableOpacity>
               ))}

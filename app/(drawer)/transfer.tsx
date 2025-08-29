@@ -1,20 +1,30 @@
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Alert,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    Platform,
+  Alert,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import type { DatabaseAccount } from '../../src/shared/services/database';
+
+// Mapa de íconos locales con nombres exactos de Ionicons
+const ICONS: Record<string, any> = {
+  'arrow-back': require('../../assets/icons/arrow-back.svg'),
+  'arrow-forward': require('../../assets/icons/arrow-forward.svg'),
+  'chevron-down': require('../../assets/icons/chevron-down.svg'),
+  'send': require('../../assets/icons/send.svg'),
+  'close': require('../../assets/icons/close.svg'),
+  'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
+};
 
 export default function Transfer() {
   const { accounts, currentAccount, refreshData } = useApp();
@@ -167,7 +177,11 @@ export default function Transfer() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+          <Image
+            source={ICONS['arrow-back']}
+            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Transferir</Text>
@@ -191,7 +205,11 @@ export default function Transfer() {
               </View>
               
               <View style={styles.transferArrow}>
-                <Ionicons name="arrow-forward" size={24} color="#3A7691" />
+                <Image
+                  source={ICONS['arrow-forward']}
+                  style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                  resizeMode="contain"
+                />
               </View>
               
               <View style={styles.accountSummary}>
@@ -231,7 +249,11 @@ export default function Transfer() {
                   </Text>
                 </View>
               </View>
-              <Ionicons name="chevron-down" size={24} color="#3A7691" />
+              <Image
+                source={ICONS['chevron-down']}
+                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           </View>
 
@@ -255,7 +277,11 @@ export default function Transfer() {
                   )}
                 </View>
               </View>
-              <Ionicons name="chevron-down" size={24} color="#3A7691" />
+              <Image
+                source={ICONS['chevron-down']}
+                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           </View>
 
@@ -301,7 +327,11 @@ export default function Transfer() {
           ) : (
             <>
               <Text style={styles.transferButtonText}>Transferir</Text>
-              <Ionicons name="send" size={20} color="#FFFFFF" />
+              <Image
+                source={ICONS['send']}
+                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                resizeMode="contain"
+              />
             </>
           )}
         </TouchableOpacity>
@@ -317,7 +347,11 @@ export default function Transfer() {
                 onPress={() => setShowFromAccountSelector(false)}
                 style={styles.closeButton}
               >
-                <Ionicons name="close" size={24} color="#666" />
+                <Image
+                  source={ICONS['close']}
+                  style={{ width: 24, height: 24, tintColor: '#666' }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
 
@@ -344,7 +378,11 @@ export default function Transfer() {
                     </View>
                   </View>
                   {fromAccount?.id === account.id && (
-                    <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
+                    <Image
+                      source={ICONS['checkmark-circle']}
+                      style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                      resizeMode="contain"
+                    />
                   )}
                 </TouchableOpacity>
               ))}
@@ -363,7 +401,11 @@ export default function Transfer() {
                 onPress={() => setShowToAccountSelector(false)}
                 style={styles.closeButton}
               >
-                <Ionicons name="close" size={24} color="#666" />
+                <Image
+                  source={ICONS['close']}
+                  style={{ width: 24, height: 24, tintColor: '#666' }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
 
@@ -395,7 +437,11 @@ export default function Transfer() {
                       </View>
                     </View>
                     {toAccount?.id === account.id && (
-                      <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
+                      <Image
+                        source={ICONS['checkmark-circle']}
+                        style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                        resizeMode="contain"
+                      />
                     )}
                   </TouchableOpacity>
                 );

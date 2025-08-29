@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -9,22 +8,27 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
   ScrollView,
   StatusBar,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 
-const ICONS = [
-  'wallet-outline',
-  'cart-outline',
-  'car-outline',
-  'home-outline',
-  'restaurant-outline',
-  'medical-outline',
-  'bus-outline',
-  'airplane-outline'
-];
+// Mapa de íconos locales (SVG) siguiendo el patrón de add-transaction.tsx
+const ICONS_MAP: Record<string, any> = {
+  'arrow-back': require('../../assets/icons/arrow-back.svg'),
+  'checkmark': require('../../assets/icons/checkmark.svg'),
+  'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
+  'cart-outline': require('../../assets/icons/cart-outline.svg'),
+  'car-outline': require('../../assets/icons/car-outline.svg'),
+  'home-outline': require('../../assets/icons/home-outline.svg'),
+  'restaurant-outline': require('../../assets/icons/restaurant-outline.svg'),
+  'medical-outline': require('../../assets/icons/medical-outline.svg'),
+  'bus-outline': require('../../assets/icons/bus-outline.svg'),
+  'airplane-outline': require('../../assets/icons/airplane-outline.svg'),
+  'list-outline': require('../../assets/icons/list-outline.svg'),
+};
 
 const COLORS = ['#FF6B6B', '#4CAF50', '#3A7691', '#FF9F43', '#845EC2', '#30353D'];
 
@@ -40,7 +44,7 @@ export default function CreateCategory() {
   // Inicialización de estados para el formulario
   const [name, setName] = useState('');
   const [type, setType] = useState(params.type as 'GASTO' | 'INGRESO' || 'GASTO');
-  const [selectedIcon, setSelectedIcon] = useState(ICONS[0]);
+  const [selectedIcon, setSelectedIcon] = useState<'wallet-outline' | string>('wallet-outline');
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
@@ -100,7 +104,7 @@ export default function CreateCategory() {
   const resetForm = useCallback(() => {
     setName('');
     setType((params.type as 'GASTO' | 'INGRESO') || 'GASTO');
-    setSelectedIcon(ICONS[0]);
+    setSelectedIcon('wallet-outline');
     setSelectedColor(COLORS[0]);
   }, [params.type]);
 
@@ -178,7 +182,11 @@ export default function CreateCategory() {
       {/* Header de la aplicación */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+          <Image
+            source={ICONS_MAP['arrow-back']}
+            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>{params.categoryId ? 'Editar Categoría' : 'Crear Categoría'}</Text>
@@ -226,20 +234,31 @@ export default function CreateCategory() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ícono</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.iconList}>
-              {ICONS.map((icon) => (
-                <TouchableOpacity
-                  key={icon}
-                  style={[styles.iconButton, selectedIcon === icon && styles.selectedIconButton]}
-                  onPress={() => setSelectedIcon(icon)}
-                >
-                  <Ionicons 
-                    name={icon as any} 
-                    size={24} 
-                    color={selectedIcon === icon ? '#FFFFFF' : '#30353D'} 
-                  />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+            {(
+              [
+                'wallet-outline',
+                'cart-outline',
+                'car-outline',
+                'home-outline',
+                'restaurant-outline',
+                'medical-outline',
+                'bus-outline',
+                'airplane-outline',
+              ] as string[]
+            ).map((icon: string) => (
+              <TouchableOpacity
+                key={icon}
+                style={[styles.iconButton, selectedIcon === icon && styles.selectedIconButton]}
+                onPress={() => setSelectedIcon(icon)}
+              >
+                <Image
+                  source={ICONS_MAP[icon] || ICONS_MAP['list-outline']}
+                  style={{ width: 24, height: 24, tintColor: selectedIcon === icon ? '#FFFFFF' : '#30353D' }}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           </View>
 
           {/* Color de categoría */}
@@ -253,7 +272,11 @@ export default function CreateCategory() {
                   onPress={() => setSelectedColor(color)}
                 >
                   {selectedColor === color && (
-                    <Ionicons name="checkmark" size={24} color="#FFFFFF" />
+                    <Image
+                      source={ICONS_MAP['checkmark']}
+                      style={{ width: 24, height: 24, tintColor: '#FFFFFF' }}
+                      resizeMode="contain"
+                    />
                   )}
                 </TouchableOpacity>
               ))}
