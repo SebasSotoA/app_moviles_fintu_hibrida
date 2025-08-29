@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 12,
-    color: '#666666',
+    color: '#4A4A4A',
     fontWeight: '500',
   },
   filterSection: {
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
   periodText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
+    color: '#4A4A4A',
   },
   activePeriodText: {
     color: '#FFFFFF',
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   dataTypeText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#666666',
+    color: '#4A4A4A',
   },
   dateNavigation: {
     flexDirection: 'row',
