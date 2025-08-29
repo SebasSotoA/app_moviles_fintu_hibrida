@@ -1,38 +1,87 @@
+import { Ionicons } from '@expo/vector-icons';
+import { DrawerActions } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import FinancialChart from '../../components/FinancialChart';
 
 export default function Graficos() {
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Gráficos</Text>
-        <Text style={styles.subtitle}>Próximamente...</Text>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      
+      {/* Área superior con color del header */}
+      <View style={[styles.statusBarArea, { height: insets.top }]} />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
+          <Ionicons name="menu" size={35} color="#FFFFFF" />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>Gráficos</Text>
+        </View>
+        <View style={styles.placeholder} />
       </View>
-    </SafeAreaView>
+
+      {/* Contenido principal */}
+      <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <FinancialChart />
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#30353D',
+  },
+  statusBarArea: {
+    backgroundColor: '#30353D',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: '#30353D',
+    borderBottomWidth: 1,
+    borderBottomColor: '#101215',
+  },
+  menuButton: {
+    padding: 5,
+    width: 38,
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  placeholder: {
+    width: 38,
+  },
+  contentContainer: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
   },
 });
 
