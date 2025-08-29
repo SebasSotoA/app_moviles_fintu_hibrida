@@ -4,7 +4,7 @@ import { useNavigation } from 'expo-router';
 import React from 'react';
 import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import FinancialChart from '../../components/FinancialChart';
+import ModernFinancialChart from '../../components/ModernFinancialChart';
 
 export default function Graficos() {
   const navigation = useNavigation();
@@ -35,7 +35,7 @@ export default function Graficos() {
       {/* Contenido principal */}
       <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <FinancialChart />
+          <ModernFinancialChart />
         </ScrollView>
       </SafeAreaView>
     </View>
