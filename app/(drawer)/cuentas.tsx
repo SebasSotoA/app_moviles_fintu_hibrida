@@ -20,10 +20,7 @@ export default function Cuentas() {
   const insets = useSafeAreaInsets();
   const { accounts, currentAccount, setCurrentAccount, isLoading } = useApp();
 
-  useEffect(() => {
-    // Placeholder: could load additional data here if needed when accounts change
-  }, [accounts]);
-
+  // Calcular totales por divisa, memo permite que solo se calcule cuando se actualice.
   const totalsByCurrency = React.useMemo(() => {
     const map = new Map<string, { total: number; count: number }>();
     accounts.forEach(acc => {
@@ -35,6 +32,7 @@ export default function Cuentas() {
     return Array.from(map.entries());
   }, [accounts]);
 
+  // Label para mostrar en pantalla.
   const totalsSummary = React.useMemo(() => {
     const parts = totalsByCurrency.map(([currency, info]) => `${info.total.toLocaleString('es-CO')} ${currency} 💸`);
     return parts.length > 0 ? parts.join(' + ') : '0';
@@ -46,13 +44,14 @@ export default function Cuentas() {
 
   const handleAccountPress = (accountId: string) => {
     setCurrentAccount(accountId);
-    // Navegar a detalle de cuenta (opcional)
   };
 
+  // Viaja a vista de creación de cuenta con el returnPath de la vista actual
   const handleAddAccount = () => {
     router.push({ pathname: '/(drawer)/new-account', params: { returnPath: '/(drawer)/cuentas' } });
   };
 
+  // Viaja a vista de transferencia con el returnPath de la vista actual
   const handleTransfer = () => {
     if (accounts.length < 2) {
       Alert.alert('Información', 'Necesitas al menos 2 cuentas para realizar transferencias');

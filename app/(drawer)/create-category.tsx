@@ -29,9 +29,15 @@ const ICONS = [
 const COLORS = ['#FF6B6B', '#4CAF50', '#3A7691', '#FF9F43', '#845EC2', '#30353D'];
 
 export default function CreateCategory() {
+  // Traer funciones desde el AppProvider, contexto de la aplicación.
   const { addCategory, updateCategory, deleteCategory, categories } = useApp();
+  
   const params = useLocalSearchParams();
+  
+  // Obtener paddings para una pantalla de celular.
   const insets = useSafeAreaInsets();
+  
+  // Inicialización de estados para el formulario
   const [name, setName] = useState('');
   const [type, setType] = useState(params.type as 'GASTO' | 'INGRESO' || 'GASTO');
   const [selectedIcon, setSelectedIcon] = useState(ICONS[0]);
@@ -39,24 +45,42 @@ export default function CreateCategory() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+
   const editingId = params.categoryId as string | undefined;
 
-  // Cross-platform alert (uses window.alert on web)
+  // Alerta multiplataforma.
   const showAlert = useCallback((title: string, message: string) => {
     if (Platform.OS === 'web') {
-      // window is available on web
       window.alert(`${title}: ${message}`);
     } else {
       Alert.alert(title, message);
     }
   }, []);
 
-  // Ensure the form's type matches the caller's intent (GASTO/INGRESO)
+  const validateForm = () => {
+    if (!name.trim()) {
+      showAlert('Error', 'El nombre de la categoría es obligatorio');
+      return false;
+    }
+    
+    // No permitir duplicados de categorías en el mismo tipo.
+    const normalizedName = name.trim().toLowerCase();
+    const duplicate = categories.some((c) =>
+      c.type === type && c.name.trim().toLowerCase() === normalizedName && c.id !== editingId
+    );
+    if (duplicate) {
+      showAlert('Nombre duplicado', `Ya existe una categoría ${type === 'GASTO' ? 'de gasto' : 'de ingreso'} con ese nombre.`);
+      return false;
+    }
+
+    return true;
+  };
+
   useEffect(() => {
     setType((params.type as 'GASTO' | 'INGRESO') || 'GASTO');
   }, [params.type]);
 
-  // If editing, prefill fields from params
+  // Actualiza estados de los parámetros en caso de cambiar de ingreso a gasto, y otros contextos
   useEffect(() => {
     const editingId = params.categoryId as string | undefined;
     if (editingId) {
@@ -81,20 +105,7 @@ export default function CreateCategory() {
   }, [params.type]);
 
   const handleCreate = async () => {
-    if (!name.trim()) {
-      showAlert('Error', 'El nombre de la categoría es requerido');
-      return;
-    }
-
-    // Prevent duplicate names in the same type (case-insensitive). Allow if different type.
-    const normalizedName = name.trim().toLowerCase();
-    const duplicate = categories.some((c) =>
-      c.type === type && c.name.trim().toLowerCase() === normalizedName && c.id !== editingId
-    );
-    if (duplicate) {
-      showAlert('Nombre duplicado', `Ya existe una categoría ${type === 'GASTO' ? 'de gasto' : 'de ingreso'} con ese nombre.`);
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       const newCategory = {
@@ -110,10 +121,10 @@ export default function CreateCategory() {
         await addCategory(newCategory);
       }
 
-      // resetear para evitar el stale state
+      // Resetear para evitar el stale state al volver al componente
       resetForm();
 
-      // Navegar según returnPath si viene definido
+      // Parámetro para navegar a la sección correcta al crear categoría.
       const returnPath = params.returnPath as string | undefined;
       if (returnPath) {
         if (returnPath === '/(drawer)/choose-category') {
@@ -133,36 +144,26 @@ export default function CreateCategory() {
       } else {
         router.back();
       }
-
     } catch (error) {
-      console.error('Error creating/updating category:', error);
-      if (error instanceof Error && error.message === 'DUPLICATE_CATEGORY') {
-        showAlert('Nombre duplicado', `Ya existe una categoría ${type === 'GASTO' ? 'de gasto' : 'de ingreso'} con ese nombre.`);
-      } else {
-        showAlert('Error', 'No se pudo guardar la categoría');
-      }
+      console.error('Error creando o actualizando categoría:', error);
+      showAlert('Error', 'No se pudo guardar la categoría');
     }
   };
 
   const handleDelete = async () => {
     if (!editingId) return;
+    
     try {
       setIsDeleting(true);
       await deleteCategory(editingId);
       setShowDeleteConfirm(false);
-      if (Platform.OS === 'web') {
-        window.alert('Categoría eliminada correctamente');
-      } else {
-        Alert.alert('Éxito', 'Categoría eliminada correctamente');
-      }
+      showAlert('Éxito', 'Categoría creada correctamente')
       router.back();
+    
     } catch (error) {
       console.error('Error deleting category:', error);
-      if (Platform.OS === 'web') {
-        window.alert('No se pudo eliminar la categoría');
-      } else {
-        Alert.alert('Error', 'No se pudo eliminar la categoría');
-      }
+      showAlert('Éxito', 'Categoría creada correctamente')
+    
     } finally {
       setIsDeleting(false);
       setDeleteConfirmInput('');
@@ -174,6 +175,7 @@ export default function CreateCategory() {
       <StatusBar barStyle="light-content" backgroundColor="#30353D" />
       <View style={[styles.statusBarArea, { height: insets.top }]} />
       
+      {/* Header de la aplicación */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
@@ -186,6 +188,7 @@ export default function CreateCategory() {
 
       <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
         <ScrollView style={styles.content}>
+          {/* Nombre de categoría */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Nombre</Text>
             <TextInput
@@ -196,6 +199,7 @@ export default function CreateCategory() {
             />
           </View>
 
+          {/* Two-state tipo de categoría */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tipo</Text>
             <View style={styles.toggleContainer}>
@@ -218,6 +222,7 @@ export default function CreateCategory() {
             </View>
           </View>
 
+          {/* Seleccionar ícono de categoría */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ícono</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.iconList}>
@@ -237,6 +242,7 @@ export default function CreateCategory() {
             </ScrollView>
           </View>
 
+          {/* Color de categoría */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Color</Text>
             <View style={styles.colorGrid}>
@@ -255,6 +261,7 @@ export default function CreateCategory() {
           </View>
         </ScrollView>
 
+        {/* Botón crear categoría */}
         <TouchableOpacity 
           style={[styles.createButton, !name && styles.disabledButton]}
           onPress={handleCreate}
@@ -263,6 +270,7 @@ export default function CreateCategory() {
           <Text style={styles.createButtonText}>{params.categoryId ? 'Guardar Cambios' : 'Crear Categoría'}</Text>
         </TouchableOpacity>
 
+        {/* Botón eliminar categoría en caso de que se esté editando*/}
         {editingId && (
           <TouchableOpacity
             style={styles.deleteButton}
@@ -273,6 +281,7 @@ export default function CreateCategory() {
         )}
       </SafeAreaView>
 
+      {/* Modal de confirmación de eliminación de categoría */}
       {showDeleteConfirm && (
         <View style={styles.modalOverlay}>
           <View style={styles.confirmModal}>
