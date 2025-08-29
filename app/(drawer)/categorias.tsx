@@ -28,6 +28,18 @@ export default function Categorias() {
     'chevron-forward': require('../../assets/icons/chevron-forward.svg'),
     'add-circle-outline': require('../../assets/icons/add-circle-outline.svg'),
     'remove-circle-outline': require('../../assets/icons/remove-circle-outline.svg'),
+    'arrow-back': require('../../assets/icons/arrow-back.svg'),
+    'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
+    'add-circle-outline': require('../../assets/icons/add-circle-outline.svg'),
+    'checkmark': require('../../assets/icons/checkmark.svg'),
+    'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
+    'cart-outline': require('../../assets/icons/cart-outline.svg'),
+    'car-outline': require('../../assets/icons/car-outline.svg'),
+    'home-outline': require('../../assets/icons/home-outline.svg'),
+    'restaurant-outline': require('../../assets/icons/restaurant-outline.svg'),
+    'medical-outline': require('../../assets/icons/medical-outline.svg'),
+    'bus-outline': require('../../assets/icons/bus-outline.svg'),
+    'airplane-outline': require('../../assets/icons/airplane-outline.svg'),
   };
 
   useEffect(() => {
