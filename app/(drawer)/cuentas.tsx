@@ -1,6 +1,6 @@
 import { DrawerActions } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -13,6 +13,7 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import EditAccountModal from '../../components/EditAccountModal';
 import { useApp } from '../../src/shared/context/AppProvider';
 
 // Mapa de íconos locales siguiendo el patrón de add-transaction.tsx
@@ -24,11 +25,14 @@ const ICONS: Record<string, any> = {
   'add-circle': require('../../assets/icons/add-circle.svg'),
   'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
 };
+import { DatabaseAccount } from '../../src/shared/services/database';
 
 export default function Cuentas() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { accounts, currentAccount, setCurrentAccount, isLoading } = useApp();
+  const { accounts, currentAccount, setCurrentAccount, isLoading, updateAccount } = useApp();
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [accountToEdit, setAccountToEdit] = useState<DatabaseAccount | null>(null);
 
   // Calcular totales por divisa, memo permite que solo se calcule cuando se actualice.
   const totalsByCurrency = React.useMemo(() => {
@@ -70,6 +74,20 @@ export default function Cuentas() {
     router.push('/(drawer)/transfer');
   };
 
+  const handleEditAccount = (account: DatabaseAccount) => {
+    setAccountToEdit(account);
+    setEditModalVisible(true);
+  };
+
+  const handleSaveAccount = async (accountId: string, updates: { name: string; symbol: string }) => {
+    await updateAccount(accountId, updates);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalVisible(false);
+    setAccountToEdit(null);
+  };
+
   const renderAccountCard = (account: any) => (
     <TouchableOpacity
       key={account.id}
@@ -87,14 +105,22 @@ export default function Cuentas() {
           <Text style={styles.accountName}>{account.name}</Text>
           <Text style={styles.accountCurrency}>{account.currency}</Text>
         </View>
-        <View style={styles.accountBalance}>
-          <Text style={[
-            styles.balanceAmount,
-            { color: account.balance >= 0 ? '#4CAF50' : '#FF6B6B' }
-          ]}>
-            {account.balance.toLocaleString('es-CO')}
-          </Text>
-          <Text style={styles.balanceCurrency}>{account.currency}</Text>
+        <View style={styles.accountActions}>
+          <TouchableOpacity 
+            style={styles.editButton}
+            onPress={() => handleEditAccount(account)}
+          >
+            <Ionicons name="create-outline" size={20} color="#3A7691" />
+          </TouchableOpacity>
+          <View style={styles.accountBalance}>
+            <Text style={[
+              styles.balanceAmount,
+              { color: account.balance >= 0 ? '#4CAF50' : '#FF6B6B' }
+            ]}>
+              {account.balance.toLocaleString('es-CO')}
+            </Text>
+            <Text style={styles.balanceCurrency}>{account.currency}</Text>
+          </View>
         </View>
       </View>
       
@@ -218,6 +244,14 @@ export default function Cuentas() {
 
         </ScrollView>
       </SafeAreaView>
+
+      {/* Modal de edición de cuenta */}
+      <EditAccountModal
+        visible={editModalVisible}
+        account={accountToEdit}
+        onClose={handleCloseEditModal}
+        onSave={handleSaveAccount}
+      />
     </View>
   );
 }
@@ -406,6 +440,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666666',
   },
+  accountActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  editButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#F0F8FF',
+    borderWidth: 1,
+    borderColor: '#3A7691',
+  },
   accountBalance: {
     alignItems: 'flex-end',
   },
@@ -465,4 +511,3 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 });
-

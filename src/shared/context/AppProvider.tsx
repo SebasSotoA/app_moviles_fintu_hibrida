@@ -15,6 +15,7 @@ interface AppContextType {
   // Actions
   addTransaction: (transaction: Omit<DatabaseTransaction, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   addAccount: (account: Omit<DatabaseAccount, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateAccount: (id: string, updates: Partial<Omit<DatabaseAccount, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
   addCategory: (category: Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateCategory: (id: string, updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
   deleteCategory: (id: string) => Promise<void>;
@@ -138,6 +139,16 @@ export function AppProvider({ children }: AppProviderProps) {
     }
   };
 
+  const updateAccount = async (id: string, updates: Partial<Omit<DatabaseAccount, 'id' | 'createdAt' | 'updatedAt'>>) => {
+    try {
+      await databaseService.updateAccount(id, updates);
+      await refreshData();
+    } catch (error) {
+      console.error('Error updating account:', error);
+      throw error;
+    }
+  };
+
   const addCategory = async (categoryData: Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       const categoryId = `cat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -185,6 +196,7 @@ export function AppProvider({ children }: AppProviderProps) {
     currentAccount,
     addTransaction,
     addAccount,
+    updateAccount,
     addCategory,
     updateCategory,
     deleteCategory,
