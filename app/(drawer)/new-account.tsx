@@ -34,20 +34,26 @@ const COLOR_OPTIONS = [
 ];
 
 export default function NewAccount() {
+  // Traer funciones desde el AppProvider, contexto de la aplicación.
   const { addAccount, accounts } = useApp();
+
+  // Obtener paddings para una pantalla de celular.
   const insets = useSafeAreaInsets();
+  
   const params = useLocalSearchParams();
   
+  // Inicialización de estados para el formulario
   const [accountName, setAccountName] = useState('');
   const [initialBalance, setInitialBalance] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('💰');
   const [selectedColor, setSelectedColor] = useState('#3A7691');
   const [selectedCurrency, setSelectedCurrency] = useState('COP');
   const [includeInTotal, setIncludeInTotal] = useState(true);
+
   const [showCurrencySelector, setShowCurrencySelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Cross-platform alert (uses window.alert on web)
+  // Alerta multiplataforma.
   const showAlert = useCallback((title: string, message: string) => {
     if (Platform.OS === 'web') {
       window.alert(`${title}: ${message}`);
