@@ -1,29 +1,36 @@
-import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
+
+// Mapa de íconos locales siguiendo el patrón de add-transaction.tsx
+const ICONS: Record<string, any> = {
+  'menu': require('../../assets/icons/menu.svg'),
+  'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
+  'eye-off-outline': require('../../assets/icons/eye-off-outline.svg'),
+  'swap-horizontal': require('../../assets/icons/swap-horizontal.svg'),
+  'add-circle': require('../../assets/icons/add-circle.svg'),
+  'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
+};
 
 export default function Cuentas() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { accounts, currentAccount, setCurrentAccount, isLoading } = useApp();
 
-  useEffect(() => {
-    // Placeholder: could load additional data here if needed when accounts change
-  }, [accounts]);
-
+  // Calcular totales por divisa, memo permite que solo se calcule cuando se actualice.
   const totalsByCurrency = React.useMemo(() => {
     const map = new Map<string, { total: number; count: number }>();
     accounts.forEach(acc => {
@@ -35,6 +42,7 @@ export default function Cuentas() {
     return Array.from(map.entries());
   }, [accounts]);
 
+  // Label para mostrar en pantalla.
   const totalsSummary = React.useMemo(() => {
     const parts = totalsByCurrency.map(([currency, info]) => `${info.total.toLocaleString('es-CO')} ${currency} 💸`);
     return parts.length > 0 ? parts.join(' + ') : '0';
@@ -46,13 +54,14 @@ export default function Cuentas() {
 
   const handleAccountPress = (accountId: string) => {
     setCurrentAccount(accountId);
-    // Navegar a detalle de cuenta (opcional)
   };
 
+  // Viaja a vista de creación de cuenta con el returnPath de la vista actual
   const handleAddAccount = () => {
     router.push({ pathname: '/(drawer)/new-account', params: { returnPath: '/(drawer)/cuentas' } });
   };
 
+  // Viaja a vista de transferencia con el returnPath de la vista actual
   const handleTransfer = () => {
     if (accounts.length < 2) {
       Alert.alert('Información', 'Necesitas al menos 2 cuentas para realizar transferencias');
@@ -91,14 +100,22 @@ export default function Cuentas() {
       
       {currentAccount?.id === account.id && (
         <View style={styles.activeIndicator}>
-          <Ionicons name="checkmark-circle" size={20} color="#3A7691" />
+          <Image
+            source={ICONS['checkmark-circle']}
+            style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+            resizeMode="contain"
+          />
           <Text style={styles.activeText}>Cuenta activa</Text>
         </View>
       )}
       
       {!account.includeInTotal && (
         <View style={styles.excludedIndicator}>
-          <Ionicons name="eye-off-outline" size={16} color="#999999" />
+          <Image
+            source={ICONS['eye-off-outline']}
+            style={{ width: 16, height: 16, tintColor: '#999999' }}
+            resizeMode="contain"
+          />
           <Text style={styles.excludedText}>Excluida del total</Text>
         </View>
       )}
@@ -124,7 +141,11 @@ export default function Cuentas() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
-          <Ionicons name="menu" size={35} color="#FFFFFF" />
+          <Image
+            source={ICONS['menu']}
+            style={{ width: 35, height: 35, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Cuentas</Text>
@@ -151,7 +172,11 @@ export default function Cuentas() {
               style={[styles.actionButton, styles.transferButton]}
               onPress={handleTransfer}
             >
-              <Ionicons name="swap-horizontal" size={20} color="#FFFFFF" />
+              <Image
+                source={ICONS['swap-horizontal']}
+                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                resizeMode="contain"
+              />
               <Text style={styles.actionButtonText}>Transferir</Text>
             </TouchableOpacity>
             
@@ -159,7 +184,11 @@ export default function Cuentas() {
               style={[styles.actionButton, styles.addButton]}
               onPress={handleAddAccount}
             >
-              <Ionicons name="add-circle" size={20} color="#FFFFFF" />
+              <Image
+                source={ICONS['add-circle']}
+                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                resizeMode="contain"
+              />
               <Text style={styles.actionButtonText}>Añadir</Text>
             </TouchableOpacity>
           </View>
@@ -174,7 +203,11 @@ export default function Cuentas() {
               </View>
             ) : (
               <View style={styles.emptyState}>
-                <Ionicons name="wallet-outline" size={60} color="#CCCCCC" />
+                <Image
+                  source={ICONS['wallet-outline']}
+                  style={{ width: 60, height: 60, tintColor: '#CCCCCC' }}
+                  resizeMode="contain"
+                />
                 <Text style={styles.emptyStateText}>No tienes cuentas creadas</Text>
                 <TouchableOpacity style={styles.createFirstAccountButton} onPress={handleAddAccount}>
                   <Text style={styles.createFirstAccountText}>Crear primera cuenta</Text>

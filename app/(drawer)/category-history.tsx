@@ -1,17 +1,17 @@
-import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    Modal, Platform, StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Modal, Platform, StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
@@ -25,34 +25,50 @@ interface TransactionWithAccount extends DatabaseTransaction {
 }
 
 type SortOption = 'amount' | 'date' | 'account';
-type DateFilterOption = 'all' | 'today' | 'week' | 'month' | 'custom';
-type FilterMode = 'date' | 'amount';
-
-interface DateRange {
-  startDate: Date;
-  endDate: Date;
-}
 
 export default function CategoryHistory() {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
-  const { currentAccount, accounts } = useApp();
+  const { accounts } = useApp();
   const insets = useSafeAreaInsets();
   
+  // Mapa de íconos locales (puedes agregar los SVG/PNG luego en assets/icons)
+  const ICONS: Record<string, any> = {
+    'arrow-back': require('../../assets/icons/arrow-back.svg'),
+    'card': require('../../assets/icons/home-outline.svg'),
+    'chevron-down': require('../../assets/icons/chevron-down.svg'),
+    'calendar': require('../../assets/icons/calendar-outline.svg'),
+    'trending-up': require('../../assets/icons/bar-chart-outline.svg'),
+    'receipt-outline': require('../../assets/icons/wallet-outline.svg'),
+    'close': require('../../assets/icons/close.svg'),
+    'apps': require('../../assets/icons/person-circle-outline.svg'),
+    'checkmark': require('../../assets/icons/checkmark-circle.svg'),
+    'infinite': require('../../assets/icons/arrow-forward.svg'),
+    'today': require('../../assets/icons/arrow-forward-outline.svg'),
+    'calendar-outline': require('../../assets/icons/calendar-outline.svg'),
+    'calendar-number': require('../../assets/icons/calendar-outline.svg'),
+    'information-circle': require('../../assets/icons/settings-outline.svg'),
+    'add': require('../../assets/icons/arrow-forward-outline.svg'),
+    'list-outline': require('../../assets/icons/list-outline.svg'),
+  };
+
   // Parámetros de la categoría con validación
-  const categoryId = params.categoryId as string;
+  const categoryId = params.categoryId as string | undefined;
   const categoryName = params.categoryName as string || 'Categoría';
-  const categoryIcon = params.categoryIcon as string || 'help-circle';
+  const categoryIcon = params.categoryIcon as string || 'list-outline';
   const categoryColor = params.categoryColor as string || '#666666';
-  const transactionType = params.transactionType as string || 'GASTO';
   
-  // Validar que tengamos al menos el ID de la categoría
-  if (!categoryId) {
-    console.error('No categoryId provided');
-    Alert.alert('Error', 'ID de categoría no válido');
-    navigation.goBack();
-    return null;
-  }
+  // Validez del ID de categoría
+  const isValidCategoryId = !!categoryId;
+  
+  // Notificar y salir si el ID es inválido (sin romper orden de hooks)
+  useEffect(() => {
+    if (!isValidCategoryId) {
+      console.error('No categoryId provided');
+      Alert.alert('Error', 'ID de categoría no válido');
+      navigation.goBack();
+    }
+  }, [isValidCategoryId, navigation]);
   
   // Estados
   const [transactions, setTransactions] = useState<TransactionWithAccount[]>([]);
@@ -61,7 +77,6 @@ export default function CategoryHistory() {
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [totalAmount, setTotalAmount] = useState(0);
   const [filteredTotalAmount, setFilteredTotalAmount] = useState(0);
   
   // Estados de filtros
@@ -79,8 +94,8 @@ export default function CategoryHistory() {
   // Clave para persistencia
   const STORAGE_KEY = `category_history_filters_${categoryId}`;
 
-  // Storage wrapper más robusto para Android
-  const storageWrapper = {
+  // Storage wrapper más robusto para Android (memoizado)
+  const storageWrapper = useMemo(() => ({
     async getItem(key: string): Promise<string | null> {
       try {
         if (Platform.OS === 'web') {
@@ -92,7 +107,6 @@ export default function CategoryHistory() {
         return null;
       }
     },
-    
     async setItem(key: string, value: string): Promise<void> {
       try {
         if (Platform.OS === 'web') {
@@ -104,7 +118,7 @@ export default function CategoryHistory() {
         console.warn('Storage setItem failed:', error);
       }
     }
-  };
+  }), []);
 
   // Cargar filtros guardados
   const loadSavedFilters = useCallback(async () => {
@@ -125,7 +139,7 @@ export default function CategoryHistory() {
     } catch (error) {
       console.error('Error loading saved filters:', error);
     }
-  }, [STORAGE_KEY]);
+  }, [STORAGE_KEY, storageWrapper]);
 
   // Guardar filtros
   const saveFilters = useCallback(async () => {
@@ -140,19 +154,23 @@ export default function CategoryHistory() {
     } catch (error) {
       console.error('Error saving filters:', error);
     }
-  }, [selectedAccount, filterMode, dateFilter, customDateRange, STORAGE_KEY]);
+  }, [selectedAccount, filterMode, dateFilter, customDateRange, STORAGE_KEY, storageWrapper]);
 
   // Cargar transacciones de la categoría con información de cuentas
   const loadCategoryTransactions = useCallback(async () => {
     setIsLoading(true);
     try {
+      if (!isValidCategoryId) {
+        setTransactions([]);
+        setFilteredTotalAmount(0);
+        return;
+      }
       // Obtener transacciones de la categoría
       const categoryTransactions = await getTransactionsByCategory(categoryId);
       
       if (!categoryTransactions || !Array.isArray(categoryTransactions)) {
         console.warn('No transactions returned or invalid format');
         setTransactions([]);
-        setTotalAmount(0);
         return;
       }
       
@@ -169,16 +187,7 @@ export default function CategoryHistory() {
       
       setTransactions(transactionsWithAccounts);
       
-      // Calcular total inicial
-      const total = transactionsWithAccounts.reduce((sum, t) => {
-        if (t.type === 'GASTO') {
-          return sum - t.amount;
-        } else {
-          return sum + t.amount;
-        }
-      }, 0);
-      
-      setTotalAmount(Math.abs(total));
+      // Nota: ya no calculamos totalAmount global no usado
     } catch (error) {
       console.error('Error loading transactions:', error);
       // En Android, mostrar un mensaje más amigable
@@ -192,11 +201,10 @@ export default function CategoryHistory() {
         Alert.alert('Error', 'No se pudieron cargar las transacciones');
       }
       setTransactions([]);
-      setTotalAmount(0);
     } finally {
       setIsLoading(false);
     }
-  }, [categoryId, accounts]);
+  }, [categoryId, accounts, isValidCategoryId]);
 
   // Aplicar filtros y ordenamiento
   useEffect(() => {
@@ -248,8 +256,8 @@ export default function CategoryHistory() {
             try {
               const transactionDate = new Date(t.date);
               return transactionDate >= startDate && transactionDate <= endDate;
-            } catch (dateError) {
-              console.warn('Invalid transaction date:', t.date, dateError);
+            } catch {
+              console.warn('Invalid transaction date:', t.date);
               return false;
             }
           });
@@ -320,9 +328,10 @@ export default function CategoryHistory() {
   // Cargar datos al enfocar la pantalla
   useFocusEffect(
     useCallback(() => {
+      if (!isValidCategoryId) return;
       loadSavedFilters();
       loadCategoryTransactions();
-    }, [loadSavedFilters, loadCategoryTransactions])
+    }, [isValidCategoryId, loadSavedFilters, loadCategoryTransactions])
   );
 
   // Formatear fecha
@@ -407,7 +416,11 @@ export default function CategoryHistory() {
     <View style={styles.transactionItem}>
       <View style={styles.transactionLeft}>
         <View style={[styles.transactionIcon, { backgroundColor: categoryColor }]}>
-          <Ionicons name={categoryIcon as any} size={20} color="#FFFFFF" />
+          <Image
+            source={ICONS[categoryIcon] || ICONS['list-outline']}
+            style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </View>
         <View style={styles.transactionInfo}>
           <Text style={styles.transactionDescription}>
@@ -454,7 +467,11 @@ export default function CategoryHistory() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+          <Image
+            source={ICONS['arrow-back']}
+            style={{ width: 24, height: 24, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>{categoryName}</Text>
@@ -484,9 +501,17 @@ export default function CategoryHistory() {
               onPress={() => setShowAccountFilter(true)}
             >
               <View style={styles.filterButtonContent}>
-                <Ionicons name="card" size={16} color="#666" />
+                <Image
+                  source={ICONS['card']}
+                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  resizeMode="contain"
+                />
                 <Text style={styles.filterButtonText}>{getAccountFilterText()}</Text>
-                <Ionicons name="chevron-down" size={16} color="#666" />
+                <Image
+                  source={ICONS['chevron-down']}
+                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  resizeMode="contain"
+                />
               </View>
             </TouchableOpacity>
           </View>
@@ -498,15 +523,19 @@ export default function CategoryHistory() {
               onPress={() => setShowDateFilter(true)}
             >
               <View style={styles.filterButtonContent}>
-                <Ionicons 
-                  name={filterMode === 'date' ? 'calendar' : 'trending-up'} 
-                  size={16} 
-                  color="#666" 
+                <Image
+                  source={ICONS[filterMode === 'date' ? 'calendar' : 'trending-up']}
+                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  resizeMode="contain"
                 />
                 <Text style={styles.filterButtonText}>
                   {filterMode === 'date' ? getDateFilterText() : 'Por cantidad'}
                 </Text>
-                <Ionicons name="chevron-down" size={16} color="#666" />
+                <Image
+                  source={ICONS['chevron-down']}
+                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  resizeMode="contain"
+                />
               </View>
             </TouchableOpacity>
           </View>
@@ -528,7 +557,11 @@ export default function CategoryHistory() {
           />
         ) : (
           <View style={styles.emptyContainer}>
-            <Ionicons name="receipt-outline" size={60} color="#CCCCCC" />
+            <Image
+              source={ICONS['receipt-outline']}
+              style={{ width: 60, height: 60, tintColor: '#CCCCCC' }}
+              resizeMode="contain"
+            />
             <Text style={styles.emptyText}>
               {selectedAccount !== 'all' 
                 ? 'No hay transacciones en esta cuenta para esta categoría'
@@ -553,7 +586,11 @@ export default function CategoryHistory() {
           style={styles.fab}
           onPress={() => router.push('/(drawer)/add-transaction')}
         >
-          <Ionicons name="add" size={24} color="#FFFFFF" />
+          <Image
+            source={ICONS['add']}
+            style={{ width: 24, height: 24, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
       </SafeAreaView>
 
@@ -572,7 +609,11 @@ export default function CategoryHistory() {
                 onPress={() => setShowAccountFilter(false)}
                 style={styles.closeButton}
               >
-                <Ionicons name="close" size={24} color="#666" />
+                <Image
+                  source={ICONS['close']}
+                  style={{ width: 24, height: 24, tintColor: '#666666' }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
             
@@ -585,7 +626,11 @@ export default function CategoryHistory() {
                 onPress={() => handleAccountFilterChange('all')}
               >
                 <View style={styles.filterOptionContent}>
-                  <Ionicons name="apps" size={20} color="#666" />
+                  <Image
+                    source={ICONS['apps']}
+                    style={{ width: 20, height: 20, tintColor: '#666666' }}
+                    resizeMode="contain"
+                  />
                   <Text style={[
                     styles.filterOptionText,
                     selectedAccount === 'all' && styles.selectedFilterOptionText
@@ -594,7 +639,11 @@ export default function CategoryHistory() {
                   </Text>
                 </View>
                 {selectedAccount === 'all' && (
-                  <Ionicons name="checkmark" size={20} color="#3A7691" />
+                  <Image
+                    source={ICONS['checkmark']}
+                    style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                    resizeMode="contain"
+                  />
                 )}
               </TouchableOpacity>
               
@@ -619,7 +668,11 @@ export default function CategoryHistory() {
                     </Text>
                   </View>
                   {selectedAccount === account.id && (
-                    <Ionicons name="checkmark" size={20} color="#3A7691" />
+                    <Image
+                      source={ICONS['checkmark']}
+                      style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                      resizeMode="contain"
+                    />
                   )}
                 </TouchableOpacity>
               ))}
@@ -643,7 +696,11 @@ export default function CategoryHistory() {
                 onPress={() => setShowDateFilter(false)}
                 style={styles.closeButton}
               >
-                <Ionicons name="close" size={24} color="#666" />
+                <Image
+                  source={ICONS['close']}
+                  style={{ width: 24, height: 24, tintColor: '#666666' }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
             
@@ -657,10 +714,10 @@ export default function CategoryHistory() {
                   ]}
                   onPress={() => handleFilterModeChange('date')}
                 >
-                  <Ionicons 
-                    name="calendar" 
-                    size={16} 
-                    color={filterMode === 'date' ? '#FFFFFF' : '#666'} 
+                  <Image
+                    source={ICONS['calendar']}
+                    style={{ width: 16, height: 16, tintColor: filterMode === 'date' ? '#FFFFFF' : '#666666' }}
+                    resizeMode="contain"
                   />
                   <Text style={[
                     styles.modeButtonText,
@@ -677,10 +734,10 @@ export default function CategoryHistory() {
                   ]}
                   onPress={() => handleFilterModeChange('amount')}
                 >
-                  <Ionicons 
-                    name="trending-up" 
-                    size={16} 
-                    color={filterMode === 'amount' ? '#FFFFFF' : '#666'} 
+                  <Image
+                    source={ICONS['trending-up']}
+                    style={{ width: 16, height: 16, tintColor: filterMode === 'amount' ? '#FFFFFF' : '#666666' }}
+                    resizeMode="contain"
                   />
                   <Text style={[
                     styles.modeButtonText,
@@ -702,7 +759,11 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange('all')}
                   >
                     <View style={styles.filterOptionContent}>
-                      <Ionicons name="infinite" size={20} color="#666" />
+                      <Image
+                        source={ICONS['infinite']}
+                        style={{ width: 20, height: 20, tintColor: '#666666' }}
+                        resizeMode="contain"
+                      />
                       <Text style={[
                         styles.filterOptionText,
                         dateFilter === 'all' && styles.selectedFilterOptionText
@@ -711,7 +772,11 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === 'all' && (
-                      <Ionicons name="checkmark" size={20} color="#3A7691" />
+                      <Image
+                        source={ICONS['checkmark']}
+                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        resizeMode="contain"
+                      />
                     )}
                   </TouchableOpacity>
                   
@@ -723,7 +788,11 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange('today')}
                   >
                     <View style={styles.filterOptionContent}>
-                      <Ionicons name="today" size={20} color="#666" />
+                      <Image
+                        source={ICONS['today']}
+                        style={{ width: 20, height: 20, tintColor: '#666666' }}
+                        resizeMode="contain"
+                      />
                       <Text style={[
                         styles.filterOptionText,
                         dateFilter === 'today' && styles.selectedFilterOptionText
@@ -732,7 +801,11 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === 'today' && (
-                      <Ionicons name="checkmark" size={20} color="#3A7691" />
+                      <Image
+                        source={ICONS['checkmark']}
+                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        resizeMode="contain"
+                      />
                     )}
                   </TouchableOpacity>
                   
@@ -744,7 +817,11 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange('week')}
                   >
                     <View style={styles.filterOptionContent}>
-                      <Ionicons name="calendar-outline" size={20} color="#666" />
+                      <Image
+                        source={ICONS['calendar-outline']}
+                        style={{ width: 20, height: 20, tintColor: '#666666' }}
+                        resizeMode="contain"
+                      />
                       <Text style={[
                         styles.filterOptionText,
                         dateFilter === 'week' && styles.selectedFilterOptionText
@@ -753,7 +830,11 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === 'week' && (
-                      <Ionicons name="checkmark" size={20} color="#3A7691" />
+                      <Image
+                        source={ICONS['checkmark']}
+                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        resizeMode="contain"
+                      />
                     )}
                   </TouchableOpacity>
                   
@@ -765,7 +846,11 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange('month')}
                   >
                     <View style={styles.filterOptionContent}>
-                      <Ionicons name="calendar" size={20} color="#666" />
+                      <Image
+                        source={ICONS['calendar']}
+                        style={{ width: 20, height: 20, tintColor: '#666666' }}
+                        resizeMode="contain"
+                      />
                       <Text style={[
                         styles.filterOptionText,
                         dateFilter === 'month' && styles.selectedFilterOptionText
@@ -774,7 +859,11 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === 'month' && (
-                      <Ionicons name="checkmark" size={20} color="#3A7691" />
+                      <Image
+                        source={ICONS['checkmark']}
+                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        resizeMode="contain"
+                      />
                     )}
                   </TouchableOpacity>
                   
@@ -786,7 +875,11 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange('custom')}
                   >
                     <View style={styles.filterOptionContent}>
-                      <Ionicons name="calendar-number" size={20} color="#666" />
+                      <Image
+                        source={ICONS['calendar-number']}
+                        style={{ width: 20, height: 20, tintColor: '#666666' }}
+                        resizeMode="contain"
+                      />
                       <Text style={[
                         styles.filterOptionText,
                         dateFilter === 'custom' && styles.selectedFilterOptionText
@@ -795,7 +888,11 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === 'custom' && (
-                      <Ionicons name="checkmark" size={20} color="#3A7691" />
+                      <Image
+                        source={ICONS['checkmark']}
+                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        resizeMode="contain"
+                      />
                     )}
                   </TouchableOpacity>
                 </>
@@ -804,7 +901,11 @@ export default function CategoryHistory() {
               {/* Información del modo cantidad */}
               {filterMode === 'amount' && (
                 <View style={styles.infoBox}>
-                  <Ionicons name="information-circle" size={20} color="#3A7691" />
+                  <Image
+                    source={ICONS['information-circle']}
+                    style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                    resizeMode="contain"
+                  />
                   <Text style={styles.infoText}>
                     Las transacciones se ordenarán por cantidad de mayor a menor, agrupadas por fecha
                   </Text>

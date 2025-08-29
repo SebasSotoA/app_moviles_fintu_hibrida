@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -10,15 +9,22 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import FintuLogo from './FintuLogo';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 interface WelcomeModalProps {
   visible: boolean;
   onClose: () => void;
 }
+
+// Mapa de íconos locales con nombres exactos de Ionicons
+const ICONS: Record<string, any> = {
+  'wallet-outline': require('../assets/icons/wallet-outline.svg'),
+  'arrow-forward': require('../assets/icons/arrow-forward.svg'),
+};
 
 export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -128,7 +134,11 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
                   activeOpacity={0.8}
                 >
                   <Text style={styles.continueButtonText}>Comenzar</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
+                  <Image
+                    source={ICONS['arrow-forward']}
+                    style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>

@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -13,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -21,8 +21,43 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import WelcomeModal from '../../components/WelcomeModal';
 import { useApp } from '../../src/shared/context/AppProvider';
 
+// Mapa de íconos locales siguiendo el patrón de _layout.tsx
+const ICONS: Record<string, any> = {
+  // Generales
+  'list-outline': require('../../assets/icons/list-outline.svg'),
+  'arrow-forward': require('../../assets/icons/arrow-forward.svg'),
+  'arrow-forward-outline': require('../../assets/icons/arrow-forward-outline.svg'),
+  'chevron-down': require('../../assets/icons/chevron-down.svg'),
+  'close': require('../../assets/icons/close.svg'),
+  'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
+  'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
+  'home-outline': require('../../assets/icons/home-outline.svg'),
+  'bar-chart-outline': require('../../assets/icons/bar-chart-outline.svg'),
+  'person-circle-outline': require('../../assets/icons/person-circle-outline.svg'),
+  'settings-outline': require('../../assets/icons/settings-outline.svg'),
+  'calendar-outline': require('../../assets/icons/calendar-outline.svg'),
+  'menu': require('../../assets/icons/menu.svg'),
+  'chevron-back': require('../../assets/icons/chevron-back.svg'),
+  'chevron-forward': require('../../assets/icons/chevron-forward.svg'),
+  'today': require('../../assets/icons/today.svg'),
+  'pie-chart-outline': require('../../assets/icons/pie-chart-outline.svg'),
+  'folder-open-outline': require('../../assets/icons/folder-open-outline.svg'),
+  'add': require('../../assets/icons/add.svg'),
+};
 
-
+// Helper para renderizar íconos locales con tamaño y color
+const renderIcon = (
+  name: string,
+  size: number,
+  color?: string,
+  style?: any
+) => (
+  <Image
+    source={ICONS[name] || ICONS['list-outline']}
+    style={[{ width: size, height: size, tintColor: color }, style]}
+    resizeMode="contain"
+  />
+);
 
 type TransactionType = 'GASTOS' | 'INGRESOS';
 type FilterPeriod = 'Día' | 'Semana' | 'Mes' | 'Año' | 'Período';
@@ -630,7 +665,7 @@ export default function Home() {
     >
       {/* Ícono de la categoría */}
       <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
-        <Ionicons name={category.icon as any} size={24} color="#FFFFFF" />
+        {renderIcon(category.icon, 24, '#FFFFFF')}
       </View>
       
       {/* Información de la categoría */}
@@ -670,7 +705,7 @@ export default function Home() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
-          <Ionicons name="menu" size={35} color="#FFFFFF" />
+          {renderIcon('menu', 35, '#FFFFFF')}
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>FintuApp</Text>
@@ -696,7 +731,7 @@ export default function Home() {
               <Text style={styles.accountName}>
                 {currentAccount?.name || 'Cargando...'}
               </Text>
-              <Ionicons name="chevron-down" size={20} color="#666" />
+              {renderIcon('chevron-down', 20, '#666')}
             </TouchableOpacity>
             <Text style={styles.balance}>
               {currentAccount?.balance?.toLocaleString('es-CO') || '0'} {currentAccount?.currency || 'COP'}
@@ -789,7 +824,7 @@ export default function Home() {
                 onPress={() => navigateTime('prev')}
                 style={styles.dateNavButton}
               >
-                <Ionicons name="chevron-back" size={20} color="#3A7691" />
+                {renderIcon('chevron-back', 20, '#3A7691')}
               </TouchableOpacity>
               
               <Text style={styles.currentDate}>
@@ -800,7 +835,7 @@ export default function Home() {
                 onPress={() => navigateTime('next')}
                 style={styles.dateNavButton}
               >
-                <Ionicons name="chevron-forward" size={20} color="#3A7691" />
+                {renderIcon('chevron-forward', 20, '#3A7691')}
               </TouchableOpacity>
               
               {/* Botón para volver a fecha actual */}
@@ -808,7 +843,7 @@ export default function Home() {
                 onPress={() => setCurrentDate(new Date())}
                 style={styles.todayButton}
               >
-                <Ionicons name="today" size={20} color="#3A7691" />
+                {renderIcon('today', 20, '#3A7691')}
               </TouchableOpacity>
             </Animated.View>
           </GestureDetector>
@@ -854,7 +889,7 @@ export default function Home() {
               </View>
             ) : (
               <View style={styles.emptyChart}>
-                <Ionicons name="pie-chart-outline" size={60} color="#CCCCCC" />
+                {renderIcon('pie-chart-outline', 60, '#CCCCCC')}
                 <Text style={styles.emptyChartText}>
                   {activeType === 'GASTOS' ? 'No hay gastos' : 'No hay ingresos'} para mostrar
                 </Text>
@@ -884,7 +919,7 @@ export default function Home() {
             </View>
           ) : (
             <View style={styles.emptyCategories}>
-              <Ionicons name="folder-open-outline" size={40} color="#CCCCCC" />
+              {renderIcon('folder-open-outline', 40, '#CCCCCC')}
               <Text style={styles.emptyCategoriesText}>
                 No hay {activeType.toLowerCase()} registrados para este período
               </Text>
@@ -1058,7 +1093,7 @@ export default function Home() {
                  onPress={() => setShowAccountSelector(false)}
                  style={styles.closeButton}
                >
-                 <Ionicons name="close" size={24} color="#666" />
+                 {renderIcon('close', 24, '#666')}
                </TouchableOpacity>
              </View>
 
@@ -1085,11 +1120,11 @@ export default function Home() {
                      </View>
                    </View>
                    {currentAccount?.id === account.id && (
-                     <Ionicons name="checkmark-circle" size={24} color="#3A7691" />
-                   )}
-                 </TouchableOpacity>
-               ))}
-             </ScrollView>
+                    renderIcon('checkmark-circle', 24, '#3A7691')
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
 
              <TouchableOpacity 
                style={styles.newAccountButton}
@@ -1098,12 +1133,12 @@ export default function Home() {
                  router.push({ pathname: '/(drawer)/new-account', params: { returnPath: '/(drawer)' } });
                }}
              >
-               <Ionicons name="add" size={20} color="#FFFFFF" />
-               <Text style={styles.newAccountButtonText}>Crear Nueva Cuenta</Text>
-             </TouchableOpacity>
-           </View>
-         </View>
-       )}
+              {renderIcon('add', 20, '#FFFFFF')}
+              <Text style={styles.newAccountButtonText}>Crear Nueva Cuenta</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
      </View>
    );
  }

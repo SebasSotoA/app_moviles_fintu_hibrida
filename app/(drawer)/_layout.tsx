@@ -1,9 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { router, usePathname } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface CustomDrawerContentProps {
@@ -14,6 +13,17 @@ interface CustomDrawerContentProps {
 
 function CustomDrawerContent(props: CustomDrawerContentProps) {
   const pathname = usePathname();
+
+  // Mapa de íconos locales
+  const ICONS: Record<string, any> = {
+    'person-circle-outline': require('../../assets/icons/person-circle-outline.svg'),
+    'home-outline': require('../../assets/icons/home-outline.svg'),
+    'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
+    'bar-chart-outline': require('../../assets/icons/bar-chart-outline.svg'),
+    'list-outline': require('../../assets/icons/list-outline.svg'),
+    'notifications-outline': require('../../assets/icons/notifications-outline.svg'),
+    'settings-outline': require('../../assets/icons/settings-outline.svg'),
+  };
 
   const menuItems = [
     {
@@ -53,7 +63,11 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
       <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
         {/* Encabezado del Drawer */}
                  <View style={styles.drawerHeader}>
-           <Ionicons name="person-circle-outline" size={60} color="#FFFFFF" />
+           <Image
+             source={ICONS['person-circle-outline']}
+             style={{ width: 60, height: 60, tintColor: '#FFFFFF' }}
+             resizeMode="contain"
+           />
            <Text style={styles.userText}>Usuario</Text>
          </View>
 
@@ -63,12 +77,16 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
             <DrawerItem
               key={index}
               label={item.label}
-              icon={({ size, color }) => (
-                                 <Ionicons 
-                   name={item.icon as any} 
-                   size={size} 
-                   color={pathname === item.route ? '#3A7691' : '#FFFFFF'} 
-                 />
+              icon={({ size }) => (
+                <Image
+                  source={ICONS[item.icon]}
+                  style={{
+                    width: size,
+                    height: size,
+                    tintColor: pathname === item.route ? '#3A7691' : '#FFFFFF',
+                  }}
+                  resizeMode="contain"
+                />
               )}
               onPress={() => router.push(item.route as any)}
               labelStyle={[
