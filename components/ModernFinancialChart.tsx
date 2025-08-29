@@ -401,6 +401,9 @@ export default function ModernFinancialChart() {
                 activePeriod === period && styles.activePeriodButton
               ]}
               onPress={() => setActivePeriod(period)}
+              accessibilityLabel={`Filtrar por ${period.toLowerCase()}`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: activePeriod === period }}
             >
               <Text style={[
                 styles.periodText,
