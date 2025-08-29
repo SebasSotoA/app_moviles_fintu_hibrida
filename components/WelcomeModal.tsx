@@ -2,15 +2,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import React, { useEffect, useRef } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Easing,
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Easing,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import FintuLogo from './FintuLogo';
 
 const { width, height } = Dimensions.get('window');
 
@@ -102,13 +103,13 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
           >
             <TouchableOpacity activeOpacity={1} onPress={() => {}}>
               <View style={styles.modal}>
-                {/* Icono decorativo */}
+                {/* Logo de Fintu */}
                 <View style={styles.iconContainer}>
-                  <Ionicons name="wallet-outline" size={60} color="#3A7691" />
+                  <FintuLogo size={115} />
                 </View>
 
                 {/* Título principal */}
-                <Text style={styles.title}>¡Bienvenido!</Text>
+                <Text style={styles.title}>¡Bienvenido a Fintu!</Text>
                 
                 {/* Subtítulo */}
                 <Text style={styles.subtitle}>
@@ -176,6 +177,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     borderWidth: 2,
     borderColor: '#3A7691',
+    overflow: 'hidden',
   },
   title: {
     fontSize: 28,

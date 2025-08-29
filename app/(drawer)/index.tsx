@@ -9,17 +9,13 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
 import WelcomeModal from '../../components/WelcomeModal';
@@ -40,6 +36,129 @@ interface CategoryData {
   color: string;
 }
 
+// Componente optimizado para renderizar un mes del calendario
+const CalendarMonth = React.memo(({ 
+  month, 
+  onDateSelection, 
+  customStartDate, 
+  customEndDate 
+}: {
+  month: Date;
+  onDateSelection: (date: Date) => void;
+  customStartDate: Date | null;
+  customEndDate: Date | null;
+}) => {
+  const getCalendarDaysFor = React.useCallback((baseDate: Date) => {
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const firstDayWeekday = firstDayOfMonth.getDay();
+    
+    const daysFromPreviousMonth = firstDayWeekday;
+    const totalDaysToShow = 42;
+    const daysFromNextMonth = totalDaysToShow - daysFromPreviousMonth - lastDayOfMonth.getDate();
+    
+    const days = [];
+    
+    // Días del mes anterior
+    for (let i = daysFromPreviousMonth - 1; i >= 0; i--) {
+      const date = new Date(year, month, -i);
+      days.push({
+        date,
+        isCurrentMonth: false,
+        isSelected: customStartDate && customEndDate && 
+          date >= customStartDate && date <= customEndDate,
+        isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
+        isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
+        isInRange: customStartDate && customEndDate && 
+          date > customStartDate && date < customEndDate,
+      });
+    }
+    
+    // Días del mes actual
+    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+      const date = new Date(year, month, day);
+      days.push({
+        date,
+        isCurrentMonth: true,
+        isSelected: customStartDate && customEndDate && 
+          date >= customStartDate && date <= customEndDate,
+        isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
+        isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
+        isInRange: customStartDate && customEndDate && 
+          date > customStartDate && date < customEndDate,
+      });
+    }
+    
+    // Días del mes siguiente
+    for (let day = 1; day <= daysFromNextMonth; day++) {
+      const date = new Date(year, month + 1, day);
+      days.push({
+        date,
+        isCurrentMonth: false,
+        isSelected: customStartDate && customEndDate && 
+          date >= customStartDate && date <= customEndDate,
+        isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
+        isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
+        isInRange: customStartDate && customEndDate && 
+          date > customStartDate && date < customEndDate,
+      });
+    }
+    
+    return days;
+  }, [customStartDate, customEndDate]);
+
+  return (
+    <View style={styles.calendarContainer}>
+      <View style={styles.calendarHeader}>
+        <Text
+          style={styles.calendarMonthYear}
+          accessibilityRole="header"
+          accessibilityLabel={`Mes ${month.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })}`}
+        >
+          {month.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })}
+        </Text>
+      </View>
+
+      <View style={styles.calendarDaysHeader}>
+        {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
+          <Text key={day} style={styles.calendarDayHeader}>{day}</Text>
+        ))}
+      </View>
+
+      <View style={styles.calendarGrid}>
+        {getCalendarDaysFor(month).map((day, index) => (
+          <TouchableOpacity
+            key={`${month.getFullYear()}-${month.getMonth()}-${index}`}
+            style={[
+              styles.calendarDay,
+              day.isCurrentMonth && styles.calendarDayCurrentMonth,
+              day.isSelected && styles.calendarDaySelected,
+              day.isInRange && styles.calendarDayInRange,
+              day.isStartDate && styles.calendarDayStart,
+              day.isEndDate && styles.calendarDayEnd,
+            ]}
+            onPress={() => onDateSelection(day.date)}
+            disabled={!day.isCurrentMonth}
+            accessibilityRole="button"
+            accessibilityLabel={`Día ${day.date.getDate()}${day.isCurrentMonth ? '' : ' (fuera de mes)'}`}
+          >
+            <Text style={[
+              styles.calendarDayText,
+              day.isCurrentMonth && styles.calendarDayTextCurrentMonth,
+              day.isSelected && styles.calendarDayTextSelected,
+            ]}>
+              {day.date.getDate()}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+});
+
 export default function Home() {
   const navigation = useNavigation();
   const { currentAccount, getTransactionStats, accounts, setCurrentAccount, isLoading, isInitialized } = useApp();
@@ -51,12 +170,146 @@ export default function Home() {
   const [categoryStats, setCategoryStats] = useState<CategoryData[]>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [showAccountSelector, setShowAccountSelector] = useState(false);
+  const [showPeriodSelector, setShowPeriodSelector] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
+  const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [includeAllPeriods, setIncludeAllPeriods] = useState(false);
+  const [isCalendarLoading, setIsCalendarLoading] = useState(false);
   
-
   const insets = useSafeAreaInsets();
+
+  // Ajuste de mes desde JS para usar con runOnJS
+  const adjustCalendarBy = useCallback((delta: number) => {
+    setCalendarDate(prev => {
+      const d = new Date(prev);
+      d.setMonth(d.getMonth() + delta);
+      return d;
+    });
+  }, []);
   
-  // Valores animados para el deslizamiento
+  // Función para obtener los días del calendario (optimizada)
+  const getCalendarDaysFor = React.useCallback((baseDate: Date) => {
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    
+    // Obtener el primer día del mes
+    const firstDayOfMonth = new Date(year, month, 1);
+    // Obtener el último día del mes
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    
+    // Obtener el día de la semana del primer día (0 = domingo, 1 = lunes, etc.)
+    const firstDayWeekday = firstDayOfMonth.getDay();
+    
+    // Calcular cuántos días del mes anterior mostrar
+    const daysFromPreviousMonth = firstDayWeekday;
+    
+    // Calcular cuántos días del mes siguiente mostrar para completar 6 semanas
+    const totalDaysToShow = 42; // 6 semanas * 7 días
+    const daysFromNextMonth = totalDaysToShow - daysFromPreviousMonth - lastDayOfMonth.getDate();
+    
+    const days = [];
+    
+    // Agregar días del mes anterior
+    for (let i = daysFromPreviousMonth - 1; i >= 0; i--) {
+      const date = new Date(year, month, -i);
+      days.push({
+        date,
+        isCurrentMonth: false,
+        isSelected: customStartDate && customEndDate && 
+          date >= customStartDate && date <= customEndDate,
+        isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
+        isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
+        isInRange: customStartDate && customEndDate && 
+          date > customStartDate && date < customEndDate,
+      });
+    }
+    
+    // Agregar días del mes actual
+    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+      const date = new Date(year, month, day);
+      days.push({
+        date,
+        isCurrentMonth: true,
+        isSelected: customStartDate && customEndDate && 
+          date >= customStartDate && date <= customEndDate,
+        isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
+        isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
+        isInRange: customStartDate && customEndDate && 
+          date > customStartDate && date < customEndDate,
+      });
+    }
+    
+    // Agregar días del mes siguiente
+    for (let day = 1; day <= daysFromNextMonth; day++) {
+      const date = new Date(year, month + 1, day);
+      days.push({
+        date,
+        isCurrentMonth: false,
+        isSelected: customStartDate && customEndDate && 
+          date >= customStartDate && date <= customEndDate,
+        isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
+        isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
+        isInRange: customStartDate && customEndDate && 
+          date > customStartDate && date < customEndDate,
+      });
+    }
+    
+    return days;
+  }, [customStartDate, customEndDate]);
+
+  // Generar lista de meses alredor del mes actual para scroll continuo
+  const monthsForScroll = React.useMemo(() => {
+    const center = new Date(calendarDate);
+    const list: Date[] = [];
+    const range = 12; // Reducido de 24 a 12 meses (6 atrás, 6 adelante)
+    for (let i = -6; i <= 6; i++) {
+      const d = new Date(center);
+      d.setDate(1);
+      d.setMonth(center.getMonth() + i);
+      list.push(d);
+    }
+    return list;
+  }, [calendarDate]);
+
+  // Handler para activar inmediatamente el período completo
+  const handleIncludeAllToggle = useCallback((val: boolean) => {
+    setIncludeAllPeriods(val);
+    if (val) {
+      setCustomStartDate(null);
+      setCustomEndDate(null);
+      setActivePeriod('Período');
+      setShowPeriodSelector(false);
+    }
+  }, []);
+
+  // Función para manejar la selección de fechas
+  const handleDateSelection = (selectedDate: Date) => {
+    // Si "incluir todos los períodos" está activo, desactivarlo
+    if (includeAllPeriods) {
+      setIncludeAllPeriods(false);
+    }
+
+    if (!customStartDate || (customStartDate && customEndDate)) {
+      // Primera selección o nueva selección
+      setCustomStartDate(selectedDate);
+      setCustomEndDate(null);
+    } else {
+      // Segunda selección
+      if (selectedDate < customStartDate) {
+        setCustomEndDate(customStartDate);
+        setCustomStartDate(selectedDate);
+      } else {
+        setCustomEndDate(selectedDate);
+      }
+    }
+  };
+  
+  // Valores animados para el deslizamiento horizontal en header de fecha
   const translateX = useSharedValue(0);
+
+  // Deshabilitamos gesto/anims para usar scroll nativo de meses pre-renderizados
+  const calendarPanGesture = undefined as unknown as ReturnType<typeof Gesture.Pan>;
 
   useEffect(() => {
     // Mostrar modal de bienvenida después de un breve delay
@@ -80,6 +333,18 @@ export default function Home() {
       router.replace('/(drawer)');
     }
   }, [params.accountCreated]);
+
+  // Efecto para manejar la carga del calendario
+  useEffect(() => {
+    if (showPeriodSelector) {
+      setIsCalendarLoading(true);
+      // Simular un pequeño delay para mostrar el indicador de carga
+      const timer = setTimeout(() => {
+        setIsCalendarLoading(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [showPeriodSelector]);
 
   // Cargar estadísticas cuando cambien los filtros
   useEffect(() => {
@@ -157,6 +422,26 @@ export default function Home() {
         end.setMonth(11, 31);
         end.setHours(23, 59, 59, 999);
         break;
+      case 'Período':
+        if (includeAllPeriods) {
+          // Incluir todos los períodos: desde el inicio de los tiempos hasta ahora
+          start.setTime(new Date(1970, 0, 1).getTime());
+          end.setTime(new Date().getTime());
+          start.setHours(0, 0, 0, 0);
+          end.setHours(23, 59, 59, 999);
+        } else if (customStartDate && customEndDate) {
+          start.setTime(customStartDate.getTime());
+          end.setTime(customEndDate.getTime());
+          start.setHours(0, 0, 0, 0);
+          end.setHours(23, 59, 59, 999);
+        } else {
+          // Si no hay fechas personalizadas, usar el mes actual
+          start.setDate(1);
+          start.setHours(0, 0, 0, 0);
+          end.setMonth(date.getMonth() + 1, 0);
+          end.setHours(23, 59, 59, 999);
+        }
+        break;
       default:
         break;
     }
@@ -205,7 +490,15 @@ export default function Home() {
         return date.getFullYear().toString();
       }
       case 'Período': {
-        return 'Período personalizado';
+        if (customStartDate && customEndDate) {
+          const startDay = customStartDate.getDate();
+          const startMonth = months[customStartDate.getMonth()];
+          const endDay = customEndDate.getDate();
+          const endMonth = months[customEndDate.getMonth()];
+          return `${startDay} ${startMonth} - ${endDay} ${endMonth}`;
+        } else {
+          return 'Período personalizado';
+        }
       }
       default:
         return '';
@@ -446,32 +739,45 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-                  {/* Filtro temporal - Cambiado a View horizontal para evitar ScrollView anidados */}
+                            {/* Filtro temporal - Grid responsivo */}
           <View style={styles.periodFilterContainer}>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-            >
-          {(['Día', 'Semana', 'Mes', 'Año', 'Período'] as FilterPeriod[]).map((period) => (
-            <TouchableOpacity
-              key={period}
-              style={[
-                styles.periodButton,
-                activePeriod === period && styles.activePeriodButton,
-              ]}
-              onPress={() => setActivePeriod(period)}
-            >
-              <Text
+            <View style={styles.periodFilterGrid}>
+              {(['Día', 'Semana', 'Mes', 'Año'] as FilterPeriod[]).map((period) => (
+                <TouchableOpacity
+                  key={period}
+                  style={[
+                    styles.periodButton,
+                    activePeriod === period && styles.activePeriodButton,
+                  ]}
+                  onPress={() => setActivePeriod(period)}
+                >
+                  <Text
+                    style={[
+                      styles.periodText,
+                      activePeriod === period && styles.activePeriodText,
+                    ]}
+                  >
+                    {period}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
                 style={[
-                  styles.periodText,
-                  activePeriod === period && styles.activePeriodText,
+                  styles.periodButton,
+                  activePeriod === 'Período' && styles.activePeriodButton,
                 ]}
+                onPress={() => setShowPeriodSelector(true)}
               >
-                {period}
-              </Text>
-            </TouchableOpacity>
-          ))}
-            </ScrollView>
+                <Text
+                  style={[
+                    styles.periodText,
+                    activePeriod === 'Período' && styles.activePeriodText,
+                  ]}
+                >
+                  Período
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
         {/* Sección del gráfico de torta con navegación temporal */}
@@ -605,6 +911,142 @@ export default function Home() {
          visible={showWelcomeModal}
          onClose={() => setShowWelcomeModal(false)}
        />
+
+       {/* Modal Selector de Período */}
+       {showPeriodSelector && (
+         <View style={styles.modalOverlay}>
+           <View style={styles.periodSelectorModal}>
+             <View style={styles.modalHeader}>
+               <Text style={styles.modalTitle}>Seleccionar Período</Text>
+               <TouchableOpacity 
+                 onPress={() => setShowPeriodSelector(false)}
+                 style={styles.closeButton}
+               >
+                 <Ionicons name="close" size={24} color="#666" />
+               </TouchableOpacity>
+             </View>
+
+             {/* Control fijo: Incluir todos los períodos */}
+             <View style={styles.fixedIncludeAllSection}>
+               <TouchableOpacity
+                 style={styles.includeAllRow}
+                 onPress={Platform.OS === 'web' ? () => handleIncludeAllToggle(!includeAllPeriods) : undefined}
+                 accessibilityRole={Platform.OS === 'web' ? 'checkbox' : 'switch'}
+                 accessibilityState={{ checked: includeAllPeriods }}
+                 accessibilityLabel="Incluir todos los períodos"
+                 activeOpacity={0.7}
+               >
+                 <Text style={styles.includeAllText}>Incluir todos los períodos</Text>
+                 {Platform.OS === 'web' ? (
+                   <Ionicons
+                     name={includeAllPeriods ? 'checkbox' : 'square-outline'}
+                     size={22}
+                     color={includeAllPeriods ? '#3A7691' : '#666666'}
+                   />
+                 ) : (
+                   <Switch
+                     value={includeAllPeriods}
+                     onValueChange={handleIncludeAllToggle}
+                     thumbColor={includeAllPeriods ? '#3A7691' : undefined}
+                     trackColor={{ false: '#D0D5DA', true: '#A9C7D4' }}
+                     accessibilityLabel="Interruptor incluir todos los períodos"
+                   />
+                 )}
+               </TouchableOpacity>
+             </View>
+
+             <View style={styles.periodSelectorContent}>
+               {!includeAllPeriods ? (
+                 <>
+                   {isCalendarLoading ? (
+                     <View style={styles.calendarLoadingContainer}>
+                       <ActivityIndicator size="large" color="#3A7691" />
+                       <Text style={styles.calendarLoadingText}>Cargando calendario...</Text>
+                     </View>
+                   ) : (
+                     <ScrollView 
+                       style={styles.calendarScrollView}
+                       showsVerticalScrollIndicator={false}
+                       scrollEnabled={true}
+                       contentContainerStyle={styles.calendarScrollContent}
+                     >
+                       {/* Lista de meses optimizada */}
+                       <View style={styles.calendarInfo}>
+                         <Text style={styles.calendarInfoText}>
+                           Mostrando {monthsForScroll.length} meses ({monthsForScroll[0]?.toLocaleDateString('es-CO', { month: 'short', year: 'numeric' })} - {monthsForScroll[monthsForScroll.length - 1]?.toLocaleDateString('es-CO', { month: 'short', year: 'numeric' })})
+                         </Text>
+                       </View>
+                       {monthsForScroll.map((m, idx) => (
+                         <CalendarMonth
+                           key={`${m.getFullYear()}-${m.getMonth()}`}
+                           month={m}
+                           onDateSelection={handleDateSelection}
+                           customStartDate={customStartDate}
+                           customEndDate={customEndDate}
+                         />
+                       ))}
+
+                       <View style={styles.dateRangeInfo}>
+                         <Text style={styles.dateRangeLabel}>Rango seleccionado:</Text>
+                         <Text style={styles.dateRangeText}>
+                           {customStartDate && customEndDate 
+                             ? `${customStartDate.toLocaleDateString('es-CO')} - ${customEndDate.toLocaleDateString('es-CO')}`
+                               : 'Selecciona las fechas'
+                           }
+                         </Text>
+                         {customStartDate && customEndDate && (
+                           <TouchableOpacity
+                             style={styles.clearDatesButton}
+                             onPress={() => {
+                               setCustomStartDate(null);
+                               setCustomEndDate(null);
+                             }}
+                           >
+                             <Ionicons name="close-circle" size={16} color="#666666" />
+                             <Text style={styles.clearDatesText}>Limpiar fechas</Text>
+                           </TouchableOpacity>
+                         )}
+                       </View>
+                     </ScrollView>
+                   )}
+                 </>
+               ) : (
+                 <View style={styles.allPeriodsInfo}>
+                   <Ionicons name="calendar-outline" size={48} color="#3A7691" />
+                   <Text style={styles.allPeriodsTitle}>Todos los períodos</Text>
+                   <Text style={styles.allPeriodsDescription}>
+                     Se incluirán todas las transacciones registradas en la aplicación
+                   </Text>
+                 </View>
+               )}
+
+               <View style={styles.periodSelectorActions}>
+                 <TouchableOpacity 
+                   style={[styles.periodSelectorButton, styles.cancelButton]}
+                   onPress={() => {
+                     setShowPeriodSelector(false);
+                   }}
+                 >
+                   <Text style={styles.cancelButtonText}>Cancelar</Text>
+                 </TouchableOpacity>
+                 
+                 <TouchableOpacity 
+                   style={[styles.periodSelectorButton, styles.confirmButton]}
+                   onPress={() => {
+                     if (includeAllPeriods || (customStartDate && customEndDate)) {
+                       setActivePeriod('Período');
+                       setShowPeriodSelector(false);
+                     }
+                   }}
+                   disabled={!(includeAllPeriods || (customStartDate && customEndDate))}
+                 >
+                   <Text style={styles.confirmButtonText}>Confirmar</Text>
+                 </TouchableOpacity>
+               </View>
+             </View>
+           </View>
+         </View>
+       )}
 
        {/* Modal Selector de Cuenta */}
        {showAccountSelector && (
@@ -761,13 +1203,19 @@ const styles = StyleSheet.create({
   periodFilterContainer: {
     marginBottom: 20,
   },
+  periodFilterGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
 
   periodButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 10,
+    flex: 1,
+    paddingHorizontal: 3,
+    paddingVertical: 10,
+    borderRadius: 10,
     backgroundColor: '#F5F5F5',
+    alignItems: 'center',
   },
   activePeriodButton: {
     backgroundColor: '#3A7691',
@@ -1126,6 +1574,248 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
     marginLeft: 8,
+  },
+  // Period Selector Modal Styles
+  periodSelectorModal: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    margin: 20,
+    width: '95%',
+    maxHeight: '80%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  fixedIncludeAllSection: {
+    paddingHorizontal: 20,
+    paddingTop: 0,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E9ECEF',
+    backgroundColor: '#F8F9FA',
+  },
+  periodSelectorContent: {
+    padding: 20,
+  },
+  // Calendar Styles
+  calendarScrollView: {
+    maxHeight: 400,
+  },
+  calendarScrollContent: {
+    paddingBottom: 20,
+  },
+  calendarContainer: {
+    alignItems: 'center',
+  },
+  calendarHeader: {
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 20,
+  },
+  includeAllRow: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+    backgroundColor: '#F8F9FA',
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+    marginBottom: 12,
+  },
+  includeAllText: {
+    fontSize: 14,
+    color: '#30353D',
+    fontWeight: '500',
+  },
+  calendarNavButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#F5F5F5',
+  },
+  calendarMonthYear: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#30353D',
+    textTransform: 'capitalize',
+    marginBottom: 8,
+  },
+  calendarScrollHint: {
+    fontSize: 12,
+    color: '#999999',
+    fontStyle: 'italic',
+  },
+  calendarDaysHeader: {
+    flexDirection: 'row',
+    width: '100%',
+    marginBottom: 10,
+  },
+  calendarDayHeader: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#666666',
+    paddingVertical: 8,
+  },
+  calendarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '100%',
+  },
+  calendarDay: {
+    width: '14.28%',
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 0,
+  },
+  calendarDayCurrentMonth: {
+    backgroundColor: '#FFFFFF',
+  },
+  calendarDaySelected: {
+    backgroundColor: '#E3F2FD',
+  },
+  calendarDayInRange: {
+    backgroundColor: '#F0F8FF',
+  },
+  calendarDayStart: {
+    backgroundColor: '#3A7691',
+    borderRadius: 20,
+  },
+  calendarDayEnd: {
+    backgroundColor: '#3A7691',
+    borderRadius: 20,
+  },
+  calendarDayText: {
+    fontSize: 14,
+    color: '#CCCCCC',
+  },
+  calendarDayTextCurrentMonth: {
+    color: '#30353D',
+  },
+  calendarDayTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  dateRangeInfo: {
+    marginTop: 20,
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    width: '100%',
+  },
+  dateRangeLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666666',
+    marginBottom: 4,
+  },
+  dateRangeText: {
+    fontSize: 16,
+    color: '#30353D',
+    textAlign: 'center',
+  },
+  allPeriodsInfo: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  allPeriodsTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#30353D',
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  allPeriodsDescription: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  calendarLoadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  calendarLoadingText: {
+    fontSize: 16,
+    color: '#666666',
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  clearDatesButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+  },
+  clearDatesText: {
+    fontSize: 12,
+    color: '#666666',
+    marginLeft: 6,
+  },
+  calendarInfo: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    marginBottom: 16,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+  },
+  calendarInfoText: {
+    fontSize: 12,
+    color: '#666666',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  periodSelectorActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginTop: 20,
+    width: '100%',
+  },
+  periodSelectorButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#F8F9FA',
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+  },
+  confirmButton: {
+    backgroundColor: '#3A7691',
+  },
+  cancelButtonText: {
+    color: '#666666',
+    fontWeight: '600',
+  },
+  confirmButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
 
 });

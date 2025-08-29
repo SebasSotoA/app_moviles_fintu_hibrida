@@ -1,3 +1,4 @@
+import 'react-native-reanimated';
 import { Stack } from "expo-router";
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
