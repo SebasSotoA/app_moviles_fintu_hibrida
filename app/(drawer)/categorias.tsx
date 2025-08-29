@@ -3,13 +3,13 @@ import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
@@ -30,7 +30,12 @@ export default function Categorias() {
     'remove-circle-outline': require('../../assets/icons/remove-circle-outline.svg'),
     'arrow-back': require('../../assets/icons/arrow-back.svg'),
     'checkmark-circle': require('../../assets/icons/checkmark-circle.svg'),
-    'add-circle-outline': require('../../assets/icons/add-circle-outline.svg'),
+    'game-controller-outline': require('../../assets/icons/game-controller-outline.svg'),
+    'receipt-outline': require('../../assets/icons/receipt-outline.svg'),
+    'briefcase-outline': require('../../assets/icons/briefcase-outline.svg'),
+    'laptop-outline': require('../../assets/icons/laptop-outline.svg'),
+    'trending-up-outline': require('../../assets/icons/trending-up-outline.svg'),
+    'gift-outline': require('../../assets/icons/gift-outline.svg'),
     'checkmark': require('../../assets/icons/checkmark.svg'),
     'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
     'cart-outline': require('../../assets/icons/cart-outline.svg'),

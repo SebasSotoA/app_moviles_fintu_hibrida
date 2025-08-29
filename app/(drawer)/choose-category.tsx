@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
@@ -30,6 +30,14 @@ const ICONS: Record<string, any> = {
   'bus-outline': require('../../assets/icons/bus-outline.svg'),
   'airplane-outline': require('../../assets/icons/airplane-outline.svg'),
   'list-outline': require('../../assets/icons/list-outline.svg'),
+  'school': require('../../assets/icons/school.svg'),
+  'school-outline': require('../../assets/icons/school-outline.svg'),
+  'game-controller-outline': require('../../assets/icons/game-controller-outline.svg'),
+  'receipt-outline': require('../../assets/icons/receipt-outline.svg'),
+  'briefcase-outline': require('../../assets/icons/briefcase-outline.svg'),
+  'laptop-outline': require('../../assets/icons/laptop-outline.svg'),
+  'trending-up-outline': require('../../assets/icons/trending-up-outline.svg'),
+  'gift-outline': require('../../assets/icons/gift-outline.svg'),
 };
 
 export default function ChooseCategory() {

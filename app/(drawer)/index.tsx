@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   Platform,
   ScrollView,
   StatusBar,
@@ -12,7 +13,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -953,12 +953,12 @@ export default function Home() {
            <View style={styles.periodSelectorModal}>
              <View style={styles.modalHeader}>
                <Text style={styles.modalTitle}>Seleccionar Período</Text>
-               <TouchableOpacity 
-                 onPress={() => setShowPeriodSelector(false)}
-                 style={styles.closeButton}
-               >
-                 <Ionicons name="close" size={24} color="#666" />
-               </TouchableOpacity>
+                                 <TouchableOpacity 
+                    onPress={() => setShowPeriodSelector(false)}
+                    style={styles.closeButton}
+                  >
+                    {renderIcon('close', 24, '#666')}
+                  </TouchableOpacity>
              </View>
 
              {/* Control fijo: Incluir todos los períodos */}
@@ -973,11 +973,7 @@ export default function Home() {
                >
                  <Text style={styles.includeAllText}>Incluir todos los períodos</Text>
                  {Platform.OS === 'web' ? (
-                   <Ionicons
-                     name={includeAllPeriods ? 'checkbox' : 'square-outline'}
-                     size={22}
-                     color={includeAllPeriods ? '#3A7691' : '#666666'}
-                   />
+                   renderIcon(includeAllPeriods ? 'checkmark-circle' : 'list-outline', 22, includeAllPeriods ? '#3A7691' : '#666666')
                  ) : (
                    <Switch
                      value={includeAllPeriods}
@@ -1030,16 +1026,16 @@ export default function Home() {
                            }
                          </Text>
                          {customStartDate && customEndDate && (
-                           <TouchableOpacity
-                             style={styles.clearDatesButton}
-                             onPress={() => {
-                               setCustomStartDate(null);
-                               setCustomEndDate(null);
-                             }}
-                           >
-                             <Ionicons name="close-circle" size={16} color="#666666" />
-                             <Text style={styles.clearDatesText}>Limpiar fechas</Text>
-                           </TouchableOpacity>
+                                                        <TouchableOpacity
+                               style={styles.clearDatesButton}
+                               onPress={() => {
+                                 setCustomStartDate(null);
+                                 setCustomEndDate(null);
+                               }}
+                             >
+                               {renderIcon('close', 16, '#666666')}
+                               <Text style={styles.clearDatesText}>Limpiar fechas</Text>
+                             </TouchableOpacity>
                          )}
                        </View>
                      </ScrollView>
@@ -1047,7 +1043,7 @@ export default function Home() {
                  </>
                ) : (
                  <View style={styles.allPeriodsInfo}>
-                   <Ionicons name="calendar-outline" size={48} color="#3A7691" />
+                   {renderIcon('calendar-outline', 48, '#3A7691')}
                    <Text style={styles.allPeriodsTitle}>Todos los períodos</Text>
                    <Text style={styles.allPeriodsDescription}>
                      Se incluirán todas las transacciones registradas en la aplicación

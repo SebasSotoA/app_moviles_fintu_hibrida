@@ -1,20 +1,21 @@
 import { DrawerActions } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import EditAccountModal from '../../components/EditAccountModal';
 import { useApp } from '../../src/shared/context/AppProvider';
+import { DatabaseAccount } from '../../src/shared/services/database';
 
 // Mapa de íconos locales siguiendo el patrón de add-transaction.tsx
 const ICONS: Record<string, any> = {
@@ -24,8 +25,8 @@ const ICONS: Record<string, any> = {
   'swap-horizontal': require('../../assets/icons/swap-horizontal.svg'),
   'add-circle': require('../../assets/icons/add-circle.svg'),
   'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
+  'create-outline': require('../../assets/icons/create-outline.svg'),
 };
-import { DatabaseAccount } from '../../src/shared/services/database';
 
 export default function Cuentas() {
   const navigation = useNavigation();
@@ -110,7 +111,11 @@ export default function Cuentas() {
             style={styles.editButton}
             onPress={() => handleEditAccount(account)}
           >
-            <Ionicons name="create-outline" size={20} color="#3A7691" />
+            <Image
+            source={ICONS['create-outline']}
+            style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+            resizeMode="contain"
+            />
           </TouchableOpacity>
           <View style={styles.accountBalance}>
             <Text style={[
