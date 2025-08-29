@@ -95,16 +95,11 @@ export default function Home() {
   );
 
   const loadCategoryStats = async () => {
-    if (!currentAccount) {
-      console.log('No hay cuenta actual para cargar estadísticas');
-      return;
-    }
+    if (!currentAccount) return;
     
-    console.log('Cargando estadísticas para cuenta:', currentAccount.id);
     setIsLoadingStats(true);
     try {
       const { startDate, endDate } = getDateRange(currentDate, activePeriod);
-      console.log('Rango de fechas:', { startDate, endDate, activePeriod, activeType });
       
       const stats = await getTransactionStats(
         startDate, 
@@ -112,8 +107,6 @@ export default function Home() {
         activeType === 'GASTOS' ? 'GASTO' : 'INGRESO',
         currentAccount.id
       );
-
-      console.log('Estadísticas obtenidas:', stats);
 
       // Calcular total y porcentajes
       const total = stats.reduce((sum, stat) => sum + (stat.totalAmount || 0), 0);
@@ -126,7 +119,6 @@ export default function Home() {
         color: stat.color
       }));
 
-      console.log('Categorías con porcentajes:', categoriesWithPercentage);
       setCategoryStats(categoriesWithPercentage);
     } catch (error) {
       console.error('Error loading category stats:', error);
@@ -375,8 +367,6 @@ export default function Home() {
     );
   }
 
-  console.log('Renderizando dashboard principal con cuenta:', currentAccount?.name, 'isLoading:', isLoading, 'isInitialized:', isInitialized);
-  
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#30353D" />
@@ -404,7 +394,17 @@ export default function Home() {
           {/* Selector de cuenta activa y saldo */}
           <View style={styles.accountSection}>
             <Text style={styles.accountLabel}>Cuenta actual</Text>
-            <Text style={styles.accountName}>{currentAccount?.name || 'Cargando...'}</Text>
+            <TouchableOpacity 
+              style={styles.accountSelector}
+              onPress={() => setShowAccountSelector(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.accountSymbol}>{currentAccount?.symbol || '💰'}</Text>
+              <Text style={styles.accountName}>
+                {currentAccount?.name || 'Cargando...'}
+              </Text>
+              <Ionicons name="chevron-down" size={20} color="#666" />
+            </TouchableOpacity>
             <Text style={styles.balance}>
               {currentAccount?.balance?.toLocaleString('es-CO') || '0'} {currentAccount?.currency || 'COP'}
             </Text>
@@ -713,10 +713,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 30,
   },
+  accountSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+  },
   accountName: {
     fontSize: 16,
     color: '#666666',
-    marginBottom: 8,
+    marginHorizontal: 8,
   },
   balance: {
     fontSize: 32,
@@ -1022,7 +1033,6 @@ const styles = StyleSheet.create({
   },
   accountSymbol: {
     fontSize: 20,
-    marginRight: 8,
   },
   // Modal Styles
   modalOverlay: {
