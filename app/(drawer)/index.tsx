@@ -95,17 +95,25 @@ export default function Home() {
   );
 
   const loadCategoryStats = async () => {
-    if (!currentAccount) return;
+    if (!currentAccount) {
+      console.log('No hay cuenta actual para cargar estadísticas');
+      return;
+    }
     
+    console.log('Cargando estadísticas para cuenta:', currentAccount.id);
     setIsLoadingStats(true);
     try {
       const { startDate, endDate } = getDateRange(currentDate, activePeriod);
+      console.log('Rango de fechas:', { startDate, endDate, activePeriod, activeType });
+      
       const stats = await getTransactionStats(
         startDate, 
         endDate, 
         activeType === 'GASTOS' ? 'GASTO' : 'INGRESO',
         currentAccount.id
       );
+
+      console.log('Estadísticas obtenidas:', stats);
 
       // Calcular total y porcentajes
       const total = stats.reduce((sum, stat) => sum + (stat.totalAmount || 0), 0);
@@ -118,6 +126,7 @@ export default function Home() {
         color: stat.color
       }));
 
+      console.log('Categorías con porcentajes:', categoriesWithPercentage);
       setCategoryStats(categoriesWithPercentage);
     } catch (error) {
       console.error('Error loading category stats:', error);
@@ -350,20 +359,24 @@ export default function Home() {
     </TouchableOpacity>
   );
 
-  // Mostrar pantalla de carga mientras se inicializa la app
-  if (isLoading || !isInitialized) {
+  // Mostrar pantalla de carga solo si no hay cuenta actual
+  if (isLoading || !currentAccount) {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="#30353D" />
         <View style={[styles.statusBarArea, { height: insets.top }]} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#3A7691" />
-          <Text style={styles.loadingText}>Inicializando aplicación...</Text>
+          <Text style={styles.loadingText}>
+            {isLoading ? 'Inicializando aplicación...' : 'Cargando cuenta...'}
+          </Text>
         </View>
       </View>
     );
   }
 
+  console.log('Renderizando dashboard principal con cuenta:', currentAccount?.name, 'isLoading:', isLoading, 'isInitialized:', isInitialized);
+  
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#30353D" />
@@ -377,36 +390,25 @@ export default function Home() {
           <Ionicons name="menu" size={35} color="#FFFFFF" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-                     <Text style={styles.headerTitle}>FintuApp</Text>
+          <Text style={styles.headerTitle}>FintuApp</Text>
         </View>
         <View style={styles.placeholder} />
       </View>
 
       {/* Contenido principal */}
       <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Selector de cuenta activa y saldo */}
-        <TouchableOpacity 
-          style={styles.accountSection}
-          onPress={() => setShowAccountSelector(true)}
-          activeOpacity={0.7}
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
         >
-          <View style={styles.accountHeader}>
-            <View style={styles.accountInfo}>
-              <Text style={styles.accountLabel}>Cuenta actual</Text>
-              <View style={styles.accountNameContainer}>
-                <Text style={styles.accountSymbol}>{currentAccount?.symbol || '💰'}</Text>
-                <Text style={styles.accountName}>
-                  {currentAccount?.name || 'Cargando...'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </View>
-            </View>
+          {/* Selector de cuenta activa y saldo */}
+          <View style={styles.accountSection}>
+            <Text style={styles.accountLabel}>Cuenta actual</Text>
+            <Text style={styles.accountName}>{currentAccount?.name || 'Cargando...'}</Text>
+            <Text style={styles.balance}>
+              {currentAccount?.balance?.toLocaleString('es-CO') || '0'} {currentAccount?.currency || 'COP'}
+            </Text>
           </View>
-          <Text style={styles.balance}>
-            {currentAccount?.balance?.toLocaleString('es-CO') || '0'} {currentAccount?.currency || 'COP'}
-          </Text>
-        </TouchableOpacity>
 
         {/* Toggle Gastos/Ingresos */}
         <View style={styles.toggleContainer}>
@@ -444,12 +446,12 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* Filtro temporal */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.periodFilterContainer}
-        >
+                  {/* Filtro temporal - Cambiado a View horizontal para evitar ScrollView anidados */}
+          <View style={styles.periodFilterContainer}>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+            >
           {(['Día', 'Semana', 'Mes', 'Año', 'Período'] as FilterPeriod[]).map((period) => (
             <TouchableOpacity
               key={period}
@@ -469,7 +471,8 @@ export default function Home() {
               </Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+            </ScrollView>
+          </View>
 
         {/* Sección del gráfico de torta con navegación temporal */}
         <View style={styles.chartSection}>
@@ -584,16 +587,18 @@ export default function Home() {
         </View>
 
         
-      </ScrollView>
+        </ScrollView>
 
-                 {/* Botón Nuevo + */}
-         <TouchableOpacity 
-           style={styles.newButton}
-           onPress={() => router.push('/(drawer)/add-transaction')}
-         >
-           <Text style={styles.newButtonText}>Nuevo +</Text>
-         </TouchableOpacity>
-       </SafeAreaView>
+        {/* Botón Nuevo + - Cambiado a posicionamiento relativo */}
+        <View style={styles.newButtonContainer}>
+          <TouchableOpacity 
+            style={styles.newButton}
+            onPress={() => router.push('/(drawer)/add-transaction')}
+          >
+            <Text style={styles.newButtonText}>Nuevo +</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
        {/* Modal de Bienvenida */}
        <WelcomeModal 
@@ -683,6 +688,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+
   menuButton: {
     padding: 5,
     width: 38,
@@ -744,6 +750,7 @@ const styles = StyleSheet.create({
   periodFilterContainer: {
     marginBottom: 20,
   },
+
   periodButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -964,11 +971,14 @@ const styles = StyleSheet.create({
   },
   
   
-  newButton: {
+  newButtonContainer: {
     position: 'absolute',
     bottom: 30,
     left: 20,
     right: 20,
+    zIndex: 1000,
+  },
+  newButton: {
     backgroundColor: '#3A7691',
     paddingVertical: 15,
     borderRadius: 25,
@@ -1005,7 +1015,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 50,
   },
-
 
   accountNameContainer: {
     flexDirection: 'row',
@@ -1108,4 +1117,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginLeft: 8,
   },
+
 });
