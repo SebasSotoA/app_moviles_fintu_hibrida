@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     ActivityIndicator,
     Dimensions,
@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     View,
     Animated,
+    Modal,
 } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-chart-kit';
 import { useApp } from '../src/shared/context/AppProvider';
@@ -61,15 +62,40 @@ export default function ModernFinancialChart() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [scaleAnim] = useState(new Animated.Value(0.8));
+  const [slideAnim] = useState(new Animated.Value(50));
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [tooltipData, setTooltipData] = useState<{x: number, y: number, value: string, label: string} | null>(null);
+  const summaryCardsAnim = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0)
+  ]).current;
 
   useEffect(() => {
     loadChartData();
   }, [activePeriod, activeDataType, currentDate, currentAccount?.id]);
 
   useEffect(() => {
-    // Reset animation when data type changes
+    // Reset animations when data type changes
     fadeAnim.setValue(0);
+    scaleAnim.setValue(0.8);
+    slideAnim.setValue(50);
   }, [activeDataType, chartType]);
+
+  useEffect(() => {
+    // Animate summary cards on mount
+    const animations = summaryCardsAnim.map((anim, index) => 
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 600,
+        delay: index * 100,
+        useNativeDriver: true,
+      })
+    );
+    Animated.stagger(100, animations).start();
+  }, [summaryData]);
 
   const getDateRange = (date: Date, period: FilterPeriod) => {
     const start = new Date(date);
@@ -251,12 +277,25 @@ export default function ModernFinancialChart() {
       setSummaryData(data.summaryData);
       setPieChartData(data.pieChartData);
       
-      // Animate chart appearance
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }).start();
+      // Animate chart appearance with multiple animations
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          tension: 100,
+          friction: 8,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 600,
+          useNativeDriver: true,
+        })
+      ]).start();
     } catch (error) {
       console.error('Error loading chart data:', error);
     } finally {
@@ -265,6 +304,20 @@ export default function ModernFinancialChart() {
   };
 
   const navigateDate = (direction: 'prev' | 'next' | 'today') => {
+    // Add smooth transition animation
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0.3,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      })
+    ]).start();
+
     const newDate = new Date(currentDate);
     
     if (direction === 'today') {
@@ -290,6 +343,24 @@ export default function ModernFinancialChart() {
     }
     
     setCurrentDate(newDate);
+  };
+
+  const handleChartPress = (data: { index: number; value: number; dataset: any; x: number; y: number; getColor: (opacity: number) => string; }) => {
+    if (!data || !chartData) return;
+    
+    const value = data.value;
+    const label = chartData.labels[data.index];
+    
+    setTooltipData({
+      x: data.x,
+      y: data.y - 50,
+      value: `$${value.toLocaleString()}`,
+      label: label
+    });
+    setTooltipVisible(true);
+    
+    // Auto hide tooltip after 3 seconds
+    setTimeout(() => setTooltipVisible(false), 3000);
   };
 
   const formatDateDisplay = (): string => {
@@ -361,28 +432,92 @@ export default function ModernFinancialChart() {
       {/* Summary Cards */}
       <View style={styles.summaryContainer}>
         <View style={styles.summaryRow}>
-          <View style={[styles.summaryCard, styles.incomeCard]}>
+          <Animated.View style={[
+            styles.summaryCard, 
+            styles.incomeCard,
+            {
+              opacity: summaryCardsAnim[0],
+              transform: [
+                { translateY: summaryCardsAnim[0].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [20, 0]
+                })},
+                { scale: summaryCardsAnim[0].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.9, 1]
+                })}
+              ]
+            }
+          ]}>
             <Ionicons name="trending-up" size={24} color="#4CAF50" />
             <Text style={styles.summaryValue}>${summaryData.ingresos.toLocaleString()}</Text>
             <Text style={styles.summaryLabel}>Ingresos</Text>
-          </View>
-          <View style={[styles.summaryCard, styles.expenseCard]}>
+          </Animated.View>
+          <Animated.View style={[
+            styles.summaryCard, 
+            styles.expenseCard,
+            {
+              opacity: summaryCardsAnim[1],
+              transform: [
+                { translateY: summaryCardsAnim[1].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [20, 0]
+                })},
+                { scale: summaryCardsAnim[1].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.9, 1]
+                })}
+              ]
+            }
+          ]}>
             <Ionicons name="trending-down" size={24} color="#F44336" />
             <Text style={styles.summaryValue}>${summaryData.gastos.toLocaleString()}</Text>
             <Text style={styles.summaryLabel}>Gastos</Text>
-          </View>
+          </Animated.View>
         </View>
         <View style={styles.summaryRow}>
-          <View style={[styles.summaryCard, styles.profitCard]}>
+          <Animated.View style={[
+            styles.summaryCard, 
+            styles.profitCard,
+            {
+              opacity: summaryCardsAnim[2],
+              transform: [
+                { translateY: summaryCardsAnim[2].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [20, 0]
+                })},
+                { scale: summaryCardsAnim[2].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.9, 1]
+                })}
+              ]
+            }
+          ]}>
             <Ionicons name="wallet" size={24} color="#3A7691" />
             <Text style={styles.summaryValue}>${summaryData.beneficios.toLocaleString()}</Text>
             <Text style={styles.summaryLabel}>Beneficios</Text>
-          </View>
-          <View style={[styles.summaryCard, styles.lossCard]}>
+          </Animated.View>
+          <Animated.View style={[
+            styles.summaryCard, 
+            styles.lossCard,
+            {
+              opacity: summaryCardsAnim[3],
+              transform: [
+                { translateY: summaryCardsAnim[3].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [20, 0]
+                })},
+                { scale: summaryCardsAnim[3].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.9, 1]
+                })}
+              ]
+            }
+          ]}>
             <Ionicons name="alert-circle" size={24} color="#FF9800" />
             <Text style={styles.summaryValue}>${summaryData.perdida.toLocaleString()}</Text>
             <Text style={styles.summaryLabel}>Pérdidas</Text>
-          </View>
+          </Animated.View>
         </View>
       </View>
 
@@ -512,7 +647,16 @@ export default function ModernFinancialChart() {
               </View>
             )
           ) : chartData.datasets[0].data.some(value => value > 0) ? (
-            <Animated.View style={[styles.chartWrapper, { opacity: fadeAnim }]}>
+            <Animated.View style={[
+              styles.chartWrapper, 
+              { 
+                opacity: fadeAnim,
+                transform: [
+                  { scale: scaleAnim },
+                  { translateY: slideAnim }
+                ]
+              }
+            ]}>
               {chartType === 'bar' ? (
                 <BarChart
                   data={chartData}
@@ -533,6 +677,7 @@ export default function ModernFinancialChart() {
                   chartConfig={chartConfig}
                   bezier
                   fromZero
+                  onDataPointClick={handleChartPress}
                 />
               )}
             </Animated.View>
@@ -546,6 +691,34 @@ export default function ModernFinancialChart() {
           )
         )}
       </View>
+
+      {/* Tooltip Modal */}
+      <Modal
+        visible={tooltipVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setTooltipVisible(false)}
+      >
+        <TouchableOpacity 
+          style={styles.tooltipOverlay}
+          activeOpacity={1}
+          onPress={() => setTooltipVisible(false)}
+        >
+          {tooltipData && (
+            <View style={[
+              styles.tooltipContainer,
+              {
+                left: Math.max(20, Math.min(tooltipData.x - 75, width - 170)),
+                top: tooltipData.y
+              }
+            ]}>
+              <View style={styles.tooltipArrow} />
+              <Text style={styles.tooltipLabel}>{tooltipData.label}</Text>
+              <Text style={styles.tooltipValue}>{tooltipData.value}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -779,5 +952,50 @@ const styles = StyleSheet.create({
     color: '#666666',
     textAlign: 'center',
     lineHeight: 24,
+  },
+  tooltipOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tooltipContainer: {
+    position: 'absolute',
+    backgroundColor: '#30353D',
+    borderRadius: 12,
+    padding: 12,
+    minWidth: 150,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  tooltipArrow: {
+    position: 'absolute',
+    bottom: -6,
+    left: '50%',
+    marginLeft: -6,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 6,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: '#30353D',
+  },
+  tooltipLabel: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '500',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  tooltipValue: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });
