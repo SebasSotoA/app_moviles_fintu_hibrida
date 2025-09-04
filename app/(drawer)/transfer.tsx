@@ -15,7 +15,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import type { DatabaseAccount } from '../../src/shared/services/database';
-import globalStyles from '../../src/shared/styles/globalStyles';
+import styles from '@/src/shared/styles/components/transfer';
 import colors from '../../src/shared/styles/themes';
 
 // Mapa de íconos locales con nombres exactos de Ionicons
@@ -171,7 +171,7 @@ export default function Transfer() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -181,7 +181,7 @@ export default function Transfer() {
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            style={{ width: 28, height: 28, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -209,7 +209,7 @@ export default function Transfer() {
               <View style={styles.transferArrow}>
                 <Image
                   source={ICONS['arrow-forward']}
-                  style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                  style={{ width: 24, height: 24, tintColor: colors.primary }}
                   resizeMode="contain"
                 />
               </View>
@@ -253,7 +253,7 @@ export default function Transfer() {
               </View>
               <Image
                 source={ICONS['chevron-down']}
-                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                style={{ width: 24, height: 24, tintColor: colors.primary }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -281,7 +281,7 @@ export default function Transfer() {
               </View>
               <Image
                 source={ICONS['chevron-down']}
-                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                style={{ width: 24, height: 24, tintColor: colors.primary }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -294,7 +294,7 @@ export default function Transfer() {
               <TextInput
                 style={styles.amountInput}
                 placeholder="0"
-                placeholderTextColor="#ADADAD"
+                placeholderTextColor={colors.gray}
                 value={amount}
                 onChangeText={setAmount}
                 keyboardType="numeric"
@@ -331,7 +331,7 @@ export default function Transfer() {
               <Text style={styles.transferButtonText}>Transferir</Text>
               <Image
                 source={ICONS['send']}
-                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                style={{ width: 20, height: 20, tintColor: colors.white }}
                 resizeMode="contain"
               />
             </>
@@ -351,7 +351,7 @@ export default function Transfer() {
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: '#666' }}
+                  style={{ width: 24, height: 24, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -382,7 +382,7 @@ export default function Transfer() {
                   {fromAccount?.id === account.id && (
                     <Image
                       source={ICONS['checkmark-circle']}
-                      style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                      style={{ width: 24, height: 24, tintColor: colors.primary }}
                       resizeMode="contain"
                     />
                   )}
@@ -405,7 +405,7 @@ export default function Transfer() {
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: '#666' }}
+                  style={{ width: 24, height: 24, tintColor: colors.gray }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -441,7 +441,7 @@ export default function Transfer() {
                     {toAccount?.id === account.id && (
                       <Image
                         source={ICONS['checkmark-circle']}
-                        style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                        style={{ width: 24, height: 24, tintColor: colors.primary }}
                         resizeMode="contain"
                       />
                     )}
@@ -486,142 +486,3 @@ export default function Transfer() {
     </View>
   );
 }
-
-const styles = { ...globalStyles, ...StyleSheet.create({
-  disabledAccountItem: {
-    opacity: 0.5,
-  },
-  accountSummary: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  summaryCard: {
-    backgroundColor: colors.notCompletelyLightGray,
-    borderRadius: 16,
-    padding: 16,
-    marginTop: 16,
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-  },
-  transferFlow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  accountSummarySymbol: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  accountSummaryName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.grayDark,
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  accountSummaryBalance: {
-    fontSize: 12,
-    color: colors.grayMedium,
-    textAlign: 'center',
-  },
-  transferArrow: {
-    marginHorizontal: 16,
-  },
-  transferAmount: {
-    alignItems: 'center',
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.notCompletelyLightGray,
-  },
-  transferAmountLabel: {
-    fontSize: 14,
-    color: colors.grayMedium,
-    marginBottom: 4,
-  },
-  transferAmountValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.primary,
-  },
-  amountInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  amountInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.grayDark,
-    backgroundColor: colors.notCompletelyLightGray,
-    marginRight: 12,
-    textAlign: 'right',
-  },
-  currencyLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.primary,
-    minWidth: 40,
-  },
-  balanceInfo: {
-    fontSize: 14,
-    color: colors.grayMedium,
-    marginTop: 8,
-    textAlign: 'right',
-  },
-  errorText: {
-    fontSize: 14,
-    color: colors.error,
-    marginTop: 8,
-    textAlign: 'right',
-    fontWeight: '600',
-  },
-  commentInput: {
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: colors.grayDark,
-    backgroundColor: colors.notCompletelyLightGray,
-    textAlignVertical: 'top',
-    minHeight: 80,
-  },
-  transferButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primary,
-    marginHorizontal: 20,
-    marginBottom: 20,
-    paddingVertical: 16,
-    borderRadius: 25,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  transferButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.white,
-    marginRight: 8,
-  },
-  acceptButton: {
-    backgroundColor: colors.primary,
-  },
-  acceptButtonText: {
-    color: colors.white,
-    fontWeight: '600',
-  },
-}) 
-};
-
-

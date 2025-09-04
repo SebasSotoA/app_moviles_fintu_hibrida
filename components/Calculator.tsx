@@ -8,7 +8,8 @@ import {
   Image,
 } from 'react-native';
 import { CalculatorState } from '../types/transaction';
-import breakpoints from '../src/shared/styles/breakpoints'
+import breakpoints from '../src/shared/styles/breakpoints';
+import colors from '../src/shared/styles/themes';
 
 const { width } = Dimensions.get('window');
 
@@ -163,7 +164,7 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
         <TouchableOpacity onPress={handleBackspace} style={styles.backspaceButton}>
           <Image
             source={ICONS['backspace-outline']}
-            style={{ width: 28, height: 28, tintColor: '#30353D' }}
+            style={{ width: 28, height: 28, tintColor: colors.grayDark }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -234,7 +235,7 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderRadius: 16,
     padding: 16,
     marginVertical: 20,
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   displayContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -254,12 +255,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderWidth: 2,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   displayText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#30353D',
+    color: colors.grayDark,
     flex: 1,
     textAlign: 'right',
     marginRight: 10,
@@ -277,13 +278,13 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     aspectRatio: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E9ECEF',
-    shadowColor: '#000',
+    borderColor: colors.notCompletelyLightGray,
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -295,21 +296,20 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
   },
   operationButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
   },
   operationText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 22,
   },
   equalsButton: {
-    backgroundColor: '#30353D',
+    backgroundColor: colors.grayDark,
   },
   equalsText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 22,
   },
 });
-

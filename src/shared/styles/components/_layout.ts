@@ -3,7 +3,7 @@ import colors from '@/src/shared/styles/themes';
 import { StyleSheet } from 'react-native';
 import { darken } from 'polished';
 
-const layoutStyles = { ...globalStyles, ...StyleSheet.create({
+const styles = { ...globalStyles, ...StyleSheet.create({
     drawerContainer: {
       flex: 1,
       backgroundColor: colors.grayDark, // closest to #30353D
@@ -48,6 +48,6 @@ const layoutStyles = { ...globalStyles, ...StyleSheet.create({
       fontWeight: '600',
     },
   }) 
-  };
+};
 
-export default layoutStyles;
+export default styles;

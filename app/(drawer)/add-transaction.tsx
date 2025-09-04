@@ -16,7 +16,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Calculator from '../../components/Calculator';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { TransactionType } from '../../types/transaction';
-import globalStyles from '@/src/shared/styles/globalStyles';
+import styles from '@/src/shared/styles/components/add-transaction';
 import colors from '@/src/shared/styles/themes';
 
 export default function AddTransaction() {
@@ -112,7 +112,7 @@ export default function AddTransaction() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -122,7 +122,7 @@ export default function AddTransaction() {
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            style={{ width: 28, height: 28, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -146,7 +146,7 @@ export default function AddTransaction() {
               <Text style={styles.dateText}>{formatDate(selectedDate)}</Text>
               <Image
                 source={ICONS['calendar-outline']}
-                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                style={{ width: 24, height: 24, tintColor: colors.primary }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -172,7 +172,7 @@ export default function AddTransaction() {
               </View>
               <Image
                 source={ICONS['chevron-down']}
-                style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                style={{ width: 20, height: 20, tintColor: colors.white }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -269,7 +269,7 @@ export default function AddTransaction() {
           </Text>
           <Image
             source={ICONS['arrow-forward']}
-            style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+            style={{ width: 20, height: 20, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -340,7 +340,7 @@ export default function AddTransaction() {
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: '#666666' }}
+                  style={{ width: 24, height: 24, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -371,7 +371,7 @@ export default function AddTransaction() {
                   {selectedAccount?.id === account.id && (
                     <Image
                       source={ICONS['checkmark-circle']}
-                      style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                      style={{ width: 24, height: 24, tintColor: colors.primary }}
                       resizeMode="contain"
                     />
                   )}
@@ -384,153 +384,3 @@ export default function AddTransaction() {
     </View>
   );
 }
-
-const styles = { ...globalStyles, ...StyleSheet.create({
-  dateSelector: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F8F9FA', // no close match in theme; keeping subtle light gray
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-  },
-  dateText: {
-    fontSize: 16,
-    color: colors.grayDark, // closest to #30353D
-    fontWeight: '500',
-  },
-  amountContainer: {
-    padding: 20,
-    backgroundColor: '#F8F9FA', // no close match in theme; keeping
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.primary,
-  },
-  amountText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.primary,
-  },
-  noteInput: {
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: colors.grayDark, // closest to #30353D
-    backgroundColor: '#F8F9FA', // no close match in theme; keeping
-    textAlignVertical: 'top',
-    minHeight: 80,
-  },
-
-  continueButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primary,
-    marginHorizontal: 20,
-    marginBottom: 20,
-    paddingVertical: 16,
-    borderRadius: 25,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.white,
-    marginRight: 8,
-  },
-  // Date Picker Modal Styles
-  datePickerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // overlay uses transparency; not in theme
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  datePickerModal: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: 20,
-    margin: 20,
-    width: '80%',
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  datePickerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    color: colors.grayDark,
-    marginBottom: 20,
-  },
-  datePickerControls: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  datePickerButton: {
-    backgroundColor: '#F8F9FA', // no close match in theme; keeping
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-  },
-  datePickerButtonText: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: '500',
-  },
-  selectedDateText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.grayDark,
-  },
-  datePickerActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  datePickerActionButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  todayButton: {
-    backgroundColor: '#F8F9FA', // no close match in theme; keeping
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-  },
-  todayButtonText: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.grayDark,
-  },
-}) 
-};

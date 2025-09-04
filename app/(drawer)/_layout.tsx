@@ -5,7 +5,7 @@ import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { darken } from 'polished';
-import globalStyles from '@/src/shared/styles/components/_layout';
+import styles from '@/src/shared/styles/components/_layout';
 import colors from '@/src/shared/styles/themes';
 
 interface CustomDrawerContentProps {
@@ -68,7 +68,7 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
                  <View style={styles.drawerHeader}>
            <Image
              source={ICONS['person-circle-outline']}
-             style={{ width: 60, height: 60, tintColor: '#FFFFFF' }}
+             style={{ width: 60, height: 60, tintColor: colors.white }}
              resizeMode="contain"
            />
            <Text style={styles.userText}>Usuario</Text>
@@ -86,7 +86,7 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
                   style={{
                     width: size,
                     height: size,
-                    tintColor: pathname === item.route ? '#3A7691' : '#FFFFFF',
+                    tintColor: pathname === item.route ? colors.primary : colors.white,
                   }}
                   resizeMode="contain"
                 />
@@ -187,50 +187,3 @@ export default function DrawerLayout() {
     </Drawer>
   );
 }
-
-const styles = { ...globalStyles, ...StyleSheet.create({
-  drawerContainer: {
-    flex: 1,
-    backgroundColor: colors.grayDark, // closest to #30353D
-  },
-  drawerContent: {
-    flex: 1,
-  },
-  drawerHeader: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.almostBlack, // no close match in theme; keeping custom shade
-    marginBottom: 10,
-  },
-  userText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.white,
-    marginTop: 10,
-  },
-  menuItems: {
-    flex: 1,
-    paddingTop: 10,
-  },
-  drawerItem: {
-    marginVertical: 2,
-    marginHorizontal: 10,
-    borderRadius: 8,
-  },
-  activeDrawerItem: {
-    backgroundColor: darken(0.1, colors.primary)
-  },
-  drawerLabel: {
-    fontSize: 16,
-    color: colors.white,
-    marginLeft: 10,
-  },
-  activeDrawerLabel: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-}) 
-};

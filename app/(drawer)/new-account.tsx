@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
+import styles from '@/src/shared/styles/components/new-account';
+import colors from '../../src/shared/styles/themes';
 
 // Mapa de íconos locales usando los mismos nombres de Ionicons
 const ICONS: Record<string, any> = {
@@ -56,7 +58,7 @@ export default function NewAccount() {
   const [accountName, setAccountName] = useState('');
   const [initialBalance, setInitialBalance] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('💰');
-  const [selectedColor, setSelectedColor] = useState('#3A7691');
+  const [selectedColor, setSelectedColor] = useState(colors.primary);
   const [selectedCurrency, setSelectedCurrency] = useState('COP');
   const [includeInTotal, setIncludeInTotal] = useState(true);
 
@@ -106,7 +108,7 @@ export default function NewAccount() {
     setAccountName('');
     setInitialBalance('');
     setSelectedSymbol('💰');
-    setSelectedColor('#3A7691');
+    setSelectedColor(colors.primary);
     setSelectedCurrency('COP');
     setIncludeInTotal(true);
     setShowCurrencySelector(false);
@@ -169,7 +171,7 @@ export default function NewAccount() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -179,7 +181,7 @@ export default function NewAccount() {
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            style={{ width: 28, height: 28, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -210,7 +212,7 @@ export default function NewAccount() {
             <TextInput
               style={styles.textInput}
               placeholder="Ej: Cuenta Principal, Ahorros..."
-              placeholderTextColor="#ADADAD"
+              placeholderTextColor={colors.gray}
               value={accountName}
               onChangeText={setAccountName}
               maxLength={30}
@@ -224,7 +226,7 @@ export default function NewAccount() {
               <TextInput
                 style={styles.balanceInput}
                 placeholder="0"
-                placeholderTextColor="#ADADAD"
+                placeholderTextColor={colors.gray}
                 value={initialBalance}
                 onChangeText={setInitialBalance}
                 keyboardType="numeric"
@@ -236,7 +238,7 @@ export default function NewAccount() {
                 <Text style={styles.currencyButtonText}>{selectedCurrency}</Text>
                 <Image
                   source={ICONS['chevron-down']}
-                  style={{ width: 16, height: 16, tintColor: '#3A7691' }}
+                  style={{ width: 16, height: 16, tintColor: colors.primary }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -279,7 +281,7 @@ export default function NewAccount() {
                   {selectedColor === color && (
                     <Image
                       source={ICONS['checkmark']}
-                      style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                      style={{ width: 20, height: 20, tintColor: colors.white }}
                       resizeMode="contain"
                     />
                   )}
@@ -298,7 +300,7 @@ export default function NewAccount() {
                 {includeInTotal && (
                   <Image
                     source={ICONS['checkmark']}
-                    style={{ width: 16, height: 16, tintColor: '#FFFFFF' }}
+                    style={{ width: 16, height: 16, tintColor: colors.white }}
                     resizeMode="contain"
                   />
                 )}
@@ -328,7 +330,7 @@ export default function NewAccount() {
               <Text style={styles.createButtonText}>Crear Cuenta</Text>
               <Image
                 source={ICONS['add']}
-                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                style={{ width: 20, height: 20, tintColor: colors.white }}
                 resizeMode="contain"
               />
             </>
@@ -348,7 +350,7 @@ export default function NewAccount() {
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: '#666' }}
+                  style={{ width: 24, height: 24, tintColor: colors.gray }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -374,7 +376,7 @@ export default function NewAccount() {
                   {selectedCurrency === currency.code && (
                     <Image
                       source={ICONS['checkmark-circle']}
-                      style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+                      style={{ width: 24, height: 24, tintColor: colors.gray }}
                       resizeMode="contain"
                     />
                   )}
@@ -387,294 +389,3 @@ export default function NewAccount() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D',
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#101215',
-  },
-  backButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  placeholder: {
-    width: 38,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  accountPreview: {
-    alignItems: 'center',
-    paddingVertical: 24,
-    paddingHorizontal: 20,
-    marginVertical: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  previewSymbol: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  previewName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  previewBalance: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  section: {
-    marginVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 12,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: '#30353D',
-    backgroundColor: '#F8F9FA',
-  },
-  balanceInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  balanceInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: '#30353D',
-    backgroundColor: '#F8F9FA',
-    marginRight: 12,
-  },
-  currencyButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-    borderRadius: 12,
-    backgroundColor: '#F8F9FA',
-  },
-  currencyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#3A7691',
-    marginRight: 4,
-  },
-  symbolGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  symbolOption: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#F8F9FA',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedSymbolOption: {
-    borderColor: '#3A7691',
-    backgroundColor: '#E3F2FD',
-  },
-  symbolText: {
-    fontSize: 24,
-  },
-  colorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  colorOption: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedColorOption: {
-    borderColor: '#30353D',
-    borderWidth: 3,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#E9ECEF',
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  checkedCheckbox: {
-    backgroundColor: '#3A7691',
-    borderColor: '#3A7691',
-  },
-  checkboxLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#30353D',
-  },
-  checkboxDescription: {
-    fontSize: 14,
-    color: '#666666',
-    marginLeft: 36,
-  },
-  createButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3A7691',
-    marginHorizontal: 20,
-    marginBottom: 20,
-    paddingVertical: 16,
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  disabledButton: {
-    backgroundColor: '#ADADAD',
-  },
-  createButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginRight: 8,
-  },
-  // Modal Styles
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  currencySelectorModal: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    margin: 20,
-    maxHeight: '70%',
-    width: '90%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#30353D',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  currencyList: {
-    maxHeight: 300,
-  },
-  currencyItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F8F9FA',
-  },
-  selectedCurrencyItem: {
-    backgroundColor: '#F0F8FF',
-  },
-  currencyItemInfo: {
-    flex: 1,
-  },
-  currencyItemCode: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
-  },
-  currencyItemName: {
-    fontSize: 14,
-    color: '#666666',
-  },
-});
-
-

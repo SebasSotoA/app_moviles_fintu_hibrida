@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from '@/src/shared/styles/components/recordatorios';
 
 export default function Ajustes() {
   return (
@@ -12,27 +13,3 @@ export default function Ajustes() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-  },
-});
-
