@@ -20,6 +20,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Circle, Path } from 'react-native-svg';
 import WelcomeModal from '../../components/WelcomeModal';
 import { useApp } from '../../src/shared/context/AppProvider';
+import globalStyles from '../../src/shared/styles/globalStyles';
+import colors from '../../src/shared/styles/themes';
 
 // Mapa de íconos locales siguiendo el patrón de _layout.tsx
 const ICONS: Record<string, any> = {
@@ -665,7 +667,7 @@ export default function Home() {
     >
       {/* Ícono de la categoría */}
       <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
-        {renderIcon(category.icon, 24, '#FFFFFF')}
+        {renderIcon(category.icon, 24, colors.white)}
       </View>
       
       {/* Información de la categoría */}
@@ -683,10 +685,10 @@ export default function Home() {
   if (isLoading || !currentAccount) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+        <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
         <View style={[styles.statusBarArea, { height: insets.top }]} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#3A7691" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>
             {isLoading ? 'Inicializando aplicación...' : 'Cargando cuenta...'}
           </Text>
@@ -697,7 +699,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -705,7 +707,7 @@ export default function Home() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
-          {renderIcon('menu', 35, '#FFFFFF')}
+          {renderIcon('menu', 35, colors.white)}
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>FintuApp</Text>
@@ -731,7 +733,7 @@ export default function Home() {
               <Text style={styles.accountName}>
                 {currentAccount?.name || 'Cargando...'}
               </Text>
-              {renderIcon('chevron-down', 20, '#666')}
+              {renderIcon('chevron-down', 20, colors.grayMedium)}
             </TouchableOpacity>
             <Text style={styles.balance}>
               {currentAccount?.balance?.toLocaleString('es-CO') || '0'} {currentAccount?.currency || 'COP'}
@@ -824,7 +826,7 @@ export default function Home() {
                 onPress={() => navigateTime('prev')}
                 style={styles.dateNavButton}
               >
-                {renderIcon('chevron-back', 20, '#3A7691')}
+                {renderIcon('chevron-back', 20, colors.primary)}
               </TouchableOpacity>
               
               <Text style={styles.currentDate}>
@@ -835,7 +837,7 @@ export default function Home() {
                 onPress={() => navigateTime('next')}
                 style={styles.dateNavButton}
               >
-                {renderIcon('chevron-forward', 20, '#3A7691')}
+                {renderIcon('chevron-forward', 20, colors.primary)}
               </TouchableOpacity>
               
               {/* Botón para volver a fecha actual */}
@@ -843,7 +845,7 @@ export default function Home() {
                 onPress={() => setCurrentDate(new Date())}
                 style={styles.todayButton}
               >
-                {renderIcon('today', 20, '#3A7691')}
+                {renderIcon('today', 20, colors.primary)}
               </TouchableOpacity>
             </Animated.View>
           </GestureDetector>
@@ -852,7 +854,7 @@ export default function Home() {
           <View style={styles.pieChartContainer}>
             {isLoadingStats ? (
               <View style={styles.loadingChart}>
-                <ActivityIndicator size="large" color="#3A7691" />
+                <ActivityIndicator size="large" color={colors.primary} />
                 <Text style={styles.loadingText}>Cargando datos...</Text>
               </View>
             ) : pieData.length > 0 ? (
@@ -864,7 +866,7 @@ export default function Home() {
                       key={slice.id}
                       d={slice.path}
                       fill={slice.color}
-                      stroke="#FFFFFF"
+                      stroke={colors.white}
                       strokeWidth={2}
                     />
                   ))}
@@ -873,8 +875,8 @@ export default function Home() {
                     cx={80}
                     cy={80}
                     r={35}
-                    fill="#FFFFFF"
-                    stroke="#F0F0F0"
+                    fill={colors.white}
+                    stroke={colors.notCompletelyLightGray}
                     strokeWidth={1}
                   />
                 </Svg>
@@ -889,7 +891,7 @@ export default function Home() {
               </View>
             ) : (
               <View style={styles.emptyChart}>
-                {renderIcon('pie-chart-outline', 60, '#CCCCCC')}
+                {renderIcon('pie-chart-outline', 60, colors.gray)}
                 <Text style={styles.emptyChartText}>
                   {activeType === 'GASTOS' ? 'No hay gastos' : 'No hay ingresos'} para mostrar
                 </Text>
@@ -910,7 +912,7 @@ export default function Home() {
           </Text>
           {isLoadingStats ? (
             <View style={styles.loadingCategories}>
-              <ActivityIndicator size="small" color="#3A7691" />
+              <ActivityIndicator size="small" color={colors.primary} />
               <Text style={styles.loadingText}>Cargando categorías...</Text>
             </View>
           ) : currentCategories.length > 0 ? (
@@ -919,7 +921,7 @@ export default function Home() {
             </View>
           ) : (
             <View style={styles.emptyCategories}>
-              {renderIcon('folder-open-outline', 40, '#CCCCCC')}
+              {renderIcon('folder-open-outline', 40, colors.gray)}
               <Text style={styles.emptyCategoriesText}>
                 No hay {activeType.toLowerCase()} registrados para este período
               </Text>
@@ -957,7 +959,7 @@ export default function Home() {
                     onPress={() => setShowPeriodSelector(false)}
                     style={styles.closeButton}
                   >
-                    {renderIcon('close', 24, '#666')}
+                    {renderIcon('close', 24, colors.grayMedium)}
                   </TouchableOpacity>
              </View>
 
@@ -973,13 +975,13 @@ export default function Home() {
                >
                  <Text style={styles.includeAllText}>Incluir todos los períodos</Text>
                  {Platform.OS === 'web' ? (
-                   renderIcon(includeAllPeriods ? 'checkmark-circle' : 'list-outline', 22, includeAllPeriods ? '#3A7691' : '#666666')
+                   renderIcon(includeAllPeriods ? 'checkmark-circle' : 'list-outline', 22, includeAllPeriods ? colors.primary : colors.grayMedium)
                  ) : (
                    <Switch
                      value={includeAllPeriods}
                      onValueChange={handleIncludeAllToggle}
-                     thumbColor={includeAllPeriods ? '#3A7691' : undefined}
-                     trackColor={{ false: '#D0D5DA', true: '#A9C7D4' }}
+                     thumbColor={includeAllPeriods ? colors.primary : undefined}
+                     trackColor={{ false: colors.notCompletelyLightGray, true: colors.tertiary }}
                      accessibilityLabel="Interruptor incluir todos los períodos"
                    />
                  )}
@@ -991,7 +993,7 @@ export default function Home() {
                  <>
                    {isCalendarLoading ? (
                      <View style={styles.calendarLoadingContainer}>
-                       <ActivityIndicator size="large" color="#3A7691" />
+                       <ActivityIndicator size="large" color={colors.primary} />
                        <Text style={styles.calendarLoadingText}>Cargando calendario...</Text>
                      </View>
                    ) : (
@@ -1033,7 +1035,7 @@ export default function Home() {
                                  setCustomEndDate(null);
                                }}
                              >
-                               {renderIcon('close', 16, '#666666')}
+                               {renderIcon('close', 16, colors.grayMedium)}
                                <Text style={styles.clearDatesText}>Limpiar fechas</Text>
                              </TouchableOpacity>
                          )}
@@ -1043,7 +1045,7 @@ export default function Home() {
                  </>
                ) : (
                  <View style={styles.allPeriodsInfo}>
-                   {renderIcon('calendar-outline', 48, '#3A7691')}
+                   {renderIcon('calendar-outline', 48, colors.primary)}
                    <Text style={styles.allPeriodsTitle}>Todos los períodos</Text>
                    <Text style={styles.allPeriodsDescription}>
                      Se incluirán todas las transacciones registradas en la aplicación
@@ -1089,7 +1091,7 @@ export default function Home() {
                  onPress={() => setShowAccountSelector(false)}
                  style={styles.closeButton}
                >
-                 {renderIcon('close', 24, '#666')}
+                 {renderIcon('close', 24, colors.grayMedium)}
                </TouchableOpacity>
              </View>
 
@@ -1116,7 +1118,7 @@ export default function Home() {
                      </View>
                    </View>
                    {currentAccount?.id === account.id && (
-                    renderIcon('checkmark-circle', 24, '#3A7691')
+                    renderIcon('checkmark-circle', 24, colors.primary)
                   )}
                 </TouchableOpacity>
               ))}
@@ -1129,7 +1131,7 @@ export default function Home() {
                  router.push({ pathname: '/(drawer)/new-account', params: { returnPath: '/(drawer)' } });
                }}
              >
-              {renderIcon('add', 20, '#FFFFFF')}
+              {renderIcon('add', 20, colors.white)}
               <Text style={styles.newAccountButtonText}>Crear Nueva Cuenta</Text>
             </TouchableOpacity>
           </View>
@@ -1139,97 +1141,23 @@ export default function Home() {
    );
  }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D', // Mismo color del header
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D', // Área del status bar con color del header
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-
-  menuButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  placeholder: {
-    width: 38,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
+ const styles = { ...globalStyles, ...StyleSheet.create({
   accountSection: {
     alignItems: 'center',
     paddingVertical: 30,
   },
-  accountSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-  },
-  accountName: {
-    fontSize: 16,
-    color: '#666666',
-    marginHorizontal: 8,
-  },
   balance: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#333333',
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 25,
-    marginBottom: 20,
-    padding: 4,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  activeToggleButton: {
-    backgroundColor: '#3A7691',
+    color: colors.almostBlack,
   },
   toggleText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
+    color: colors.grayMedium,
   },
   activeToggleText: {
-    color: '#FFFFFF',
+    color: colors.white,
   },
   periodFilterContainer: {
     marginBottom: 20,
@@ -1245,26 +1173,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.notCompletelyLightGray,
     alignItems: 'center',
   },
   activePeriodButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
   },
   periodText: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     fontWeight: '500',
   },
   activePeriodText: {
-    color: '#FFFFFF',
+    color: colors.white,
   },
   chartSection: {
     marginBottom: 30,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1283,18 +1211,18 @@ const styles = StyleSheet.create({
   dateNavButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.notCompletelyLightGray,
   },
   todayButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.notCompletelyLightGray,
     marginLeft: 10,
   },
   currentDate: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333333',
+    color: colors.almostBlack,
     textAlign: 'center',
     flex: 1,
   },
@@ -1308,7 +1236,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   svgChart: {
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1321,11 +1249,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 35,
     width: 70,
     height: 70,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -1337,12 +1265,12 @@ const styles = StyleSheet.create({
   centerAmount: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#30353D',
+    color: colors.grayDark,
     textAlign: 'center',
   },
   centerCurrency: {
     fontSize: 10,
-    color: '#666666',
+    color: colors.grayMedium,
     marginTop: 1,
   },
   emptyChart: {
@@ -1353,7 +1281,7 @@ const styles = StyleSheet.create({
   emptyChartText: {
     marginTop: 10,
     fontSize: 14,
-    color: '#CCCCCC',
+    color: colors.gray,
     textAlign: 'center',
   },
   loadingChart: {
@@ -1361,11 +1289,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
-  },
-  loadingText: {
-    fontSize: 12,
-    color: '#999999',
-    marginTop: 5,
   },
   loadingCategories: {
     paddingVertical: 30,
@@ -1379,22 +1302,22 @@ const styles = StyleSheet.create({
   },
   emptyCategoriesText: {
     fontSize: 14,
-    color: '#CCCCCC',
+    color: colors.gray,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
   swipeHint: {
     fontSize: 12,
-    color: '#999999',
+    color: colors.grayMedium,
     textAlign: 'center',
     fontStyle: 'italic',
   },
   categoriesSection: {
     marginBottom: 100,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1406,7 +1329,7 @@ const styles = StyleSheet.create({
   categoriesTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333333',
+    color: colors.almostBlack,
     marginBottom: 15,
   },
   categoriesGrid: {
@@ -1414,11 +1337,11 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1427,36 +1350,19 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: colors.notCompletelyLightGray,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  categoryIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  categoryInfo: {
-    flex: 1,
-  },
-  categoryName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 4,
-  },
   categoryAmount: {
     fontSize: 14,
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '500',
   },
   categoryPercentage: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#30353D',
+    color: colors.grayDark,
     marginLeft: 12,
   },
   
@@ -1469,11 +1375,11 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   newButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -1485,117 +1391,26 @@ const styles = StyleSheet.create({
   newButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   // Account Selector Styles
   accountHeader: {
     marginBottom: 8,
   },
-  accountInfo: {
-    flex: 1,
-  },
   accountLabel: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
     marginBottom: 4,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 50,
-  },
-
   accountNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  accountSymbol: {
-    fontSize: 20,
-  },
-  // Modal Styles
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  accountSelectorModal: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    margin: 20,
-    maxHeight: '70%',
-    width: '90%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#30353D',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  accountsList: {
-    maxHeight: 300,
-  },
-  accountItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F8F9FA',
-  },
-  selectedAccountItem: {
-    backgroundColor: '#F0F8FF',
-  },
-  accountItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  accountItemSymbol: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  accountItemInfo: {
-    flex: 1,
-  },
-  accountItemName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
-  },
-  accountItemBalance: {
-    fontSize: 14,
-    color: '#666666',
   },
   newAccountButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     margin: 20,
     paddingVertical: 14,
     borderRadius: 12,
@@ -1603,17 +1418,17 @@ const styles = StyleSheet.create({
   newAccountButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginLeft: 8,
   },
   // Period Selector Modal Styles
   periodSelectorModal: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 20,
     margin: 20,
     width: '95%',
     maxHeight: '80%',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1627,8 +1442,8 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
-    backgroundColor: '#F8F9FA',
+    borderBottomColor: colors.notCompletelyLightGray,
+    backgroundColor: colors.notCompletelyLightGray,
   },
   periodSelectorContent: {
     padding: 20,
@@ -1656,31 +1471,31 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 6,
     borderRadius: 10,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     marginBottom: 12,
   },
   includeAllText: {
     fontSize: 14,
-    color: '#30353D',
+    color: colors.grayDark,
     fontWeight: '500',
   },
   calendarNavButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.notCompletelyLightGray,
   },
   calendarMonthYear: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
     textTransform: 'capitalize',
     marginBottom: 8,
   },
   calendarScrollHint: {
     fontSize: 12,
-    color: '#999999',
+    color: colors.grayMedium,
     fontStyle: 'italic',
   },
   calendarDaysHeader: {
@@ -1693,7 +1508,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     fontWeight: '600',
-    color: '#666666',
+    color: colors.grayMedium,
     paddingVertical: 8,
   },
   calendarGrid: {
@@ -1709,50 +1524,50 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   calendarDayCurrentMonth: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
   },
   calendarDaySelected: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: colors.tertiary,
   },
   calendarDayInRange: {
-    backgroundColor: '#F0F8FF',
+    backgroundColor: colors.tertiary,
   },
   calendarDayStart: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     borderRadius: 20,
   },
   calendarDayEnd: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     borderRadius: 20,
   },
   calendarDayText: {
     fontSize: 14,
-    color: '#CCCCCC',
+    color: colors.gray,
   },
   calendarDayTextCurrentMonth: {
-    color: '#30353D',
+    color: colors.grayDark,
   },
   calendarDayTextSelected: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontWeight: '600',
   },
   dateRangeInfo: {
     marginTop: 20,
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderRadius: 12,
     width: '100%',
   },
   dateRangeLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
+    color: colors.grayMedium,
     marginBottom: 4,
   },
   dateRangeText: {
     fontSize: 16,
-    color: '#30353D',
+    color: colors.grayDark,
     textAlign: 'center',
   },
   allPeriodsInfo: {
@@ -1764,14 +1579,14 @@ const styles = StyleSheet.create({
   allPeriodsTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
     marginTop: 16,
     marginBottom: 8,
     textAlign: 'center',
   },
   allPeriodsDescription: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -1783,7 +1598,7 @@ const styles = StyleSheet.create({
   },
   calendarLoadingText: {
     fontSize: 16,
-    color: '#666666',
+    color: colors.grayMedium,
     marginTop: 16,
     textAlign: 'center',
   },
@@ -1794,28 +1609,28 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   clearDatesText: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
     marginLeft: 6,
   },
   calendarInfo: {
     alignItems: 'center',
     paddingVertical: 12,
     marginBottom: 16,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   calendarInfoText: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
     textAlign: 'center',
     fontStyle: 'italic',
   },
@@ -1833,20 +1648,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
-  confirmButton: {
-    backgroundColor: '#3A7691',
-  },
-  cancelButtonText: {
-    color: '#666666',
-    fontWeight: '600',
-  },
-  confirmButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-
-});
+}) 
+};

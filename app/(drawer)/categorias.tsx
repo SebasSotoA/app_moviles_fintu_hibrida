@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
+import globalStyles from '../../src/shared/styles/globalStyles';
+import colors from '../../src/shared/styles/themes';
+import { lighten } from 'polished';
 
 export default function Categorias() {
   const navigation = useNavigation();
@@ -242,77 +245,25 @@ export default function Categorias() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D',
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#101215',
-  },
-  menuButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  placeholder: {
-    width: 38,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    gap: 10,
-  },
-  loadingText: {
-    fontSize: 14,
-    color: '#999999',
-  },
+const styles = { ...globalStyles, ...StyleSheet.create({
   summarySection: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: lighten(0.10, colors.notCompletelyLightGray),
     borderRadius: 16,
     padding: 24,
     marginVertical: 20,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   summaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#30353D',
+    color: colors.grayDark, // closest to #30353D
     marginBottom: 8,
     textAlign: 'center',
   },
   summaryText: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 20,
@@ -329,19 +280,19 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#3A7691',
+    color: colors.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   statDivider: {
     width: 1,
     height: 40,
-    backgroundColor: '#E9ECEF',
+    backgroundColor: colors.notCompletelyLightGray,
     marginHorizontal: 20,
   },
   section: {
@@ -353,56 +304,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#30353D',
-  },
+
   sectionCount: {
     fontSize: 12,
-    color: '#666666',
-    backgroundColor: '#F5F5F5',
+    color: colors.grayMedium,
+    backgroundColor: lighten(0.10, colors.notCompletelyLightGray),
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
   },
   categoriesContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     overflow: 'hidden',
-  },
-  categoryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#FFFFFF',
   },
   categoryItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  categoryIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  categoryInfo: {
-    flex: 1,
-  },
-  categoryName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
+    borderBottomColor: colors.notCompletelyLightGray, // very light border; not in theme, kept
   },
   monthlyAmount: {
     fontSize: 12,
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '500',
   },
   categoryActions: {
@@ -411,47 +335,34 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   monthlyBadge: {
-    backgroundColor: '#E8F4FD',
+    backgroundColor: colors.tertiary, // light info blue; closest theme is tertiary but a bit different; keeping
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
   },
   monthlyBadgeText: {
     fontSize: 10,
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '600',
     textTransform: 'uppercase',
   },
-  createCategoryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    backgroundColor: '#F8F9FA',
-    gap: 8,
-  },
-  createCategoryText: {
-    fontSize: 14,
-    color: '#3A7691',
-    fontWeight: '600',
-  },
   emptyCategorySection: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     padding: 40,
     alignItems: 'center',
     gap: 16,
   },
   emptyCategoryText: {
     fontSize: 14,
-    color: '#CCCCCC',
+    color: colors.gray,
     textAlign: 'center',
     lineHeight: 20,
   },
   createFirstCategoryButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
@@ -459,10 +370,10 @@ const styles = StyleSheet.create({
   createFirstCategoryText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   bottomSpace: {
     height: 30,
   },
-});
-
+}) 
+};

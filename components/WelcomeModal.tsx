@@ -12,6 +12,7 @@ import {
   Image,
 } from 'react-native';
 import FintuLogo from './FintuLogo';
+import colors from '../src/shared/styles/themes';
 
 const { width } = Dimensions.get('window');
 
@@ -136,7 +137,7 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
                   <Text style={styles.continueButtonText}>Comenzar</Text>
                   <Image
                     source={ICONS['arrow-forward']}
-                    style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                    style={{ width: 20, height: 20, tintColor: colors.white }}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
@@ -164,11 +165,11 @@ const styles = StyleSheet.create({
     maxWidth: 350,
   },
   modal: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 24,
     padding: 32,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 10,
@@ -181,25 +182,25 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#F0F8FF',
+    backgroundColor: colors.tertiary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
     borderWidth: 2,
-    borderColor: '#3A7691',
+    borderColor: colors.primary,
     overflow: 'hidden',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#30353D',
+    color: colors.grayDark,
     textAlign: 'center',
     marginBottom: 12,
     letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 18,
-    color: '#3A7691',
+    color: colors.primary,
     textAlign: 'center',
     fontWeight: '600',
     marginBottom: 16,
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 32,
@@ -217,12 +218,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 25,
     width: '100%',
-    shadowColor: '#3A7691',
+    shadowColor: colors.primary,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -234,8 +235,9 @@ const styles = StyleSheet.create({
   continueButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginRight: 8,
   },
-});
+})
+;
 

@@ -15,6 +15,8 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import type { DatabaseAccount } from '../../src/shared/services/database';
+import globalStyles from '../../src/shared/styles/globalStyles';
+import colors from '../../src/shared/styles/themes';
 
 // Mapa de íconos locales con nombres exactos de Ionicons
 const ICONS: Record<string, any> = {
@@ -485,48 +487,7 @@ export default function Transfer() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D',
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#101215',
-  },
-  backButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  placeholder: {
-    width: 38,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
+const styles = { ...globalStyles, ...StyleSheet.create({
   disabledAccountItem: {
     opacity: 0.5,
   },
@@ -535,12 +496,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   summaryCard: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderRadius: 16,
     padding: 16,
     marginTop: 16,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   transferFlow: {
     flexDirection: 'row',
@@ -554,13 +515,13 @@ const styles = StyleSheet.create({
   accountSummaryName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
     textAlign: 'center',
     marginBottom: 4,
   },
   accountSummaryBalance: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
     textAlign: 'center',
   },
   transferArrow: {
@@ -570,58 +531,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#E9ECEF',
+    borderTopColor: colors.notCompletelyLightGray,
   },
   transferAmountLabel: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     marginBottom: 4,
   },
   transferAmountValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#3A7691',
-  },
-  section: {
-    marginVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 12,
-  },
-  accountSelector: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-  },
-  accountSelectorLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  accountSelectorSymbol: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  accountSelectorInfo: {
-    flex: 1,
-  },
-  accountSelectorName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
-  },
-  accountSelectorBalance: {
-    fontSize: 14,
-    color: '#666666',
+    color: colors.primary,
   },
   amountInputContainer: {
     flexDirection: 'row',
@@ -630,43 +550,43 @@ const styles = StyleSheet.create({
   amountInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     borderRadius: 12,
     padding: 16,
     fontSize: 18,
     fontWeight: '600',
-    color: '#30353D',
-    backgroundColor: '#F8F9FA',
+    color: colors.grayDark,
+    backgroundColor: colors.notCompletelyLightGray,
     marginRight: 12,
     textAlign: 'right',
   },
   currencyLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#3A7691',
+    color: colors.primary,
     minWidth: 40,
   },
   balanceInfo: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     marginTop: 8,
     textAlign: 'right',
   },
   errorText: {
     fontSize: 14,
-    color: '#FF4D4F',
+    color: colors.error,
     marginTop: 8,
     textAlign: 'right',
     fontWeight: '600',
   },
   commentInput: {
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#30353D',
-    backgroundColor: '#F8F9FA',
+    color: colors.grayDark,
+    backgroundColor: colors.notCompletelyLightGray,
     textAlignVertical: 'top',
     minHeight: 80,
   },
@@ -674,12 +594,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     marginHorizontal: 20,
     marginBottom: 20,
     paddingVertical: 16,
     borderRadius: 25,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -688,132 +608,20 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
   },
-  disabledButton: {
-    backgroundColor: '#ADADAD',
-  },
   transferButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginRight: 8,
   },
-  // Modal Styles (reused)
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  accountSelectorModal: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    margin: 20,
-    maxHeight: '70%',
-    width: '90%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#30353D',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  accountsList: {
-    maxHeight: 300,
-  },
-  accountItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F8F9FA',
-  },
-  selectedAccountItem: {
-    backgroundColor: '#F0F8FF',
-  },
-  accountItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  accountItemSymbol: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  accountItemInfo: {
-    flex: 1,
-  },
-  accountItemName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
-  },
-  accountItemBalance: {
-    fontSize: 14,
-    color: '#666666',
-  },
-  // Confirm modal styles
-  confirmModal: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    width: '85%',
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-  },
-  confirmText: {
-    fontSize: 14,
-    color: '#30353D',
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  confirmActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-  },
-  confirmButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  cancelButton: {
-    backgroundColor: '#ECECEC',
-  },
   acceptButton: {
-    backgroundColor: '#3A7691',
-  },
-  cancelButtonText: {
-    color: '#30353D',
-    fontWeight: '600',
+    backgroundColor: colors.primary,
   },
   acceptButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontWeight: '600',
   },
-});
+}) 
+};
 
 

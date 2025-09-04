@@ -12,6 +12,7 @@ import {
     View,
 } from 'react-native';
 import { DatabaseAccount } from '../src/shared/services/database';
+import colors from '../src/shared/styles/themes';
 
 interface EditAccountModalProps {
   visible: boolean;
@@ -112,7 +113,7 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
               style={styles.closeButton}
               disabled={isLoading}
             >
-              <Ionicons name="close" size={24} color="#666" />
+              <Ionicons name="close" size={24} color={colors.grayMedium} />
             </TouchableOpacity>
           </View>
 
@@ -213,13 +214,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 20,
     margin: 20,
     maxHeight: '80%',
     width: '90%',
     maxWidth: 400,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -234,12 +235,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
+    borderBottomColor: colors.notCompletelyLightGray,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#30353D',
+    color: colors.grayDark,
   },
   closeButton: {
     padding: 4,
@@ -249,22 +250,22 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     padding: 20,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     marginHorizontal: 20,
     marginTop: 20,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   infoLabel: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
     marginBottom: 4,
   },
   infoValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
   },
   inputSection: {
     padding: 20,
@@ -272,17 +273,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
     marginBottom: 8,
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
   },
   symbolGrid: {
     flexDirection: 'row',
@@ -293,15 +294,15 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     borderWidth: 2,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     justifyContent: 'center',
     alignItems: 'center',
   },
   selectedSymbolButton: {
-    borderColor: '#3A7691',
-    backgroundColor: '#F0F8FF',
+    borderColor: colors.primary,
+    backgroundColor: colors.tertiary,
   },
   symbolText: {
     fontSize: 20,
@@ -310,11 +311,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   previewCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 16,
     borderWidth: 2,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -335,12 +336,12 @@ const styles = StyleSheet.create({
   previewName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
     marginBottom: 2,
   },
   previewCurrency: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
   },
   previewBalance: {
     alignItems: 'flex-end',
@@ -348,11 +349,11 @@ const styles = StyleSheet.create({
   previewBalanceAmount: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: colors.success,
   },
   previewBalanceCurrency: {
     fontSize: 10,
-    color: '#666666',
+    color: colors.grayMedium,
     marginTop: 1,
   },
   actions: {
@@ -360,35 +361,35 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E9ECEF',
+    borderTopColor: colors.notCompletelyLightGray,
   },
   cancelButton: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 25,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   cancelButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
+    color: colors.grayMedium,
   },
   saveButton: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 25,
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     alignItems: 'center',
   },
   disabledButton: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: colors.gray,
   },
   saveButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
 });

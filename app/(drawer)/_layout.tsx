@@ -4,6 +4,9 @@ import { Drawer } from 'expo-router/drawer';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { darken } from 'polished';
+import globalStyles from '@/src/shared/styles/components/_layout';
+import colors from '@/src/shared/styles/themes';
 
 interface CustomDrawerContentProps {
   state: any;
@@ -185,10 +188,10 @@ export default function DrawerLayout() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = { ...globalStyles, ...StyleSheet.create({
   drawerContainer: {
     flex: 1,
-    backgroundColor: '#30353D',
+    backgroundColor: colors.grayDark, // closest to #30353D
   },
   drawerContent: {
     flex: 1,
@@ -199,13 +202,13 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#101215',
+    borderBottomColor: colors.almostBlack, // no close match in theme; keeping custom shade
     marginBottom: 10,
   },
   userText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginTop: 10,
   },
   menuItems: {
@@ -218,15 +221,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   activeDrawerItem: {
-    backgroundColor: '#39515C',
+    backgroundColor: darken(0.1, colors.primary)
   },
   drawerLabel: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.white,
     marginLeft: 10,
   },
   activeDrawerLabel: {
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '600',
   },
-});
+}) 
+};

@@ -17,6 +17,9 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useApp } from '../../src/shared/context/AppProvider';
 import { DatabaseTransaction } from '../../src/shared/services/database';
 import { getTransactionsByCategory } from '../../src/shared/services/transactions';
+import globalStyles from '../../src/shared/styles/globalStyles';
+import colors from '../../src/shared/styles/themes';
+import { darken, lighten } from 'polished';
 
 interface TransactionWithAccount extends DatabaseTransaction {
   accountName: string;
@@ -56,7 +59,7 @@ export default function CategoryHistory() {
   const categoryId = params.categoryId as string | undefined;
   const categoryName = params.categoryName as string || 'Categoría';
   const categoryIcon = params.categoryIcon as string || 'list-outline';
-  const categoryColor = params.categoryColor as string || '#666666';
+  const categoryColor = params.categoryColor as string || colors.grayMedium;
   
   // Validez del ID de categoría
   const isValidCategoryId = !!categoryId;
@@ -181,7 +184,7 @@ export default function CategoryHistory() {
           ...transaction,
           accountName: account?.name || 'Cuenta desconocida',
           accountSymbol: account?.symbol || '💰',
-          accountColor: account?.color || '#666666'
+          accountColor: account?.color || colors.grayMedium
         };
       });
       
@@ -418,7 +421,7 @@ export default function CategoryHistory() {
         <View style={[styles.transactionIcon, { backgroundColor: categoryColor }]}>
           <Image
             source={ICONS[categoryIcon] || ICONS['list-outline']}
-            style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+            style={{ width: 20, height: 20, tintColor: colors.white }}
             resizeMode="contain"
           />
         </View>
@@ -459,7 +462,7 @@ export default function CategoryHistory() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -469,7 +472,7 @@ export default function CategoryHistory() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 24, height: 24, tintColor: '#FFFFFF' }}
+            style={{ width: 24, height: 24, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -503,13 +506,13 @@ export default function CategoryHistory() {
               <View style={styles.filterButtonContent}>
                 <Image
                   source={ICONS['card']}
-                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  style={{ width: 16, height: 16, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
                 <Text style={styles.filterButtonText}>{getAccountFilterText()}</Text>
                 <Image
                   source={ICONS['chevron-down']}
-                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  style={{ width: 16, height: 16, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
               </View>
@@ -525,7 +528,7 @@ export default function CategoryHistory() {
               <View style={styles.filterButtonContent}>
                 <Image
                   source={ICONS[filterMode === 'date' ? 'calendar' : 'trending-up']}
-                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  style={{ width: 16, height: 16, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
                 <Text style={styles.filterButtonText}>
@@ -533,7 +536,7 @@ export default function CategoryHistory() {
                 </Text>
                 <Image
                   source={ICONS['chevron-down']}
-                  style={{ width: 16, height: 16, tintColor: '#666666' }}
+                  style={{ width: 16, height: 16, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
               </View>
@@ -544,7 +547,7 @@ export default function CategoryHistory() {
         {/* Lista de transacciones */}
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#3A7691" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Cargando transacciones...</Text>
           </View>
         ) : filteredTransactions.length > 0 ? (
@@ -559,7 +562,7 @@ export default function CategoryHistory() {
           <View style={styles.emptyContainer}>
             <Image
               source={ICONS['receipt-outline']}
-              style={{ width: 60, height: 60, tintColor: '#CCCCCC' }}
+              style={{ width: 60, height: 60, tintColor: colors.gray }}
               resizeMode="contain"
             />
             <Text style={styles.emptyText}>
@@ -588,7 +591,7 @@ export default function CategoryHistory() {
         >
           <Image
             source={ICONS['add']}
-            style={{ width: 24, height: 24, tintColor: '#FFFFFF' }}
+            style={{ width: 24, height: 24, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -611,7 +614,7 @@ export default function CategoryHistory() {
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: '#666666' }}
+                  style={{ width: 24, height: 24, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -628,7 +631,7 @@ export default function CategoryHistory() {
                 <View style={styles.filterOptionContent}>
                   <Image
                     source={ICONS['apps']}
-                    style={{ width: 20, height: 20, tintColor: '#666666' }}
+                    style={{ width: 20, height: 20, tintColor: colors.grayMedium }}
                     resizeMode="contain"
                   />
                   <Text style={[
@@ -641,7 +644,7 @@ export default function CategoryHistory() {
                 {selectedAccount === 'all' && (
                   <Image
                     source={ICONS['checkmark']}
-                    style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                    style={{ width: 20, height: 20, tintColor: colors.primary }}
                     resizeMode="contain"
                   />
                 )}
@@ -670,7 +673,7 @@ export default function CategoryHistory() {
                   {selectedAccount === account.id && (
                     <Image
                       source={ICONS['checkmark']}
-                      style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                      style={{ width: 20, height: 20, tintColor: colors.primary }}
                       resizeMode="contain"
                     />
                   )}
@@ -698,7 +701,7 @@ export default function CategoryHistory() {
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: '#666666' }}
+                  style={{ width: 24, height: 24, tintColor: colors.grayMedium }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -736,7 +739,7 @@ export default function CategoryHistory() {
                 >
                   <Image
                     source={ICONS['trending-up']}
-                    style={{ width: 16, height: 16, tintColor: filterMode === 'amount' ? '#FFFFFF' : '#666666' }}
+                    style={{ width: 16, height: 16, tintColor: filterMode === 'date' ? '#FFFFFF' : '#666666' }}
                     resizeMode="contain"
                   />
                   <Text style={[
@@ -803,7 +806,7 @@ export default function CategoryHistory() {
                     {dateFilter === 'today' && (
                       <Image
                         source={ICONS['checkmark']}
-                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        style={{ width: 20, height: 20, tintColor: colors.primary }}
                         resizeMode="contain"
                       />
                     )}
@@ -832,7 +835,7 @@ export default function CategoryHistory() {
                     {dateFilter === 'week' && (
                       <Image
                         source={ICONS['checkmark']}
-                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        style={{ width: 20, height: 20, tintColor: colors.primary }}
                         resizeMode="contain"
                       />
                     )}
@@ -861,7 +864,7 @@ export default function CategoryHistory() {
                     {dateFilter === 'month' && (
                       <Image
                         source={ICONS['checkmark']}
-                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        style={{ width: 20, height: 20, tintColor: colors.primary }}
                         resizeMode="contain"
                       />
                     )}
@@ -890,7 +893,7 @@ export default function CategoryHistory() {
                     {dateFilter === 'custom' && (
                       <Image
                         source={ICONS['checkmark']}
-                        style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                        style={{ width: 20, height: 20, tintColor: colors.primary }}
                         resizeMode="contain"
                       />
                     )}
@@ -903,7 +906,7 @@ export default function CategoryHistory() {
                 <View style={styles.infoBox}>
                   <Image
                     source={ICONS['information-circle']}
-                    style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+                    style={{ width: 20, height: 20, tintColor: colors.primary }}
                     resizeMode="contain"
                   />
                   <Text style={styles.infoText}>
@@ -919,62 +922,18 @@ export default function CategoryHistory() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D',
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-  },
-  backButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 15,
-  },
+const styles = { ...globalStyles, ...StyleSheet.create({
   headerButton: {
     padding: 5,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   totalSection: {
     alignItems: 'center',
     paddingVertical: 30,
-    backgroundColor: '#FFFFFF',
-  },
-  totalAmount: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333333',
+    backgroundColor: colors.white,
   },
   totalSubtitle: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     marginTop: 8,
     fontStyle: 'italic',
   },
@@ -983,19 +942,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: colors.notCompletelyLightGray, // no exact token; close to notCompletelyLightGray
   },
   filterGroup: {
     flex: 1,
     marginHorizontal: 5,
   },
   filterButton: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: lighten(0.10, colors.notCompletelyLightGray),
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
@@ -1007,7 +966,7 @@ const styles = StyleSheet.create({
   filterButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333333',
+    color: colors.almostBlack,
     flex: 1,
     textAlign: 'center',
   },
@@ -1020,10 +979,10 @@ const styles = StyleSheet.create({
   dateHeader: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#666666',
+    color: colors.grayMedium,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray, // no exact token; subtle light gray
   },
   transactionItem: {
     flexDirection: 'row',
@@ -1031,9 +990,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: colors.notCompletelyLightGray, // no exact token
   },
   transactionLeft: {
     flexDirection: 'row',
@@ -1054,7 +1013,7 @@ const styles = StyleSheet.create({
   transactionDescription: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333333',
+    color: colors.almostBlack,
     marginBottom: 4,
   },
   accountInfo: {
@@ -1068,7 +1027,7 @@ const styles = StyleSheet.create({
   },
   transactionAccount: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
   },
   transactionAmount: {
     fontSize: 16,
@@ -1080,17 +1039,6 @@ const styles = StyleSheet.create({
   incomeAmount: {
     color: '#4ECDC4',
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 50,
-  },
-  loadingText: {
-    marginTop: 15,
-    fontSize: 16,
-    color: '#666666',
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -1100,12 +1048,12 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 15,
     fontSize: 16,
-    color: '#666666',
+    color: colors.grayMedium,
     textAlign: 'center',
     paddingHorizontal: 30,
   },
   resetFilterButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
@@ -1114,7 +1062,7 @@ const styles = StyleSheet.create({
   resetFilterButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   fab: {
     position: 'absolute',
@@ -1126,7 +1074,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFD700',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -1135,20 +1083,13 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
   },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   modalContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 20,
     margin: 20,
     maxHeight: '80%',
     width: '90%',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 10,
@@ -1157,28 +1098,12 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 10,
   },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  closeButton: {
-    padding: 4,
-  },
   modalBody: {
     padding: 20,
   },
   modeSelector: {
     flexDirection: 'row',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F8F9FA', // no exact token
     borderRadius: 12,
     padding: 4,
     marginBottom: 20,
@@ -1194,15 +1119,15 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   activeModeButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
   },
   modeButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
+    color: colors.grayMedium,
   },
   activeModeButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
   },
   filterOption: {
     flexDirection: 'row',
@@ -1212,12 +1137,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 12,
     marginBottom: 8,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray
   },
   selectedFilterOption: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: darken(0.15, colors.notCompletelyLightGray), // no exact token
     borderWidth: 1,
-    borderColor: '#3A7691',
+    borderColor: colors.primary,
   },
   filterOptionContent: {
     flexDirection: 'row',
@@ -1228,24 +1153,25 @@ const styles = StyleSheet.create({
   filterOptionText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333333',
+    color: colors.almostBlack,
   },
   selectedFilterOptionText: {
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '600',
   },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#E3F2FD',
+    backgroundColor: darken(0.15, colors.notCompletelyLightGray), // no exact token
     padding: 16,
     borderRadius: 12,
     gap: 12,
   },
   infoText: {
     fontSize: 14,
-    color: '#3A7691',
+    color: colors.primary,
     flex: 1,
     lineHeight: 20,
   },
-});
+}) 
+};

@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import colors from '../src/shared/styles/themes';
 
 export default function Index() {
 
@@ -19,9 +20,9 @@ export default function Index() {
       flex: 1, 
       justifyContent: 'center', 
       alignItems: 'center', 
-      backgroundColor: '#30353D' 
+      backgroundColor: colors.grayDark  
     }}>
-      <ActivityIndicator size="large" color="#3A7691" />
+      <ActivityIndicator size="large" color={colors.primary} />
     </View>
   );
 }

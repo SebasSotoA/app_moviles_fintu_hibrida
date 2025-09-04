@@ -16,6 +16,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Calculator from '../../components/Calculator';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { TransactionType } from '../../types/transaction';
+import globalStyles from '@/src/shared/styles/globalStyles';
+import colors from '@/src/shared/styles/themes';
 
 export default function AddTransaction() {
   const { currentAccount, accounts } = useApp();
@@ -383,116 +385,43 @@ export default function AddTransaction() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D',
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#101215',
-  },
-  backButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  placeholder: {
-    width: 38,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  section: {
-    marginVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 12,
-  },
+const styles = { ...globalStyles, ...StyleSheet.create({
   dateSelector: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F8F9FA', // no close match in theme; keeping subtle light gray
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   dateText: {
     fontSize: 16,
-    color: '#30353D',
+    color: colors.grayDark, // closest to #30353D
     fontWeight: '500',
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 25,
-    padding: 4,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  activeToggleButton: {
-    backgroundColor: '#3A7691',
-  },
-  toggleText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666666',
-  },
-  activeToggleText: {
-    color: '#FFFFFF',
   },
   amountContainer: {
     padding: 20,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F8F9FA', // no close match in theme; keeping
     borderRadius: 12,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#3A7691',
+    borderColor: colors.primary,
   },
   amountText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#3A7691',
+    color: colors.primary,
   },
   noteInput: {
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#30353D',
-    backgroundColor: '#F8F9FA',
+    color: colors.grayDark, // closest to #30353D
+    backgroundColor: '#F8F9FA', // no close match in theme; keeping
     textAlignVertical: 'top',
     minHeight: 80,
   },
@@ -501,12 +430,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     marginHorizontal: 20,
     marginBottom: 20,
     paddingVertical: 16,
     borderRadius: 25,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -518,14 +447,8 @@ const styles = StyleSheet.create({
   continueButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginRight: 8,
-  },
-  disabledButton: {
-    backgroundColor: '#ADADAD',
-  },
-  disabledButtonText: {
-    color: '#FFFFFF',
   },
   // Date Picker Modal Styles
   datePickerOverlay: {
@@ -534,17 +457,17 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // overlay uses transparency; not in theme
     justifyContent: 'center',
     alignItems: 'center',
   },
   datePickerModal: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 20,
     padding: 20,
     margin: 20,
     width: '80%',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -557,7 +480,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#30353D',
+    color: colors.grayDark,
     marginBottom: 20,
   },
   datePickerControls: {
@@ -567,22 +490,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   datePickerButton: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F8F9FA', // no close match in theme; keeping
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   datePickerButtonText: {
     fontSize: 14,
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '500',
   },
   selectedDateText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
   },
   datePickerActions: {
     flexDirection: 'row',
@@ -596,131 +519,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   todayButton: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F8F9FA', // no close match in theme; keeping
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   todayButtonText: {
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '600',
-  },
-  confirmButton: {
-    backgroundColor: '#3A7691',
-  },
-  confirmButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  // Account Selector Styles
-  accountSelector: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-  },
-  accountSelectorLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  accountSelectorSymbol: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  accountSelectorInfo: {
-    flex: 1,
-  },
-  accountSelectorName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
-  },
-  accountSelectorBalance: {
-    fontSize: 14,
-    color: '#666666',
-  },
-  // Modal Styles (reused from dashboard)
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  accountSelectorModal: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    margin: 20,
-    maxHeight: '70%',
-    width: '90%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
   },
-  closeButton: {
-    padding: 4,
-  },
-  accountsList: {
-    maxHeight: 300,
-  },
-  accountItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F8F9FA',
-  },
-  selectedAccountItem: {
-    backgroundColor: '#F0F8FF',
-  },
-  accountItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  accountItemSymbol: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  accountItemInfo: {
-    flex: 1,
-  },
-  accountItemName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
-  },
-  accountItemBalance: {
-    fontSize: 14,
-    color: '#666666',
-  },
-});
-
+}) 
+};

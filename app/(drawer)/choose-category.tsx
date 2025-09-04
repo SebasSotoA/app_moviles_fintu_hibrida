@@ -14,6 +14,8 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { TransactionType } from '../../types/transaction';
+import globalStyles from '../../src/shared/styles/globalStyles';
+import colors from '../../src/shared/styles/themes';
 
 // Mapa de íconos locales con nombres exactos de Ionicons
 const ICONS: Record<string, any> = {
@@ -132,7 +134,7 @@ export default function ChooseCategory() {
       <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
         <Image
           source={ICONS[category.icon as string]}
-          style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+          style={{ width: 28, height: 28, tintColor: colors.white }}
           resizeMode="contain"
         />
       </View>
@@ -140,7 +142,7 @@ export default function ChooseCategory() {
       {selectedCategory === category.id && (
         <Image
           source={ICONS['checkmark-circle']}
-          style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+          style={{ width: 24, height: 24, tintColor: colors.primary }}
           resizeMode="contain"
         />
       )}
@@ -149,7 +151,7 @@ export default function ChooseCategory() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -159,7 +161,7 @@ export default function ChooseCategory() {
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: '#FFFFFF' }}
+            style={{ width: 28, height: 28, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -179,7 +181,7 @@ export default function ChooseCategory() {
             <Text style={styles.summaryLabel}>Tipo:</Text>
             <Text style={[
               styles.summaryValue,
-              { color: transactionType === 'GASTO' ? '#FF6B6B' : '#4CAF50' }
+              { color: transactionType === 'GASTO' ? colors.error : colors.success }
             ]}>
               {transactionType}
             </Text>
@@ -211,7 +213,7 @@ export default function ChooseCategory() {
           >
             <Image
               source={ICONS['add-circle-outline']}
-              style={{ width: 24, height: 24, tintColor: '#3A7691' }}
+              style={{ width: 24, height: 24, tintColor: colors.primary }}
               resizeMode="contain"
             />
             <Text style={styles.createCategoryText}>Crear Nueva Categoría</Text>
@@ -229,7 +231,7 @@ export default function ChooseCategory() {
           disabled={!selectedCategory || isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
+            <ActivityIndicator size="small" color={colors.white} />
           ) : (
             <>
               <Text style={[
@@ -240,7 +242,7 @@ export default function ChooseCategory() {
               </Text>
               <Image
                 source={ICONS['checkmark']}
-                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                style={{ width: 20, height: 20, tintColor: colors.white }}
                 resizeMode="contain"
               />
             </>
@@ -251,52 +253,14 @@ export default function ChooseCategory() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D',
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#101215',
-  },
-  backButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  placeholder: {
-    width: 38,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+const styles = { ...globalStyles, ...StyleSheet.create({
   summaryContainer: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: colors.notCompletelyLightGray,
     margin: 20,
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -306,23 +270,13 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     fontWeight: '500',
   },
   summaryValue: {
     fontSize: 16,
-    color: '#30353D',
+    color: colors.grayDark,
     fontWeight: '600',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#30353D',
-    marginBottom: 20,
   },
   categoriesGrid: {
     gap: 12,
@@ -331,57 +285,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#E9ECEF',
+    borderColor: colors.notCompletelyLightGray,
     marginBottom: 8,
   },
   selectedCategoryItem: {
-    borderColor: '#3A7691',
-    backgroundColor: '#F0F8FF',
-  },
-  categoryIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  categoryName: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-  },
-  createCategoryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    marginVertical: 20,
-    borderWidth: 2,
-    borderColor: '#3A7691',
-    borderStyle: 'dashed',
-    borderRadius: 12,
-  },
-  createCategoryText: {
-    fontSize: 16,
-    color: '#3A7691',
-    fontWeight: '600',
-    marginLeft: 8,
+    borderColor: colors.primary,
+    backgroundColor: colors.tertiary,
   },
   confirmButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     marginHorizontal: 20,
     marginBottom: 20,
     paddingVertical: 16,
     borderRadius: 25,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -393,14 +316,8 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginRight: 8,
   },
-  disabledButton: {
-    backgroundColor: '#ADADAD',
-  },
-  disabledButtonText: {
-    color: '#FFFFFF',
-  },
-});
-
+}) 
+};

@@ -16,6 +16,9 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import EditAccountModal from '../../components/EditAccountModal';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { DatabaseAccount } from '../../src/shared/services/database';
+import globalStyles from '../../src/shared/styles/globalStyles';
+import colors from '../../src/shared/styles/themes';
+import { darken } from 'polished';
 
 // Mapa de íconos locales siguiendo el patrón de add-transaction.tsx
 const ICONS: Record<string, any> = {
@@ -113,7 +116,7 @@ export default function Cuentas() {
           >
             <Image
             source={ICONS['create-outline']}
-            style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+            style={{ width: 20, height: 20, tintColor: colors.primary }}
             resizeMode="contain"
             />
           </TouchableOpacity>
@@ -133,7 +136,7 @@ export default function Cuentas() {
         <View style={styles.activeIndicator}>
           <Image
             source={ICONS['checkmark-circle']}
-            style={{ width: 20, height: 20, tintColor: '#3A7691' }}
+            style={{ width: 20, height: 20, tintColor: colors.primary }}
             resizeMode="contain"
           />
           <Text style={styles.activeText}>Cuenta activa</Text>
@@ -144,7 +147,7 @@ export default function Cuentas() {
         <View style={styles.excludedIndicator}>
           <Image
             source={ICONS['eye-off-outline']}
-            style={{ width: 16, height: 16, tintColor: '#999999' }}
+            style={{ width: 16, height: 16, tintColor: colors.gray }}
             resizeMode="contain"
           />
           <Text style={styles.excludedText}>Excluida del total</Text>
@@ -156,7 +159,7 @@ export default function Cuentas() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3A7691" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>Cargando cuentas...</Text>
       </View>
     );
@@ -164,7 +167,7 @@ export default function Cuentas() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#30353D" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -174,7 +177,7 @@ export default function Cuentas() {
         <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
           <Image
             source={ICONS['menu']}
-            style={{ width: 35, height: 35, tintColor: '#FFFFFF' }}
+            style={{ width: 35, height: 35, tintColor: colors.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -205,7 +208,7 @@ export default function Cuentas() {
             >
               <Image
                 source={ICONS['swap-horizontal']}
-                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                style={{ width: 20, height: 20, tintColor: colors.white }}
                 resizeMode="contain"
               />
               <Text style={styles.actionButtonText}>Transferir</Text>
@@ -217,7 +220,7 @@ export default function Cuentas() {
             >
               <Image
                 source={ICONS['add-circle']}
-                style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+                style={{ width: 20, height: 20, tintColor: colors.white }}
                 resizeMode="contain"
               />
               <Text style={styles.actionButtonText}>Añadir</Text>
@@ -236,7 +239,7 @@ export default function Cuentas() {
               <View style={styles.emptyState}>
                 <Image
                   source={ICONS['wallet-outline']}
-                  style={{ width: 60, height: 60, tintColor: '#CCCCCC' }}
+                  style={{ width: 60, height: 60, tintColor: colors.gray }}
                   resizeMode="contain"
                 />
                 <Text style={styles.emptyStateText}>No tienes cuentas creadas</Text>
@@ -261,82 +264,21 @@ export default function Cuentas() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#30353D',
-  },
-  statusBarArea: {
-    backgroundColor: '#30353D',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#30353D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#101215',
-  },
-  menuButton: {
-    padding: 5,
-    width: 38,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  placeholder: {
-    width: 38,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    gap: 10,
-  },
-  loadingText: {
-    fontSize: 14,
-    color: '#999999',
-  },
-  totalSection: {
-    backgroundColor: '#F8F9FA',
-    borderRadius: 16,
-    padding: 24,
-    marginVertical: 20,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-  },
+const styles = { ...globalStyles, ...StyleSheet.create({
   totalLabel: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.grayMedium,
     marginBottom: 8,
   },
   totalAmount: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#30353D',
+    color: colors.grayDark,
     marginBottom: 4,
   },
   totalSubtext: {
     fontSize: 12,
-    color: '#999999',
+    color: colors.gray,
   },
   currencyRow: {
     width: '100%',
@@ -345,21 +287,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#ECECEC',
+    borderBottomColor: colors.notCompletelyLightGray,
   },
   currencyCode: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#30353D',
+    color: colors.grayDark,
   },
   currencyTotal: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#3A7691',
+    color: colors.primary,
   },
   currencyCount: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
   },
   actionButtons: {
     flexDirection: 'row',
@@ -376,35 +318,29 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   transferButton: {
-    backgroundColor: '#39515C',
+    backgroundColor: darken(0.15, colors.primary),
   },
   addButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
   },
   actionButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   accountsSection: {
     marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#30353D',
-    marginBottom: 16,
   },
   accountsList: {
     gap: 12,
   },
   accountCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 20,
     borderWidth: 2,
-    borderColor: '#E9ECEF',
-    shadowColor: '#000',
+    borderColor: colors.notCompletelyLightGray,
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -414,8 +350,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   activeAccountCard: {
-    borderColor: '#3A7691',
-    backgroundColor: '#F0F8FF',
+    borderColor: colors.primary,
+    backgroundColor: colors.tertiary,
   },
   accountHeader: {
     flexDirection: 'row',
@@ -429,21 +365,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
   },
-  symbolText: {
-    fontSize: 20,
-  },
-  accountInfo: {
-    flex: 1,
-  },
-  accountName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#30353D',
-    marginBottom: 2,
-  },
   accountCurrency: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
   },
   accountActions: {
     flexDirection: 'row',
@@ -453,9 +377,9 @@ const styles = StyleSheet.create({
   editButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#F0F8FF',
+    backgroundColor: colors.tertiary,
     borderWidth: 1,
-    borderColor: '#3A7691',
+    borderColor: colors.primary,
   },
   accountBalance: {
     alignItems: 'flex-end',
@@ -466,7 +390,7 @@ const styles = StyleSheet.create({
   },
   balanceCurrency: {
     fontSize: 12,
-    color: '#666666',
+    color: colors.grayMedium,
     marginTop: 2,
   },
   activeIndicator: {
@@ -475,12 +399,12 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E9ECEF',
+    borderTopColor: colors.notCompletelyLightGray,
     gap: 6,
   },
   activeText: {
     fontSize: 12,
-    color: '#3A7691',
+    color: colors.primary,
     fontWeight: '500',
   },
   excludedIndicator: {
@@ -491,7 +415,7 @@ const styles = StyleSheet.create({
   },
   excludedText: {
     fontSize: 11,
-    color: '#999999',
+    color: colors.gray,
     fontStyle: 'italic',
   },
   emptyState: {
@@ -501,11 +425,11 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 16,
-    color: '#CCCCCC',
+    color: colors.gray,
     textAlign: 'center',
   },
   createFirstAccountButton: {
-    backgroundColor: '#3A7691',
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 20,
@@ -513,6 +437,7 @@ const styles = StyleSheet.create({
   createFirstAccountText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
-});
+}) 
+};
