@@ -1,18 +1,18 @@
 import { BlurView } from 'expo-blur';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   Animated,
   Dimensions,
   Easing,
+  Image,
   Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
+import { colors } from '../src/shared/styles/tokens';
 import FintuLogo from './FintuLogo';
-import colors from '../src/shared/styles/themes';
 
 const { width } = Dimensions.get('window');
 
@@ -40,19 +40,19 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
           toValue: 1,
           duration: 600,
           easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(scaleAnim, {
           toValue: 1,
           duration: 600,
           easing: Easing.out(Easing.back(1.2)),
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(slideAnim, {
           toValue: 0,
           duration: 500,
           easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ]).start();
     } else {
@@ -61,7 +61,7 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
       scaleAnim.setValue(0.8);
       slideAnim.setValue(50);
     }
-  }, [visible]);
+  }, [visible, fadeAnim, scaleAnim, slideAnim]);
 
   const handleClose = () => {
     // Animación de salida
@@ -69,12 +69,12 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
       Animated.timing(scaleAnim, {
         toValue: 0.8,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
     ]).start(() => {
       onClose();
@@ -137,7 +137,7 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
                   <Text style={styles.continueButtonText}>Comenzar</Text>
                   <Image
                     source={ICONS['arrow-forward']}
-                    style={{ width: 20, height: 20, tintColor: colors.white }}
+                    style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
@@ -165,11 +165,11 @@ const styles = StyleSheet.create({
     maxWidth: 350,
   },
   modal: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.neutral.white,
     borderRadius: 24,
     padding: 32,
     alignItems: 'center',
-    shadowColor: colors.black,
+    shadowColor: colors.neutral.black,
     shadowOffset: {
       width: 0,
       height: 10,
@@ -182,25 +182,25 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.tertiary,
+    backgroundColor: colors.primary[50],
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
     borderWidth: 2,
-    borderColor: colors.primary,
+    borderColor: colors.primary[500],
     overflow: 'hidden',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colors.grayDark,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: 12,
     letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 18,
-    color: colors.primary,
+    color: colors.background.toggleUnpressed,
     textAlign: 'center',
     fontWeight: '600',
     marginBottom: 16,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: colors.grayMedium,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 32,
@@ -218,12 +218,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary[500],
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 25,
     width: '100%',
-    shadowColor: colors.primary,
+    shadowColor: colors.primary[500],
     shadowOffset: {
       width: 0,
       height: 4,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   continueButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.white,
+    color: colors.neutral.white,
     marginRight: 8,
   },
 })

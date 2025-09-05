@@ -372,6 +372,34 @@ class WebDatabaseService implements IDatabaseService {
 
     return Object.values(stats).filter((stat: any) => stat.totalAmount > 0);
   }
+
+  // Método específico para eliminar transacciones
+  async deleteTransaction(transactionId: string): Promise<void> {
+    const data = await this.getData();
+    const transactionIndex = data.transactions.findIndex((tx: any) => tx.id === transactionId);
+    
+    if (transactionIndex === -1) {
+      throw new Error(`Transacción con ID ${transactionId} no encontrada`);
+    }
+
+    const transaction = data.transactions[transactionIndex];
+    const now = new Date().toISOString();
+
+    // Revertir el efecto en el balance de la cuenta
+    const accountIndex = data.accounts.findIndex((acc: any) => acc.id === transaction.accountId);
+    if (accountIndex !== -1) {
+      const balanceChange = transaction.type === 'INGRESO' ? -transaction.amount : transaction.amount; // revertir el impacto original
+      data.accounts[accountIndex].balance += balanceChange;
+      data.accounts[accountIndex].updatedAt = now;
+    }
+
+    // Eliminar la transacción
+    data.transactions.splice(transactionIndex, 1);
+
+    // Guardar los datos actualizados
+    await this.saveData(data);
+  }
+
 }
 
 const databaseService = new WebDatabaseService();

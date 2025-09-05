@@ -5,14 +5,14 @@ import {
     Modal,
     Platform,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View,
 } from 'react-native';
+import { useStyles } from '../src/shared/hooks';
 import { DatabaseAccount } from '../src/shared/services/database';
-import colors from '../src/shared/styles/themes';
+import { colors, spacing, typography } from '../src/shared/styles/tokens';
 
 interface EditAccountModalProps {
   visible: boolean;
@@ -32,6 +32,194 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
   const [name, setName] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('💰');
   const [isLoading, setIsLoading] = useState(false);
+
+  const editAccountModalStyles = useStyles(() => ({
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      backgroundColor: colors.neutral.white,
+      borderRadius: 20,
+      margin: 20,
+      maxHeight: '80%',
+      width: '90%',
+      maxWidth: 400,
+      shadowColor: colors.neutral.black,
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.light,
+    },
+    title: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.text.primary,
+    },
+    closeButton: {
+      padding: 4,
+    },
+    content: {
+      maxHeight: 400,
+    },
+    infoSection: {
+      padding: 20,
+      backgroundColor: colors.background.surface,
+      marginHorizontal: 20,
+      marginTop: 20,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+    },
+    infoLabel: {
+      fontSize: typography.fontSize.xs,
+      color: colors.text.tertiary,
+      marginBottom: 4,
+    },
+    infoValue: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.primary,
+    },
+    inputSection: {
+      padding: 20,
+    },
+    label: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.primary,
+      marginBottom: 8,
+    },
+    textInput: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: 12,
+      paddingHorizontal: spacing[4],
+      paddingVertical: spacing[3],
+      fontSize: typography.fontSize.base,
+      backgroundColor: colors.neutral.white,
+    },
+    symbolGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    symbolButton: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.background.surface,
+      borderWidth: 2,
+      borderColor: colors.border.light,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    selectedSymbolButton: {
+      borderColor: colors.primary[500],
+      backgroundColor: colors.primary[50],
+    },
+    symbolText: {
+      fontSize: typography.fontSize.lg,
+      color: colors.text.primary,
+    },
+    previewSection: {
+      padding: 20,
+    },
+    previewCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.background.surface,
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+    },
+    previewSymbol: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    previewSymbolText: {
+      fontSize: typography.fontSize.lg,
+      color: colors.neutral.white,
+    },
+    previewInfo: {
+      flex: 1,
+    },
+    previewName: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.primary,
+    },
+    previewCurrency: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.secondary,
+    },
+    previewBalance: {
+      alignItems: 'flex-end',
+    },
+    previewBalanceAmount: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.text.primary,
+    },
+    previewBalanceCurrency: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.secondary,
+    },
+    actions: {
+      flexDirection: 'row',
+      padding: 20,
+      gap: 12,
+    },
+    cancelButton: {
+      flex: 1,
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 12,
+      backgroundColor: colors.background.surface,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      alignItems: 'center',
+    },
+    cancelButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.text.secondary,
+    },
+    saveButton: {
+      flex: 1,
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 12,
+      backgroundColor: colors.primary[500],
+      alignItems: 'center',
+    },
+    disabledButton: {
+      backgroundColor: colors.text.tertiary,
+    },
+    saveButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.neutral.white,
+    },
+  }));
 
   React.useEffect(() => {
     if (account && visible) {
@@ -103,34 +291,34 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
       animationType="slide"
       onRequestClose={handleClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
+      <View style={editAccountModalStyles.overlay}>
+        <View style={editAccountModalStyles.modalContainer}>
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Editar Cuenta</Text>
+          <View style={editAccountModalStyles.header}>
+            <Text style={editAccountModalStyles.title}>Editar Cuenta</Text>
             <TouchableOpacity 
               onPress={handleClose} 
-              style={styles.closeButton}
+              style={editAccountModalStyles.closeButton}
               disabled={isLoading}
             >
-              <Ionicons name="close" size={24} color={colors.grayMedium} />
+              <Ionicons name="close" size={24} color={colors.text.tertiary} />
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <ScrollView style={editAccountModalStyles.content} showsVerticalScrollIndicator={false}>
             {/* Información no editable */}
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>Saldo actual (no editable)</Text>
-              <Text style={styles.infoValue}>
+            <View style={editAccountModalStyles.infoSection}>
+              <Text style={editAccountModalStyles.infoLabel}>Saldo actual (no editable)</Text>
+              <Text style={editAccountModalStyles.infoValue}>
                 {account.balance.toLocaleString('es-CO')} {account.currency}
               </Text>
             </View>
 
             {/* Campo de nombre */}
-            <View style={styles.inputSection}>
-              <Text style={styles.label}>Nombre de la cuenta *</Text>
+            <View style={editAccountModalStyles.inputSection}>
+              <Text style={editAccountModalStyles.label}>Nombre de la cuenta *</Text>
               <TextInput
-                style={styles.textInput}
+                style={editAccountModalStyles.textInput}
                 value={name}
                 onChangeText={setName}
                 placeholder="Ej: Cuenta de ahorros"
@@ -140,62 +328,62 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
             </View>
 
             {/* Selector de símbolo */}
-            <View style={styles.inputSection}>
-              <Text style={styles.label}>Símbolo de la cuenta *</Text>
-              <View style={styles.symbolGrid}>
+            <View style={editAccountModalStyles.inputSection}>
+              <Text style={editAccountModalStyles.label}>Símbolo de la cuenta *</Text>
+              <View style={editAccountModalStyles.symbolGrid}>
                 {AVAILABLE_SYMBOLS.map((symbol) => (
                   <TouchableOpacity
                     key={symbol}
                     style={[
-                      styles.symbolButton,
-                      selectedSymbol === symbol && styles.selectedSymbolButton,
+                      editAccountModalStyles.symbolButton,
+                      selectedSymbol === symbol && editAccountModalStyles.selectedSymbolButton,
                     ]}
                     onPress={() => setSelectedSymbol(symbol)}
                     disabled={isLoading}
                   >
-                    <Text style={styles.symbolText}>{symbol}</Text>
+                    <Text style={editAccountModalStyles.symbolText}>{symbol}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </View>
 
             {/* Preview */}
-            <View style={styles.previewSection}>
-              <Text style={styles.label}>Vista previa</Text>
-              <View style={styles.previewCard}>
-                <View style={[styles.previewSymbol, { backgroundColor: account.color }]}>
-                  <Text style={styles.previewSymbolText}>{selectedSymbol}</Text>
+            <View style={editAccountModalStyles.previewSection}>
+              <Text style={editAccountModalStyles.label}>Vista previa</Text>
+              <View style={editAccountModalStyles.previewCard}>
+                <View style={[editAccountModalStyles.previewSymbol, { backgroundColor: account.color }]}>
+                  <Text style={editAccountModalStyles.previewSymbolText}>{selectedSymbol}</Text>
                 </View>
-                <View style={styles.previewInfo}>
-                  <Text style={styles.previewName}>{name || 'Nombre de la cuenta'}</Text>
-                  <Text style={styles.previewCurrency}>{account.currency}</Text>
+                <View style={editAccountModalStyles.previewInfo}>
+                  <Text style={editAccountModalStyles.previewName}>{name || 'Nombre de la cuenta'}</Text>
+                  <Text style={editAccountModalStyles.previewCurrency}>{account.currency}</Text>
                 </View>
-                <View style={styles.previewBalance}>
-                  <Text style={styles.previewBalanceAmount}>
+                <View style={editAccountModalStyles.previewBalance}>
+                  <Text style={editAccountModalStyles.previewBalanceAmount}>
                     {account.balance.toLocaleString('es-CO')}
                   </Text>
-                  <Text style={styles.previewBalanceCurrency}>{account.currency}</Text>
+                  <Text style={editAccountModalStyles.previewBalanceCurrency}>{account.currency}</Text>
                 </View>
               </View>
             </View>
           </ScrollView>
 
           {/* Botones de acción */}
-          <View style={styles.actions}>
+          <View style={editAccountModalStyles.actions}>
             <TouchableOpacity 
-              style={styles.cancelButton} 
+              style={editAccountModalStyles.cancelButton} 
               onPress={handleClose}
               disabled={isLoading}
             >
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
+              <Text style={editAccountModalStyles.cancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.saveButton, isLoading && styles.disabledButton]} 
+              style={[editAccountModalStyles.saveButton, isLoading && editAccountModalStyles.disabledButton]} 
               onPress={handleSave}
               disabled={isLoading}
             >
-              <Text style={styles.saveButtonText}>
+              <Text style={editAccountModalStyles.saveButtonText}>
                 {isLoading ? 'Guardando...' : 'Guardar'}
               </Text>
             </TouchableOpacity>
@@ -205,191 +393,3 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    margin: 20,
-    maxHeight: '80%',
-    width: '90%',
-    maxWidth: 400,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.notCompletelyLightGray,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.grayDark,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  content: {
-    maxHeight: 400,
-  },
-  infoSection: {
-    padding: 20,
-    backgroundColor: colors.notCompletelyLightGray,
-    marginHorizontal: 20,
-    marginTop: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: colors.grayMedium,
-    marginBottom: 4,
-  },
-  infoValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.grayDark,
-  },
-  inputSection: {
-    padding: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.grayDark,
-    marginBottom: 8,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: colors.white,
-  },
-  symbolGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  symbolButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.notCompletelyLightGray,
-    borderWidth: 2,
-    borderColor: colors.notCompletelyLightGray,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedSymbolButton: {
-    borderColor: colors.primary,
-    backgroundColor: colors.tertiary,
-  },
-  symbolText: {
-    fontSize: 20,
-  },
-  previewSection: {
-    padding: 20,
-  },
-  previewCard: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 2,
-    borderColor: colors.notCompletelyLightGray,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  previewSymbol: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  previewSymbolText: {
-    fontSize: 16,
-  },
-  previewInfo: {
-    flex: 1,
-  },
-  previewName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.grayDark,
-    marginBottom: 2,
-  },
-  previewCurrency: {
-    fontSize: 12,
-    color: colors.grayMedium,
-  },
-  previewBalance: {
-    alignItems: 'flex-end',
-  },
-  previewBalanceAmount: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: colors.success,
-  },
-  previewBalanceCurrency: {
-    fontSize: 10,
-    color: colors.grayMedium,
-    marginTop: 1,
-  },
-  actions: {
-    flexDirection: 'row',
-    padding: 20,
-    gap: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.notCompletelyLightGray,
-  },
-  cancelButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 25,
-    backgroundColor: colors.notCompletelyLightGray,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.notCompletelyLightGray,
-  },
-  cancelButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.grayMedium,
-  },
-  saveButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 25,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-  },
-  disabledButton: {
-    backgroundColor: colors.gray,
-  },
-  saveButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.white,
-  },
-});

@@ -1,26 +1,138 @@
 import { DrawerActions } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
   ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
-import styles from '@/src/shared/styles/components/categorias';
-import colors from '../../src/shared/styles/themes';
-import { lighten } from 'polished';
+
+import { useStyles } from '../../src/shared/hooks';
+import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 export default function Categorias() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { categories, isLoading } = useApp();
+  
+  const styles = useStyles(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.dark,
+    },
+    statusBarArea: {
+      backgroundColor: colors.background.dark,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: spacing.layout.screenPadding,
+      paddingVertical: spacing[3],
+      backgroundColor: colors.background.dark,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.background.dark,
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: typography.fontSize.xl,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    menuButton: {
+      padding: spacing[1],
+      width: 38,
+      height: 38,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 25,
+    },
+    placeholder: {
+      width: 38,
+    },
+    contentContainer: {
+      flex: 1,
+      backgroundColor: colors.neutral.white,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: spacing.layout.screenPadding,
+    },
+    section: {
+      marginBottom: spacing[6],
+    },
+    sectionTitle: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.primary,
+      marginBottom: spacing[3],
+    },
+    categoryItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: spacing.component.cardPadding,
+      backgroundColor: colors.neutral.white,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      marginBottom: spacing[2],
+     },
+     categoryIcon: {
+       width: 44,
+       height: 44,
+       borderRadius: 22,
+       justifyContent: 'center',
+       alignItems: 'center',
+       marginRight: spacing[4],
+     },
+     categoryInfo: {
+       flex: 1,
+     },
+     categoryName: {
+       fontSize: typography.fontSize.base,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.text.secondary,
+       marginBottom: spacing[0],
+     },
+     categoryType: {
+       fontSize: typography.fontSize.sm,
+       color: colors.text.tertiary,
+     },
+     chevronIcon: {
+       marginLeft: spacing[2],
+     },
+     loadingContainer: {
+       flex: 1,
+       justifyContent: 'center',
+       alignItems: 'center',
+       paddingVertical: spacing[12],
+     },
+     loadingText: {
+       marginTop: spacing[4],
+       fontSize: typography.fontSize.base,
+       color: colors.text.secondary,
+     },
+     emptyState: {
+       alignItems: 'center',
+       paddingVertical: spacing[12],
+       gap: spacing[4],
+     },
+     emptyStateText: {
+       fontSize: typography.fontSize.base,
+       color: colors.neutral.gray[300],
+       textAlign: 'center',
+     },
+   }));
+  
   const [expenseCategories, setExpenseCategories] = useState<any[]>([]);
   const [incomeCategories, setIncomeCategories] = useState<any[]>([]);
 
@@ -90,15 +202,14 @@ export default function Categorias() {
     <TouchableOpacity
       key={category.id}
       style={[
-        styles.categoryItem,
-        !isLast && styles.categoryItemBorder
+        styles.categoryItem
       ]}
       onPress={() => handleEditCategory(category)}
     >
       <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
         <Image
           source={ICONS[category.icon] || ICONS['list-outline']}
-          style={{ width: 24, height: 24, tintColor: colors.white }}
+          style={{ width: 24, height: 24, tintColor: colors.neutral.white }}
           resizeMode="contain"
         />
       </View>
@@ -106,21 +217,21 @@ export default function Categorias() {
       <View style={styles.categoryInfo}>
         <Text style={styles.categoryName}>{category.name}</Text>
         {category.isMonthlyExpense && category.monthlyAmount && (
-          <Text style={styles.monthlyAmount}>
+          <Text style={{ fontSize: typography.fontSize.sm, color: colors.text.tertiary }}>
             {category.monthlyAmount.toLocaleString('es-CO')} COP/mes
           </Text>
         )}
       </View>
       
-      <View style={styles.categoryActions}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {category.isMonthlyExpense && (
-          <View style={styles.monthlyBadge}>
-            <Text style={styles.monthlyBadgeText}>Mensual</Text>
+          <View style={{ backgroundColor: colors.primary[100], paddingHorizontal: spacing[2], paddingVertical: spacing[1], borderRadius: 12, marginRight: spacing[2] }}>
+            <Text style={{ fontSize: typography.fontSize.xs, color: colors.primary[600], fontWeight: typography.fontWeight.semibold }}>Mensual</Text>
           </View>
         )}
         <Image
           source={ICONS['chevron-forward']}
-          style={{ width: 20, height: 20, tintColor: colors.gray }}
+          style={{ width: 20, height: 20, tintColor: colors.text.tertiary }}
           resizeMode="contain"
         />
       </View>
@@ -129,45 +240,45 @@ export default function Categorias() {
 
   const renderCategorySection = (title: string, categories: any[], type: 'GASTO' | 'INGRESO') => (
     <View style={styles.section}>
-      <View style={styles.sectionHeader}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing[3] }}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <Text style={styles.sectionCount}>{categories.length} categorías</Text>
+        <Text style={{ fontSize: typography.fontSize.sm, color: colors.text.tertiary }}>{categories.length} categorías</Text>
       </View>
       
       {categories.length > 0 ? (
-        <View style={styles.categoriesContainer}>
+        <View>
           {categories.map((category, index) => 
             renderCategoryItem(category, index === categories.length - 1)
           )}
           
           {/* Botón crear categoría */}
           <TouchableOpacity
-            style={styles.createCategoryButton}
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: spacing.component.cardPadding, backgroundColor: colors.neutral.gray[100], borderRadius: 12, marginTop: spacing[2] }}
             onPress={() => handleCreateCategory(type)}
           >
             <Image
               source={ICONS['add-circle-outline']}
-              style={{ width: 24, height: 24, tintColor: colors.primary }}
+              style={{ width: 24, height: 24, tintColor: colors.primary[500] }}
               resizeMode="contain"
             />
-            <Text style={styles.createCategoryText}>Crear nueva categoría</Text>
+            <Text style={{ fontSize: typography.fontSize.sm, color: colors.primary[500], fontWeight: typography.fontWeight.semibold, marginLeft: spacing[2] }}>Crear nueva categoría</Text>
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.emptyCategorySection}>
+        <View style={styles.emptyState}>
           <Image
             source={type === 'GASTO' ? ICONS['remove-circle-outline'] : ICONS['add-circle-outline']}
-            style={{ width: 40, height: 40, tintColor: colors.gray }}
+            style={{ width: 40, height: 40, tintColor: colors.text.tertiary }}
             resizeMode="contain"
           />
-          <Text style={styles.emptyCategoryText}>
+          <Text style={styles.emptyStateText}>
             No tienes categorías de {type.toLowerCase()} creadas
           </Text>
           <TouchableOpacity
-            style={styles.createFirstCategoryButton}
+            style={{ backgroundColor: colors.primary[500], paddingHorizontal: spacing[4], paddingVertical: spacing[3], borderRadius: 25 }}
             onPress={() => handleCreateCategory(type)}
           >
-            <Text style={styles.createFirstCategoryText}>
+            <Text style={{ fontSize: typography.fontSize.base, color: colors.neutral.white, fontWeight: typography.fontWeight.semibold }}>
               Crear primera categoría
             </Text>
           </TouchableOpacity>
@@ -179,7 +290,7 @@ export default function Categorias() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={colors.primary[500]} />
         <Text style={styles.loadingText}>Cargando categorías...</Text>
       </View>
     );
@@ -187,7 +298,7 @@ export default function Categorias() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.dark} />
           
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -197,7 +308,7 @@ export default function Categorias() {
         <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
           <Image
             source={ICONS['menu']}
-            style={{ width: 35, height: 35, tintColor: colors.white }}
+            style={{ width: 35, height: 35, tintColor: colors.neutral.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -212,20 +323,20 @@ export default function Categorias() {
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           
           {/* Resumen de categorías */}
-          <View style={styles.summarySection}>
-            <Text style={styles.summaryTitle}>Gestión de Categorías</Text>
-            <Text style={styles.summaryText}>
+          <View style={{ backgroundColor: colors.neutral.gray[100], padding: spacing[4], borderRadius: 12, marginBottom: spacing[6] }}>
+            <Text style={{ fontSize: typography.fontSize.lg, fontWeight: typography.fontWeight.semibold, color: colors.text.primary, marginBottom: spacing[2] }}>Gestión de Categorías</Text>
+            <Text style={{ fontSize: typography.fontSize.base, color: colors.text.secondary, lineHeight: 20, marginBottom: spacing[4] }}>
               Organiza tus gastos e ingresos en categorías personalizadas
             </Text>
-            <View style={styles.summaryStats}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{expenseCategories.length}</Text>
-                <Text style={styles.statLabel}>Gastos</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ alignItems: 'center', flex: 1 }}>
+                <Text style={{ fontSize: typography.fontSize['2xl'], fontWeight: typography.fontWeight.bold, color: colors.primary[500] }}>{expenseCategories.length}</Text>
+                <Text style={{ fontSize: typography.fontSize.sm, color: colors.text.tertiary }}>Gastos</Text>
               </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{incomeCategories.length}</Text>
-                <Text style={styles.statLabel}>Ingresos</Text>
+              <View style={{ width: 1, height: 40, backgroundColor: colors.border.light, marginHorizontal: spacing[4] }} />
+              <View style={{ alignItems: 'center', flex: 1 }}>
+                <Text style={{ fontSize: typography.fontSize['2xl'], fontWeight: typography.fontWeight.bold, color: colors.primary[500] }}>{incomeCategories.length}</Text>
+                <Text style={{ fontSize: typography.fontSize.sm, color: colors.text.tertiary }}>Ingresos</Text>
               </View>
             </View>
           </View>
@@ -237,7 +348,7 @@ export default function Categorias() {
           {renderCategorySection('INGRESOS', incomeCategories, 'INGRESO')}
 
           {/* Espacio inferior */}
-          <View style={styles.bottomSpace} />
+          <View style={{ height: spacing[8] }} />
 
         </ScrollView>
       </SafeAreaView>

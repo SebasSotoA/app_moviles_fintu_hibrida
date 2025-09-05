@@ -1,22 +1,20 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
-  Alert,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  ScrollView,
-  StatusBar,
+    Alert,
+    Image,
+    Platform,
+    ScrollView,
+    StatusBar,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
-import styles from '@/src/shared/styles/components/create-category';
-import colors from '../../src/shared/styles/themes';
-import { lighten } from 'polished';
+import { useStyles } from '../../src/shared/hooks';
+import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 // Mapa de íconos locales (SVG) siguiendo el patrón de add-transaction.tsx
 const ICONS_MAP: Record<string, any> = {
@@ -38,6 +36,220 @@ const COLORS = ['#FF6B6B', '#4CAF50', '#3A7691', '#FF9F43', '#845EC2', '#30353D'
 export default function CreateCategory() {
   // Traer funciones desde el AppProvider, contexto de la aplicación.
   const { addCategory, updateCategory, deleteCategory, categories } = useApp();
+  
+  const styles = useStyles(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.dark,
+    },
+    statusBarArea: {
+      backgroundColor: colors.background.dark,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: colors.background.dark,
+    },
+    backButton: {
+      padding: 8,
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.neutral.white,
+    },
+    placeholder: {
+      width: 44,
+    },
+    contentContainer: {
+      flex: 1,
+      backgroundColor: colors.neutral.white,
+    },
+    content: {
+      flex: 1,
+      padding: spacing[4],
+    },
+    section: {
+      marginBottom: spacing[6],
+    },
+    sectionTitle: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.secondary,
+      marginBottom: spacing[2],
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: 12,
+      paddingHorizontal: spacing[4],
+      paddingVertical: spacing[3],
+      fontSize: typography.fontSize.base,
+      backgroundColor: colors.neutral.white,
+    },
+    toggleContainer: {
+      flexDirection: 'row',
+      backgroundColor: colors.background.light,
+      borderRadius: 12,
+      padding: 4,
+    },
+    toggleButton: {
+      flex: 1,
+      paddingVertical: spacing[3],
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    activeToggleButton: {
+      backgroundColor: colors.primary[500],
+    },
+    toggleText: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.text.tertiary,
+    },
+    activeToggleText: {
+      color: colors.neutral.white,
+    },
+    iconList: {
+      flexDirection: 'row',
+    },
+    iconButton: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: colors.background.light,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: spacing[2],
+    },
+    selectedIconButton: {
+      backgroundColor: colors.primary[500],
+    },
+    colorGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing[2],
+    },
+    colorButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    createButton: {
+      backgroundColor: colors.primary[500],
+      paddingHorizontal: spacing[6],
+      paddingVertical: spacing[4],
+      borderRadius: 25,
+      alignItems: 'center',
+      marginHorizontal: spacing[4],
+      marginBottom: spacing[4],
+    },
+    disabledButton: {
+      backgroundColor: colors.text.tertiary,
+    },
+    createButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    deleteButton: {
+      backgroundColor: colors.semantic.error,
+      paddingHorizontal: spacing[6],
+      paddingVertical: spacing[4],
+      borderRadius: 25,
+      alignItems: 'center',
+      marginHorizontal: spacing[4],
+      marginBottom: spacing[4],
+    },
+    deleteButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    modalOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    confirmModal: {
+      backgroundColor: colors.neutral.white,
+      borderRadius: 20,
+      padding: spacing[6],
+      margin: spacing[4],
+      maxWidth: 400,
+      width: '90%',
+    },
+    modalTitle: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.text.primary,
+      marginBottom: spacing[4],
+    },
+    confirmText: {
+      fontSize: typography.fontSize.base,
+      color: colors.text.secondary,
+      marginBottom: spacing[4],
+    },
+    confirmInstruction: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.tertiary,
+      marginBottom: spacing[4],
+    },
+    confirmInput: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: 12,
+      paddingHorizontal: spacing[4],
+      paddingVertical: spacing[3],
+      fontSize: typography.fontSize.base,
+      backgroundColor: colors.neutral.white,
+      marginBottom: spacing[4],
+    },
+    confirmActions: {
+      flexDirection: 'row',
+      gap: spacing[3],
+    },
+    confirmButton: {
+      flex: 1,
+      paddingVertical: spacing[3],
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    cancelButton: {
+      backgroundColor: colors.background.light,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+    },
+    cancelButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.text.secondary,
+    },
+    deleteConfirmButton: {
+      backgroundColor: colors.semantic.error,
+    },
+    disabledDeleteButton: {
+      backgroundColor: colors.text.tertiary,
+    },
+    deleteConfirmButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.neutral.white,
+    },
+  }));
   
   const params = useLocalSearchParams();
   
@@ -179,7 +391,7 @@ export default function CreateCategory() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.dark} />
       <View style={[styles.statusBarArea, { height: insets.top }]} />
       
       {/* Header de la aplicación */}
@@ -187,7 +399,7 @@ export default function CreateCategory() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Image
             source={ICONS_MAP['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: colors.white }}
+            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -256,7 +468,7 @@ export default function CreateCategory() {
               >
                 <Image
                   source={ICONS_MAP[icon] || ICONS_MAP['list-outline']}
-                  style={{ width: 24, height: 24, tintColor: selectedIcon === icon ? colors.white : colors.grayDark }}
+                  style={{ width: 24, height: 24, tintColor: selectedIcon === icon ? colors.neutral.white : colors.background.dark }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -277,7 +489,7 @@ export default function CreateCategory() {
                   {selectedColor === color && (
                     <Image
                       source={ICONS_MAP['checkmark']}
-                      style={{ width: 24, height: 24, tintColor: colors.white }}
+                      style={{ width: 24, height: 24, tintColor: colors.neutral.white }}
                       resizeMode="contain"
                     />
                   )}
@@ -321,7 +533,7 @@ export default function CreateCategory() {
             <TextInput
               style={styles.confirmInput}
               placeholder="DE ACUERDO"
-              placeholderTextColor={colors.gray}
+              placeholderTextColor={colors.text.tertiary}
               value={deleteConfirmInput}
               onChangeText={setDeleteConfirmInput}
               autoCapitalize="characters"
@@ -350,3 +562,4 @@ export default function CreateCategory() {
     </View>
   );
 }
+

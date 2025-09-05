@@ -43,3 +43,4 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+src/shared/styles/README.md

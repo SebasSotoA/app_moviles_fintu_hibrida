@@ -64,6 +64,7 @@ export interface IDatabaseService {
   getTransactions(): Promise<DatabaseTransaction[]>;
   getTransactionsByDateRange(startDate: string, endDate: string): Promise<DatabaseTransaction[]>;
   createTransaction(transaction: Omit<DatabaseTransaction, 'createdAt' | 'updatedAt'>): Promise<void>;
+  deleteTransaction(transactionId: string): Promise<void>;
   
   // Transferencias
   createTransfer(transfer: Omit<DatabaseTransfer, 'createdAt' | 'updatedAt'>): Promise<void>;

@@ -1,21 +1,21 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
-  Alert,
-  Platform,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
+    Alert,
+    Image,
+    Platform,
+    ScrollView,
+    StatusBar,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
-import styles from '@/src/shared/styles/components/new-account';
-import colors from '../../src/shared/styles/themes';
+import { useStyles } from '../../src/shared/hooks';
+import { colors, spacing, typography } from '../../src/shared/styles/tokens';
+
 
 // Mapa de íconos locales usando los mismos nombres de Ionicons
 const ICONS: Record<string, any> = {
@@ -58,12 +58,274 @@ export default function NewAccount() {
   const [accountName, setAccountName] = useState('');
   const [initialBalance, setInitialBalance] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('💰');
-  const [selectedColor, setSelectedColor] = useState(colors.primary);
+  const [selectedColor, setSelectedColor] = useState(colors.primary[500]);
   const [selectedCurrency, setSelectedCurrency] = useState('COP');
   const [includeInTotal, setIncludeInTotal] = useState(true);
 
   const [showCurrencySelector, setShowCurrencySelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const styles = useStyles(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.dark,
+    },
+    statusBarArea: {
+      backgroundColor: colors.background.dark,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: colors.background.dark,
+    },
+    backButton: {
+      padding: 8,
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.neutral.white,
+    },
+    placeholder: {
+      width: 44,
+    },
+    contentContainer: {
+      flex: 1,
+      backgroundColor: colors.neutral.white,
+    },
+    content: {
+      flex: 1,
+      padding: spacing[4],
+    },
+    accountPreview: {
+      alignItems: 'center',
+      padding: spacing[6],
+      borderRadius: 16,
+      marginBottom: spacing[6],
+    },
+    previewSymbol: {
+      fontSize: typography.fontSize['4xl'],
+      marginBottom: spacing[2],
+    },
+    previewName: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+      marginBottom: spacing[1],
+    },
+    previewBalance: {
+      fontSize: typography.fontSize.base,
+      color: colors.neutral.white,
+    },
+    section: {
+      marginBottom: spacing[6],
+    },
+    sectionTitle: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.secondary,
+      marginBottom: spacing[2],
+    },
+    textInput: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: 12,
+      paddingHorizontal: spacing[4],
+      paddingVertical: spacing[3],
+      fontSize: typography.fontSize.base,
+      backgroundColor: colors.neutral.white,
+    },
+    balanceInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing[2],
+    },
+    balanceInput: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: 12,
+      paddingHorizontal: spacing[4],
+      paddingVertical: spacing[3],
+      fontSize: typography.fontSize.base,
+      backgroundColor: colors.neutral.white,
+    },
+    currencyButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: spacing[4],
+      paddingVertical: spacing[3],
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: 12,
+      backgroundColor: colors.neutral.white,
+      gap: spacing[2],
+    },
+    currencyButtonText: {
+      fontSize: typography.fontSize.base,
+      color: colors.text.primary,
+    },
+    symbolGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing[2],
+    },
+    symbolOption: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: colors.background.surface,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: colors.border.light,
+    },
+    selectedSymbolOption: {
+      borderColor: colors.primary[500],
+      backgroundColor: colors.primary[50],
+    },
+    symbolText: {
+      fontSize: typography.fontSize.lg,
+    },
+    colorGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing[2],
+    },
+    colorOption: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: colors.border.light,
+    },
+    selectedColorOption: {
+      borderColor: colors.neutral.black,
+      borderWidth: 3,
+    },
+    checkboxContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: spacing[2],
+    },
+    checkbox: {
+      width: 20,
+      height: 20,
+      borderRadius: 4,
+      borderWidth: 2,
+      borderColor: colors.border.light,
+      marginRight: spacing[2],
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    checkedCheckbox: {
+      backgroundColor: colors.primary[500],
+      borderColor: colors.primary[500],
+    },
+    checkboxLabel: {
+      fontSize: typography.fontSize.base,
+      color: colors.text.primary,
+    },
+    checkboxDescription: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.secondary,
+    },
+    createButton: {
+      backgroundColor: colors.primary[500],
+      paddingHorizontal: spacing[6],
+      paddingVertical: spacing[4],
+      borderRadius: 25,
+      alignItems: 'center',
+      marginHorizontal: spacing[4],
+      marginBottom: spacing[4],
+    },
+    disabledButton: {
+      backgroundColor: colors.text.tertiary,
+    },
+    createButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    modalOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    currencySelectorModal: {
+      backgroundColor: colors.neutral.white,
+      borderRadius: 20,
+      margin: spacing[4],
+      maxHeight: '80%',
+      width: '90%',
+      maxWidth: 400,
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: spacing[4],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.light,
+    },
+    modalTitle: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.text.primary,
+    },
+    closeButton: {
+      padding: spacing[2],
+    },
+    currencyList: {
+      maxHeight: 300,
+    },
+    currencyItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: spacing[4],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.light,
+    },
+    selectedCurrencyItem: {
+      backgroundColor: colors.primary[50],
+    },
+    currencyCode: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.text.primary,
+      marginRight: spacing[2],
+    },
+    currencyName: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.secondary,
+    },
+    currencyItemInfo: {
+      flex: 1,
+    },
+    currencyItemCode: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.text.primary,
+      marginRight: spacing[2],
+    },
+    currencyItemName: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.secondary,
+    },
+  }));
 
   // Alerta multiplataforma.
   const showAlert = useCallback((title: string, message: string) => {
@@ -108,7 +370,7 @@ export default function NewAccount() {
     setAccountName('');
     setInitialBalance('');
     setSelectedSymbol('💰');
-    setSelectedColor(colors.primary);
+    setSelectedColor(colors.primary[500]);
     setSelectedCurrency('COP');
     setIncludeInTotal(true);
     setShowCurrencySelector(false);
@@ -171,7 +433,7 @@ export default function NewAccount() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.dark} />
       
       {/* Área superior con color del header */}
       <View style={[styles.statusBarArea, { height: insets.top }]} />
@@ -181,7 +443,7 @@ export default function NewAccount() {
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: colors.white }}
+            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -212,7 +474,7 @@ export default function NewAccount() {
             <TextInput
               style={styles.textInput}
               placeholder="Ej: Cuenta Principal, Ahorros..."
-              placeholderTextColor={colors.gray}
+              placeholderTextColor={colors.text.tertiary}
               value={accountName}
               onChangeText={setAccountName}
               maxLength={30}
@@ -226,7 +488,7 @@ export default function NewAccount() {
               <TextInput
                 style={styles.balanceInput}
                 placeholder="0"
-                placeholderTextColor={colors.gray}
+                placeholderTextColor={colors.text.tertiary}
                 value={initialBalance}
                 onChangeText={setInitialBalance}
                 keyboardType="numeric"
@@ -238,7 +500,7 @@ export default function NewAccount() {
                 <Text style={styles.currencyButtonText}>{selectedCurrency}</Text>
                 <Image
                   source={ICONS['chevron-down']}
-                  style={{ width: 16, height: 16, tintColor: colors.primary }}
+                  style={{ width: 16, height: 16, tintColor: colors.primary[500] }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -276,12 +538,12 @@ export default function NewAccount() {
                     { backgroundColor: color },
                     selectedColor === color && styles.selectedColorOption
                   ]}
-                  onPress={() => setSelectedColor(color)}
+                  onPress={() => setSelectedColor(color as any)}
                 >
                   {selectedColor === color && (
                     <Image
                       source={ICONS['checkmark']}
-                      style={{ width: 20, height: 20, tintColor: colors.white }}
+                      style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                       resizeMode="contain"
                     />
                   )}
@@ -300,7 +562,7 @@ export default function NewAccount() {
                 {includeInTotal && (
                   <Image
                     source={ICONS['checkmark']}
-                    style={{ width: 16, height: 16, tintColor: colors.white }}
+                    style={{ width: 16, height: 16, tintColor: colors.neutral.white }}
                     resizeMode="contain"
                   />
                 )}
@@ -330,7 +592,7 @@ export default function NewAccount() {
               <Text style={styles.createButtonText}>Crear Cuenta</Text>
               <Image
                 source={ICONS['add']}
-                style={{ width: 20, height: 20, tintColor: colors.white }}
+                style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                 resizeMode="contain"
               />
             </>
@@ -350,7 +612,7 @@ export default function NewAccount() {
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: colors.gray }}
+                  style={{ width: 24, height: 24, tintColor: colors.text.tertiary }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -376,7 +638,7 @@ export default function NewAccount() {
                   {selectedCurrency === currency.code && (
                     <Image
                       source={ICONS['checkmark-circle']}
-                      style={{ width: 24, height: 24, tintColor: colors.gray }}
+                      style={{ width: 24, height: 24, tintColor: colors.text.tertiary }}
                       resizeMode="contain"
                     />
                   )}

@@ -7,18 +7,17 @@ import {
   Image,
   ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import EditAccountModal from '../../components/EditAccountModal';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { DatabaseAccount } from '../../src/shared/services/database';
-import styles from '@/src/shared/styles/components/cuentas';
-import colors from '../../src/shared/styles/themes';
-import { darken } from 'polished';
+
+import { useStyles } from '../../src/shared/hooks';
+import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 // Mapa de íconos locales siguiendo el patrón de add-transaction.tsx
 const ICONS: Record<string, any> = {
@@ -37,6 +36,217 @@ export default function Cuentas() {
   const { accounts, currentAccount, setCurrentAccount, isLoading, updateAccount } = useApp();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [accountToEdit, setAccountToEdit] = useState<DatabaseAccount | null>(null);
+
+  const accountsStyles = useStyles(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.dark,
+    },
+    statusBarArea: {
+      backgroundColor: colors.background.dark,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: colors.background.dark,
+    },
+    menuButton: {
+      padding: 8,
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.neutral.white,
+    },
+    placeholder: {
+      width: 44,
+    },
+    contentContainer: {
+      flex: 1,
+      backgroundColor: colors.neutral.white,
+    },
+    content: {
+      flex: 1,
+      padding: spacing[4],
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.neutral.white,
+    },
+    loadingText: {
+      fontSize: typography.fontSize.base,
+      color: colors.text.secondary,
+      marginTop: spacing[2],
+    },
+    totalSection: {
+      backgroundColor: colors.primary[50],
+      padding: spacing[4],
+      borderRadius: 12,
+      marginBottom: spacing[4],
+      alignItems: 'center',
+    },
+    totalLabel: {
+      fontSize: typography.fontSize.sm,
+      color: colors.primary[600],
+      marginBottom: spacing[1],
+    },
+    totalAmount: {
+      fontSize: typography.fontSize['2xl'],
+      fontWeight: typography.fontWeight.bold,
+      color: colors.primary[600],
+    },
+    totalSubtext: {
+      fontSize: typography.fontSize.xs,
+      color: colors.primary[500],
+      marginTop: spacing[1],
+    },
+    actionButtons: {
+      flexDirection: 'row',
+      gap: spacing[3],
+      marginBottom: spacing[6],
+    },
+    actionButton: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: spacing[3],
+      paddingHorizontal: spacing[4],
+      borderRadius: 12,
+      gap: spacing[2],
+    },
+    transferButton: {
+      backgroundColor: colors.primary[500],
+    },
+    addButton: {
+      backgroundColor: colors.semantic.success,
+    },
+    actionButtonText: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    accountsSection: {
+      flex: 1,
+    },
+    sectionTitle: {
+      fontSize: typography.fontSize.lg,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.text.primary,
+      marginBottom: spacing[4],
+    },
+    accountsList: {
+      gap: spacing[3],
+    },
+    accountCard: {
+      backgroundColor: colors.neutral.white,
+      borderRadius: 12,
+      padding: spacing[4],
+      borderWidth: 1,
+      borderColor: colors.border.light,
+    },
+    activeAccountCard: {
+      borderColor: colors.primary[500],
+      borderWidth: 2,
+    },
+    accountHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    accountSymbol: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: spacing[3],
+    },
+    symbolText: {
+      fontSize: typography.fontSize.lg,
+    },
+    accountInfo: {
+      flex: 1,
+    },
+    accountName: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.primary,
+    },
+    accountCurrency: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.secondary,
+    },
+    accountActions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing[3],
+    },
+    editButton: {
+      padding: spacing[2],
+    },
+    accountBalance: {
+      alignItems: 'flex-end',
+    },
+    balanceAmount: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.bold,
+    },
+    balanceCurrency: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.secondary,
+    },
+    activeIndicator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: spacing[2],
+      gap: spacing[2],
+    },
+    activeText: {
+      fontSize: typography.fontSize.sm,
+      color: colors.primary[500],
+      fontWeight: typography.fontWeight.medium,
+    },
+    excludedIndicator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: spacing[2],
+      gap: spacing[2],
+    },
+    excludedText: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.tertiary,
+    },
+    emptyState: {
+      alignItems: 'center',
+      paddingVertical: spacing[8],
+    },
+    emptyStateText: {
+      fontSize: typography.fontSize.base,
+      color: colors.text.secondary,
+      marginTop: spacing[2],
+      textAlign: 'center',
+    },
+    createFirstAccountButton: {
+      backgroundColor: colors.primary[500],
+      paddingHorizontal: spacing[4],
+      paddingVertical: spacing[3],
+      borderRadius: 12,
+      marginTop: spacing[4],
+    },
+    createFirstAccountText: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+  }));
 
   // Calcular totales por divisa, memo permite que solo se calcule cuando se actualice.
   const totalsByCurrency = React.useMemo(() => {
@@ -96,61 +306,61 @@ export default function Cuentas() {
     <TouchableOpacity
       key={account.id}
       style={[
-        styles.accountCard,
-        currentAccount?.id === account.id && styles.activeAccountCard,
+        accountsStyles.accountCard,
+        currentAccount?.id === account.id && accountsStyles.activeAccountCard,
       ]}
       onPress={() => handleAccountPress(account.id)}
     >
-      <View style={styles.accountHeader}>
-        <View style={[styles.accountSymbol, { backgroundColor: account.color }]}>
-          <Text style={styles.symbolText}>{account.symbol}</Text>
+      <View style={accountsStyles.accountHeader}>
+        <View style={[accountsStyles.accountSymbol, { backgroundColor: account.color }]}>
+          <Text style={accountsStyles.symbolText}>{account.symbol}</Text>
         </View>
-        <View style={styles.accountInfo}>
-          <Text style={styles.accountName}>{account.name}</Text>
-          <Text style={styles.accountCurrency}>{account.currency}</Text>
+        <View style={accountsStyles.accountInfo}>
+          <Text style={accountsStyles.accountName}>{account.name}</Text>
+          <Text style={accountsStyles.accountCurrency}>{account.currency}</Text>
         </View>
-        <View style={styles.accountActions}>
+        <View style={accountsStyles.accountActions}>
           <TouchableOpacity 
-            style={styles.editButton}
+            style={accountsStyles.editButton}
             onPress={() => handleEditAccount(account)}
           >
             <Image
             source={ICONS['create-outline']}
-            style={{ width: 20, height: 20, tintColor: colors.primary }}
+            style={{ width: 20, height: 20, tintColor: colors.primary[500] }}
             resizeMode="contain"
             />
           </TouchableOpacity>
-          <View style={styles.accountBalance}>
+          <View style={accountsStyles.accountBalance}>
             <Text style={[
-              styles.balanceAmount,
+              accountsStyles.balanceAmount,
               { color: account.balance >= 0 ? '#4CAF50' : '#FF6B6B' }
             ]}>
               {account.balance.toLocaleString('es-CO')}
             </Text>
-            <Text style={styles.balanceCurrency}>{account.currency}</Text>
+            <Text style={accountsStyles.balanceCurrency}>{account.currency}</Text>
           </View>
         </View>
       </View>
       
       {currentAccount?.id === account.id && (
-        <View style={styles.activeIndicator}>
+        <View style={accountsStyles.activeIndicator}>
           <Image
             source={ICONS['checkmark-circle']}
-            style={{ width: 20, height: 20, tintColor: colors.primary }}
+            style={{ width: 20, height: 20, tintColor: colors.primary[500] }}
             resizeMode="contain"
           />
-          <Text style={styles.activeText}>Cuenta activa</Text>
+          <Text style={accountsStyles.activeText}>Cuenta activa</Text>
         </View>
       )}
       
       {!account.includeInTotal && (
-        <View style={styles.excludedIndicator}>
+        <View style={accountsStyles.excludedIndicator}>
           <Image
             source={ICONS['eye-off-outline']}
-            style={{ width: 16, height: 16, tintColor: colors.gray }}
+            style={{ width: 16, height: 16, tintColor: colors.text.tertiary }}
             resizeMode="contain"
           />
-          <Text style={styles.excludedText}>Excluida del total</Text>
+          <Text style={accountsStyles.excludedText}>Excluida del total</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -158,93 +368,93 @@ export default function Cuentas() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Cargando cuentas...</Text>
+      <View style={accountsStyles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary[500]} />
+        <Text style={accountsStyles.loadingText}>Cargando cuentas...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
+    <View style={accountsStyles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.dark} />
       
       {/* Área superior con color del header */}
-      <View style={[styles.statusBarArea, { height: insets.top }]} />
+      <View style={[accountsStyles.statusBarArea, { height: insets.top }]} />
       
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
+      <View style={accountsStyles.header}>
+        <TouchableOpacity onPress={openDrawer} style={accountsStyles.menuButton}>
           <Image
             source={ICONS['menu']}
-            style={{ width: 35, height: 35, tintColor: colors.white }}
+            style={{ width: 35, height: 35, tintColor: colors.neutral.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Cuentas</Text>
+        <View style={accountsStyles.headerCenter}>
+          <Text style={accountsStyles.headerTitle}>Cuentas</Text>
         </View>
-        <View style={styles.placeholder} />
+        <View style={accountsStyles.placeholder} />
       </View>
 
       {/* Contenido principal */}
-      <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <SafeAreaView style={accountsStyles.contentContainer} edges={['left', 'right', 'bottom']}>
+        <ScrollView style={accountsStyles.content} showsVerticalScrollIndicator={false}>
           
           {/* Saldo total (concatenado por divisa) */}
-          <View style={styles.totalSection}>
-            <Text style={styles.totalLabel}>Saldo Total</Text>
-            <Text style={styles.totalAmount}>{totalsSummary}</Text>
-            <Text style={styles.totalSubtext}>
+          <View style={accountsStyles.totalSection}>
+            <Text style={accountsStyles.totalLabel}>Saldo Total</Text>
+            <Text style={accountsStyles.totalAmount}>{totalsSummary}</Text>
+            <Text style={accountsStyles.totalSubtext}>
               {accounts.filter(acc => acc.includeInTotal).length} cuentas incluidas
             </Text>
           </View>
 
           {/* Botones de acción */}
-          <View style={styles.actionButtons}>
+          <View style={accountsStyles.actionButtons}>
             <TouchableOpacity 
-              style={[styles.actionButton, styles.transferButton]}
+              style={[accountsStyles.actionButton, accountsStyles.transferButton]}
               onPress={handleTransfer}
             >
               <Image
                 source={ICONS['swap-horizontal']}
-                style={{ width: 20, height: 20, tintColor: colors.white }}
+                style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                 resizeMode="contain"
               />
-              <Text style={styles.actionButtonText}>Transferir</Text>
+              <Text style={accountsStyles.actionButtonText}>Transferir</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.actionButton, styles.addButton]}
+              style={[accountsStyles.actionButton, accountsStyles.addButton]}
               onPress={handleAddAccount}
             >
               <Image
                 source={ICONS['add-circle']}
-                style={{ width: 20, height: 20, tintColor: colors.white }}
+                style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                 resizeMode="contain"
               />
-              <Text style={styles.actionButtonText}>Añadir</Text>
+              <Text style={accountsStyles.actionButtonText}>Añadir</Text>
             </TouchableOpacity>
           </View>
 
           {/* Lista de cuentas */}
-          <View style={styles.accountsSection}>
-            <Text style={styles.sectionTitle}>Mis Cuentas</Text>
+          <View style={accountsStyles.accountsSection}>
+            <Text style={accountsStyles.sectionTitle}>Mis Cuentas</Text>
             
             {accounts.length > 0 ? (
-              <View style={styles.accountsList}>
+              <View style={accountsStyles.accountsList}>
                 {accounts.map(renderAccountCard)}
               </View>
             ) : (
-              <View style={styles.emptyState}>
+              <View style={accountsStyles.emptyState}>
                 <Image
                   source={ICONS['wallet-outline']}
-                  style={{ width: 60, height: 60, tintColor: colors.gray }}
+                  style={{ width: 60, height: 60, tintColor: colors.text.tertiary }}
                   resizeMode="contain"
                 />
-                <Text style={styles.emptyStateText}>No tienes cuentas creadas</Text>
-                <TouchableOpacity style={styles.createFirstAccountButton} onPress={handleAddAccount}>
-                  <Text style={styles.createFirstAccountText}>Crear primera cuenta</Text>
+                <Text style={accountsStyles.emptyStateText}>No tienes cuentas creadas</Text>
+                <TouchableOpacity style={accountsStyles.createFirstAccountButton} onPress={handleAddAccount}>
+                  <Text style={accountsStyles.createFirstAccountText}>Crear primera cuenta</Text>
                 </TouchableOpacity>
               </View>
             )}

@@ -2,26 +2,624 @@ import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
+  Image,
   ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  Image,
+  View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 // Removido DateTimePicker - no compatible con Expo Go
 import Calculator from '../../components/Calculator';
 import { useApp } from '../../src/shared/context/AppProvider';
+import { useStyles } from '../../src/shared/hooks';
+import { colors, shadows, spacing, typography } from '../../src/shared/styles/tokens';
 import { TransactionType } from '../../types/transaction';
-import styles from '@/src/shared/styles/components/add-transaction';
-import colors from '@/src/shared/styles/themes';
+
+// Componente para renderizar un mes del calendario
+const CalendarMonth = React.memo(({ 
+  month, 
+  selectedDate, 
+  onDateSelection 
+}: {
+  month: Date;
+  selectedDate: Date;
+  onDateSelection: (date: Date) => void;
+}) => {
+  const calendarStyles = useStyles(() => ({
+    calendarContainer: {
+      marginBottom: spacing[4],
+    },
+    calendarHeader: {
+      alignItems: 'center',
+      marginBottom: spacing[2],
+    },
+    calendarMonthYear: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.primary,
+    },
+    calendarDaysHeader: {
+      flexDirection: 'row',
+      marginBottom: spacing[2],
+    },
+    calendarDayHeader: {
+      flexBasis: '14.285714%',
+      textAlign: 'center',
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.medium,
+      color: colors.text.secondary,
+      paddingVertical: spacing[2],
+    } as any,
+    calendarGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
+    calendarDay: {
+      flexBasis: '14.285714%',
+      flexGrow: 0,
+      flexShrink: 0,
+      aspectRatio: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+      padding: spacing[1],
+    },
+    calendarDayCurrentMonth: {
+      backgroundColor: colors.neutral.white,
+    },
+    calendarDaySelected: {
+      backgroundColor: colors.primary[500],
+    },
+    calendarDayText: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.tertiary,
+    } as any,
+    calendarDayTextCurrentMonth: {
+      color: colors.text.primary,
+    } as any,
+    calendarDayTextSelected: {
+      color: colors.neutral.white,
+    } as any,
+  }));
+
+  const getCalendarDaysFor = React.useCallback((baseDate: Date) => {
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const firstDayWeekday = firstDayOfMonth.getDay();
+    
+    const days = [];
+    
+    // Días del mes anterior
+    const prevMonth = new Date(year, month, 0);
+    const daysInPrevMonth = prevMonth.getDate();
+    
+    for (let i = firstDayWeekday - 1; i >= 0; i--) {
+      const dayNumber = daysInPrevMonth - i;
+      const date = new Date(year, month - 1, dayNumber);
+      days.push({
+        date,
+        isCurrentMonth: false,
+        isSelected: selectedDate && date.getTime() === selectedDate.getTime(),
+      });
+    }
+    
+    // Días del mes actual
+    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+      const date = new Date(year, month, day);
+      days.push({
+        date,
+        isCurrentMonth: true,
+        isSelected: selectedDate && date.getTime() === selectedDate.getTime(),
+      });
+    }
+    
+    // Días del mes siguiente para completar exactamente 42 días
+    const totalDaysSoFar = days.length;
+    const remainingDays = 42 - totalDaysSoFar;
+    
+    for (let day = 1; day <= remainingDays; day++) {
+      const date = new Date(year, month + 1, day);
+      days.push({
+        date,
+        isCurrentMonth: false,
+        isSelected: selectedDate && date.getTime() === selectedDate.getTime(),
+      });
+    }
+    
+    // Asegurar que siempre tengamos exactamente 42 días
+    while (days.length < 42) {
+      const lastDate: Date = days[days.length - 1].date;
+      const nextDate: Date = new Date(lastDate);
+      nextDate.setDate(nextDate.getDate() + 1);
+      days.push({
+        date: nextDate,
+        isCurrentMonth: false,
+        isSelected: selectedDate && nextDate.getTime() === selectedDate.getTime(),
+      });
+    }
+    
+    return days;
+  }, [selectedDate]);
+
+  return (
+    <View style={calendarStyles.calendarContainer}>
+      <View style={calendarStyles.calendarHeader}>
+        <Text style={calendarStyles.calendarMonthYear}>
+          {month.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })}
+        </Text>
+      </View>
+
+      <View style={calendarStyles.calendarDaysHeader}>
+        {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
+          <Text key={day} style={calendarStyles.calendarDayHeader}>{day}</Text>
+        ))}
+      </View>
+
+      <View style={calendarStyles.calendarGrid}>
+        {getCalendarDaysFor(month).map((day, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[
+              calendarStyles.calendarDay,
+              day.isCurrentMonth && calendarStyles.calendarDayCurrentMonth,
+              day.isSelected && calendarStyles.calendarDaySelected,
+            ]}
+            onPress={() => {
+              if (day.isCurrentMonth) {
+                onDateSelection(day.date);
+              }
+            }}
+            disabled={!day.isCurrentMonth}
+          >
+            <Text style={[
+              calendarStyles.calendarDayText,
+              day.isCurrentMonth && calendarStyles.calendarDayTextCurrentMonth,
+              day.isSelected && calendarStyles.calendarDayTextSelected,
+            ]}>
+              {day.date.getDate()}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+});
+
+CalendarMonth.displayName = 'CalendarMonth';
+
+// Componente para calendario de selección de fecha única
+const SingleDateCalendar = React.memo(({ 
+  selectedDate, 
+  onDateSelection 
+}: {
+  selectedDate: Date;
+  onDateSelection: (date: Date) => void;
+}) => {
+  // Generar lista de meses alrededor del mes actual para scroll continuo
+  const monthsForScroll = React.useMemo(() => {
+    const center = new Date();
+    const list: Date[] = [];
+    // 6 meses atrás, 6 meses adelante
+    for (let i = -6; i <= 6; i++) {
+      const d = new Date(center);
+      d.setDate(1);
+      d.setMonth(center.getMonth() + i);
+      list.push(d);
+    }
+    return list;
+  }, []);
+
+  const calendarStyles = useStyles(() => ({
+    calendarScrollView: {
+      maxHeight: 400,
+    },
+  }));
+
+  return (
+    <ScrollView style={calendarStyles.calendarScrollView} showsVerticalScrollIndicator={false}>
+      {monthsForScroll.map((month, idx) => (
+        <CalendarMonth
+          key={`${month.getFullYear()}-${month.getMonth()}`}
+          month={month}
+          selectedDate={selectedDate}
+          onDateSelection={onDateSelection}
+        />
+      ))}
+    </ScrollView>
+  );
+});
+
+SingleDateCalendar.displayName = 'SingleDateCalendar';
 
 export default function AddTransaction() {
   const { currentAccount, accounts } = useApp();
   const insets = useSafeAreaInsets();
+  
+  const addTransactionStyles = useStyles(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.dark,
+    },
+    statusBarArea: {
+      backgroundColor: colors.background.dark,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: spacing.layout.screenPadding,
+      paddingVertical: spacing[3],
+      backgroundColor: colors.background.dark,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.background.dark,
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: typography.fontSize.xl,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    backButton: {
+      padding: spacing[1],
+      width: 38,
+      height: 38,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 25,
+    },
+    placeholder: {
+      width: 38,
+    },
+    contentContainer: {
+      flex: 1,
+      backgroundColor: colors.neutral.white,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: spacing.layout.screenPadding,
+    },
+    calculatorSection: {
+      backgroundColor: colors.neutral.white,
+      paddingHorizontal: spacing.layout.screenPadding,
+      paddingVertical: spacing[4],
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.light,
+    },
+    calculatorTitle: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.secondary,
+      marginBottom: spacing[3],
+    },
+    floatingButtonContainer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: colors.neutral.white,
+      paddingHorizontal: spacing.layout.screenPadding,
+      paddingVertical: spacing[4],
+      borderTopWidth: 1,
+      borderTopColor: colors.border.light,
+      ...shadows.specific.card,
+    },
+    floatingButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primary[500],
+      paddingVertical: spacing.component.buttonPadding,
+      borderRadius: 25,
+      ...shadows.specific.button,
+    },
+    floatingButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+      marginRight: spacing[2],
+    },
+    dateSelector: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: spacing.component.inputPadding,
+      backgroundColor: colors.neutral.gray[100],
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      marginBottom: spacing[4],
+    },
+    dateText: {
+      fontSize: typography.fontSize.base,
+      color: colors.text.secondary,
+      fontWeight: typography.fontWeight.medium,
+    },
+    amountContainer: {
+      padding: spacing[5],
+      backgroundColor: colors.neutral.gray[100],
+      borderRadius: 12,
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: colors.primary[500],
+      marginBottom: spacing[4],
+    },
+    amountText: {
+      fontSize: typography.fontSize['3xl'],
+      fontWeight: typography.fontWeight.bold,
+      color: colors.primary[500],
+    },
+    noteInput: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: 12,
+      padding: spacing.component.inputPadding,
+      fontSize: typography.fontSize.base,
+      color: colors.text.secondary,
+      backgroundColor: colors.neutral.gray[100],
+      textAlignVertical: 'top',
+      minHeight: 80,
+      marginBottom: spacing[4],
+    },
+    continueButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primary[500],
+      marginHorizontal: spacing.layout.screenPadding,
+      marginBottom: spacing.layout.screenPadding,
+      paddingVertical: spacing.component.buttonPadding,
+      borderRadius: 25,
+      ...shadows.specific.button,
+    },
+    continueButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+      marginRight: spacing[2],
+    },
+    toggleContainer: {
+      flexDirection: 'row',
+      backgroundColor: colors.neutral.gray[100],
+      borderRadius: 25,
+      padding: spacing[1],
+      marginBottom: spacing[4],
+    },
+    toggleButton: {
+      flex: 1,
+      paddingVertical: spacing[3],
+      alignItems: 'center',
+      borderRadius: 25,
+    },
+    activeToggleButton: {
+      backgroundColor: colors.primary[500],
+    },
+    toggleText: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.tertiary,
+    },
+    activeToggleText: {
+      color: colors.neutral.white,
+    },
+    accountSelector: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: spacing.component.inputPadding,
+      backgroundColor: colors.neutral.gray[100],
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      marginBottom: spacing[4],
+    },
+    accountSelectorInfo: {
+      flex: 1,
+    },
+    accountSelectorName: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.secondary,
+      marginBottom: spacing[0],
+    },
+    accountSelectorBalance: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.tertiary,
+    },
+    accountSelectorLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    accountSelectorSymbol: {
+      fontSize: typography.fontSize['2xl'],
+      marginRight: spacing[3],
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: spacing[12],
+    },
+         loadingText: {
+       marginTop: spacing[4],
+       fontSize: typography.fontSize.base,
+       color: colors.text.secondary,
+     },
+     section: {
+       marginBottom: spacing[4],
+     },
+     sectionTitle: {
+       fontSize: typography.fontSize.sm,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.text.secondary,
+       marginBottom: spacing[2],
+     },
+     disabledButton: {
+       backgroundColor: colors.neutral.gray[300],
+     },
+     disabledButtonText: {
+       color: colors.neutral.gray[500],
+     },
+     datePickerOverlay: {
+       position: 'absolute',
+       top: 0,
+       left: 0,
+       right: 0,
+       bottom: 0,
+       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+       justifyContent: 'center',
+       alignItems: 'center',
+       zIndex: 1000,
+     },
+     datePickerModal: {
+       backgroundColor: colors.neutral.white,
+       borderRadius: 12,
+       padding: spacing[6],
+       margin: spacing[4],
+       minWidth: 300,
+     },
+     datePickerTitle: {
+       fontSize: typography.fontSize.lg,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.text.primary,
+       textAlign: 'center',
+       marginBottom: spacing[4],
+     },
+     datePickerControls: {
+       flexDirection: 'row',
+       justifyContent: 'space-between',
+       alignItems: 'center',
+       marginBottom: spacing[4],
+     },
+     datePickerButton: {
+       backgroundColor: colors.neutral.gray[100],
+       paddingHorizontal: spacing[3],
+       paddingVertical: spacing[2],
+       borderRadius: 8,
+     },
+     datePickerButtonText: {
+       fontSize: typography.fontSize.sm,
+       color: colors.text.secondary,
+     },
+     selectedDateText: {
+       fontSize: typography.fontSize.base,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.text.primary,
+     },
+     datePickerActions: {
+       flexDirection: 'row',
+       gap: spacing[2],
+     },
+     datePickerActionButton: {
+       flex: 1,
+       paddingVertical: spacing[3],
+       borderRadius: 8,
+       alignItems: 'center',
+     },
+     todayButton: {
+       backgroundColor: colors.neutral.gray[100],
+     },
+     todayButtonText: {
+       fontSize: typography.fontSize.base,
+       color: colors.text.secondary,
+     },
+     confirmButton: {
+       backgroundColor: colors.primary[500],
+     },
+     confirmButtonText: {
+       fontSize: typography.fontSize.base,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.neutral.white,
+     },
+     modalOverlay: {
+       position: 'absolute',
+       top: 0,
+       left: 0,
+       right: 0,
+       bottom: 0,
+       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+       justifyContent: 'center',
+       alignItems: 'center',
+       zIndex: 1000,
+     },
+     accountSelectorModal: {
+       backgroundColor: colors.neutral.white,
+       borderRadius: 12,
+       margin: spacing[4],
+       maxHeight: '80%',
+       minWidth: 300,
+     },
+     modalHeader: {
+       flexDirection: 'row',
+       justifyContent: 'space-between',
+       alignItems: 'center',
+       padding: spacing[4],
+       borderBottomWidth: 1,
+       borderBottomColor: colors.border.light,
+     },
+     modalTitle: {
+       fontSize: typography.fontSize.lg,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.text.primary,
+     },
+         closeButton: {
+      padding: spacing[1],
+    },
+    datePickerHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: spacing[4],
+    },
+    calendarScrollView: {
+      maxHeight: 400,
+      marginBottom: spacing[4],
+    },
+     accountsList: {
+       maxHeight: 400,
+     },
+     accountItem: {
+       flexDirection: 'row',
+       alignItems: 'center',
+       padding: spacing[4],
+       borderBottomWidth: 1,
+       borderBottomColor: colors.border.light,
+     },
+     selectedAccountItem: {
+       backgroundColor: colors.secondary[50],
+     },
+     accountItemLeft: {
+       flexDirection: 'row',
+       alignItems: 'center',
+       flex: 1,
+     },
+     accountItemSymbol: {
+       fontSize: typography.fontSize['2xl'],
+       marginRight: spacing[3],
+     },
+     accountItemInfo: {
+       flex: 1,
+     },
+     accountItemName: {
+       fontSize: typography.fontSize.base,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.text.secondary,
+       marginBottom: spacing[0],
+     },
+     accountItemBalance: {
+       fontSize: typography.fontSize.sm,
+       color: colors.text.tertiary,
+     },
+   }));
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [transactionType, setTransactionType] = useState<TransactionType>('GASTO');
   const [amount, setAmount] = useState('0');
@@ -46,7 +644,7 @@ export default function AddTransaction() {
     setShowDatePicker(false);
     setShowAccountSelector(false);
     setCalcResetKey(prev => prev + 1); // Forzar remount del componente Calculator
-  }, [currentAccount?.id]);
+  }, [currentAccount]);
 
   const formatDate = (date: Date) => {
     const days = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
@@ -111,88 +709,97 @@ export default function AddTransaction() {
     };  
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
+    <View style={addTransactionStyles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.background.dark} />
       
       {/* Área superior con color del header */}
-      <View style={[styles.statusBarArea, { height: insets.top }]} />
+      <View style={[addTransactionStyles.statusBarArea, { height: insets.top }]} />
       
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+      <View style={addTransactionStyles.header}>
+        <TouchableOpacity onPress={goBack} style={addTransactionStyles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: colors.white }}
+            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Añadir Transacción</Text>
+        <View style={addTransactionStyles.headerCenter}>
+          <Text style={addTransactionStyles.headerTitle}>Añadir Transacción</Text>
         </View>
-        <View style={styles.placeholder} />
+        <View style={addTransactionStyles.placeholder} />
       </View>
 
       {/* Contenido principal */}
-      <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          
+      <SafeAreaView style={addTransactionStyles.contentContainer} edges={['left', 'right', 'bottom']}>
+        {/* Calculadora al inicio */}
+        <View style={addTransactionStyles.calculatorSection}>
+          <Text style={addTransactionStyles.calculatorTitle}>Monto</Text>
+          <Calculator 
+            key={calcResetKey}
+            onAmountChange={setAmount}
+            initialValue={amount}
+          />
+        </View>
+
+        <ScrollView style={addTransactionStyles.content} showsVerticalScrollIndicator={false}>
           {/* Selector de fecha */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Fecha</Text>
+          <View style={{ marginBottom: spacing[4] }}>
+            <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Fecha</Text>
             <TouchableOpacity 
-              style={styles.dateSelector}
+              style={addTransactionStyles.dateSelector}
               onPress={showDatepicker}
             >
-              <Text style={styles.dateText}>{formatDate(selectedDate)}</Text>
+              <Text style={addTransactionStyles.dateText}>{formatDate(selectedDate)}</Text>
               <Image
                 source={ICONS['calendar-outline']}
-                style={{ width: 24, height: 24, tintColor: colors.primary }}
+                style={{ width: 24, height: 24, tintColor: colors.primary[500] }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
           </View>
 
           {/* Selector de cuenta */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Cuenta</Text>
+          <View style={{ marginBottom: spacing[4] }}>
+            <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Cuenta</Text>
             <TouchableOpacity 
-              style={styles.accountSelector}
+              style={addTransactionStyles.accountSelector}
               onPress={() => setShowAccountSelector(true)}
             >
-              <View style={styles.accountSelectorLeft}>
-                <Text style={styles.accountSelectorSymbol}>{selectedAccount?.symbol || '💰'}</Text>
-                <View style={styles.accountSelectorInfo}>
-                  <Text style={styles.accountSelectorName}>
+              <View style={addTransactionStyles.accountSelectorLeft}>
+                <Text style={addTransactionStyles.accountSelectorSymbol}>{selectedAccount?.symbol || '💰'}</Text>
+                <View style={addTransactionStyles.accountSelectorInfo}>
+                  <Text style={addTransactionStyles.accountSelectorName}>
                     {selectedAccount?.name || 'Seleccionar cuenta'}
                   </Text>
-                  <Text style={styles.accountSelectorBalance}>
+                  <Text style={addTransactionStyles.accountSelectorBalance}>
                     Balance: {selectedAccount?.balance?.toLocaleString('es-CO') || '0'} {selectedAccount?.currency || 'COP'}
                   </Text>
                 </View>
               </View>
               <Image
                 source={ICONS['chevron-down']}
-                style={{ width: 20, height: 20, tintColor: colors.white }}
+                style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
           </View>
 
           {/* Toggle tipo de transacción */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Tipo</Text>
-            <View style={styles.toggleContainer}>
+          <View style={{ marginBottom: spacing[4] }}>
+            <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Tipo</Text>
+            <View style={addTransactionStyles.toggleContainer}>
               <TouchableOpacity
                 style={[
-                  styles.toggleButton,
-                  transactionType === 'GASTO' && styles.activeToggleButton,
+                  addTransactionStyles.toggleButton,
+                  transactionType === 'GASTO' && addTransactionStyles.activeToggleButton,
                 ]}
                 onPress={() => setTransactionType('GASTO')}
               >
                 <Text
                   style={[
-                    styles.toggleText,
-                    transactionType === 'GASTO' && styles.activeToggleText,
+                    addTransactionStyles.toggleText,
+                    transactionType === 'GASTO' && addTransactionStyles.activeToggleText,
                   ]}
                 >
                   GASTO
@@ -200,15 +807,15 @@ export default function AddTransaction() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
-                  styles.toggleButton,
-                  transactionType === 'INGRESO' && styles.activeToggleButton,
+                  addTransactionStyles.toggleButton,
+                  transactionType === 'INGRESO' && addTransactionStyles.activeToggleButton,
                 ]}
                 onPress={() => setTransactionType('INGRESO')}
               >
                 <Text
                   style={[
-                    styles.toggleText,
-                    transactionType === 'INGRESO' && styles.activeToggleText,
+                    addTransactionStyles.toggleText,
+                    transactionType === 'INGRESO' && addTransactionStyles.activeToggleText,
                   ]}
                 >
                   INGRESO
@@ -217,21 +824,11 @@ export default function AddTransaction() {
             </View>
           </View>
 
-          {/* Campo de monto */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Monto</Text>
-            <View style={styles.amountContainer}>
-              <Text style={styles.amountText}>
-                {parseFloat(amount).toLocaleString('es-CO')} {selectedAccount?.currency || 'COP'}
-              </Text>
-            </View>
-          </View>
-
           {/* Campo de nota */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Nota (opcional)</Text>
+          <View style={{ marginBottom: spacing[4] }}>
+            <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Nota (opcional)</Text>
             <TextInput
-              style={styles.noteInput}
+              style={addTransactionStyles.noteInput}
               placeholder="Agregar una nota..."
               placeholderTextColor="#ADADAD"
               value={note}
@@ -241,87 +838,71 @@ export default function AddTransaction() {
             />
           </View>
 
-
-
-          {/* Teclado numérico personalizado */}
-          <Calculator 
-            key={calcResetKey}
-            onAmountChange={setAmount}
-            initialValue={amount}
-          />
-
+          {/* Espacio para el botón flotante */}
+          <View style={{ height: 100 }} />
         </ScrollView>
 
-        {/* Botón Continuar */}
-        <TouchableOpacity 
-          style={[
-            styles.continueButton,
-            parseFloat(amount) <= 0 && styles.disabledButton
-          ]}
-          onPress={handleContinue}
-          disabled={parseFloat(amount) <= 0}
-        >
-          <Text style={[
-            styles.continueButtonText,
-            parseFloat(amount) <= 0 && styles.disabledButtonText
-          ]}>
-            Continuar
-          </Text>
-          <Image
-            source={ICONS['arrow-forward']}
-            style={{ width: 20, height: 20, tintColor: colors.white }}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
+        {/* Botón Continuar Flotante */}
+        <View style={addTransactionStyles.floatingButtonContainer}>
+          <TouchableOpacity 
+            style={[
+              addTransactionStyles.floatingButton,
+              parseFloat(amount) <= 0 && addTransactionStyles.disabledButton
+            ]}
+            onPress={handleContinue}
+            disabled={parseFloat(amount) <= 0}
+          >
+            <Text style={[
+              addTransactionStyles.floatingButtonText,
+              parseFloat(amount) <= 0 && addTransactionStyles.disabledButtonText
+            ]}>
+              Continuar
+            </Text>
+            <Image
+              source={ICONS['arrow-forward']}
+              style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
 
-      {/* Date Picker Modal Simple */}
+      {/* Date Picker Modal con Calendario */}
       {showDatePicker && (
-        <View style={styles.datePickerOverlay}>
-          <View style={styles.datePickerModal}>
-            <Text style={styles.datePickerTitle}>Seleccionar Fecha</Text>
-            
-            <View style={styles.datePickerControls}>
+        <View style={addTransactionStyles.datePickerOverlay}>
+          <View style={addTransactionStyles.datePickerModal}>
+            <View style={addTransactionStyles.datePickerHeader}>
+              <Text style={addTransactionStyles.datePickerTitle}>Seleccionar Fecha</Text>
               <TouchableOpacity 
-                style={styles.datePickerButton}
-                onPress={() => {
-                  const newDate = new Date(selectedDate);
-                  newDate.setDate(newDate.getDate() - 1);
-                  setSelectedDate(newDate);
-                }}
+                onPress={() => setShowDatePicker(false)}
+                style={addTransactionStyles.closeButton}
               >
-                <Text style={styles.datePickerButtonText}>Día Anterior</Text>
-              </TouchableOpacity>
-              
-              <Text style={styles.selectedDateText}>
-                {selectedDate.toLocaleDateString('es-CO')}
-              </Text>
-              
-              <TouchableOpacity 
-                style={styles.datePickerButton}
-                onPress={() => {
-                  const newDate = new Date(selectedDate);
-                  newDate.setDate(newDate.getDate() + 1);
-                  setSelectedDate(newDate);
-                }}
-              >
-                <Text style={styles.datePickerButtonText}>Día Siguiente</Text>
+                <Image
+                  source={require('../../assets/icons/close.svg')}
+                  style={{ width: 24, height: 24, tintColor: colors.text.tertiary }}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
             
-            <View style={styles.datePickerActions}>
+            <SingleDateCalendar
+              selectedDate={selectedDate}
+              onDateSelection={setSelectedDate}
+            />
+            
+            <View style={addTransactionStyles.datePickerActions}>
               <TouchableOpacity 
-                style={[styles.datePickerActionButton, styles.todayButton]}
+                style={[addTransactionStyles.datePickerActionButton, addTransactionStyles.todayButton]}
                 onPress={() => setSelectedDate(new Date())}
               >
-                <Text style={styles.todayButtonText}>Hoy</Text>
+                <Text style={addTransactionStyles.todayButtonText}>Hoy</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
-                style={[styles.datePickerActionButton, styles.confirmButton]}
+                style={[addTransactionStyles.datePickerActionButton, addTransactionStyles.confirmButton]}
                 onPress={() => setShowDatePicker(false)}
               >
-                <Text style={styles.confirmButtonText}>Confirmar</Text>
+                <Text style={addTransactionStyles.confirmButtonText}>Confirmar</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -330,40 +911,40 @@ export default function AddTransaction() {
 
       {/* Modal Selector de Cuenta */}
       {showAccountSelector && (
-        <View style={styles.modalOverlay}>
-          <View style={styles.accountSelectorModal}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Seleccionar Cuenta</Text>
+        <View style={addTransactionStyles.modalOverlay}>
+          <View style={addTransactionStyles.accountSelectorModal}>
+            <View style={addTransactionStyles.modalHeader}>
+              <Text style={addTransactionStyles.modalTitle}>Seleccionar Cuenta</Text>
               <TouchableOpacity 
                 onPress={() => setShowAccountSelector(false)}
-                style={styles.closeButton}
+                style={addTransactionStyles.closeButton}
               >
                 <Image
                   source={ICONS['close']}
-                  style={{ width: 24, height: 24, tintColor: colors.grayMedium }}
+                  style={{ width: 24, height: 24, tintColor: colors.text.tertiary }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.accountsList} showsVerticalScrollIndicator={false}>
+            <ScrollView style={addTransactionStyles.accountsList} showsVerticalScrollIndicator={false}>
               {accounts.map((account) => (
                 <TouchableOpacity
                   key={account.id}
                   style={[
-                    styles.accountItem,
-                    selectedAccount?.id === account.id && styles.selectedAccountItem
+                    addTransactionStyles.accountItem,
+                    selectedAccount?.id === account.id && addTransactionStyles.selectedAccountItem
                   ]}
                   onPress={() => {
                     setSelectedAccount(account);
                     setShowAccountSelector(false);
                   }}
                 >
-                  <View style={styles.accountItemLeft}>
-                    <Text style={styles.accountItemSymbol}>{account.symbol}</Text>
-                    <View style={styles.accountItemInfo}>
-                      <Text style={styles.accountItemName}>{account.name}</Text>
-                      <Text style={styles.accountItemBalance}>
+                  <View style={addTransactionStyles.accountItemLeft}>
+                    <Text style={addTransactionStyles.accountItemSymbol}>{account.symbol}</Text>
+                    <View style={addTransactionStyles.accountItemInfo}>
+                      <Text style={addTransactionStyles.accountItemName}>{account.name}</Text>
+                      <Text style={addTransactionStyles.accountItemBalance}>
                         Balance: {account.balance.toLocaleString('es-CO')} {account.currency}
                       </Text>
                     </View>
@@ -371,7 +952,7 @@ export default function AddTransaction() {
                   {selectedAccount?.id === account.id && (
                     <Image
                       source={ICONS['checkmark-circle']}
-                      style={{ width: 24, height: 24, tintColor: colors.primary }}
+                      style={{ width: 24, height: 24, tintColor: colors.primary[500] }}
                       resizeMode="contain"
                     />
                   )}

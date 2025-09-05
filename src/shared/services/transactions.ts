@@ -101,6 +101,18 @@ export const getCategoryTransactionStats = async (categoryId: string) => {
 };
 
 /**
+ * Elimina una transacción por ID
+ */
+export const deleteTransaction = async (transactionId: string): Promise<void> => {
+  try {
+    await databaseService.deleteTransaction(transactionId);
+  } catch (error) {
+    console.error('Error al eliminar transacción:', error);
+    throw error;
+  }
+};
+
+/**
  * Obtiene estadísticas de todas las categorías para la pantalla de inicio
  */
 export const getAllCategoriesStats = async () => {

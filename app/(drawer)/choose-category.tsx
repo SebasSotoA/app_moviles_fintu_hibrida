@@ -1,21 +1,20 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   Image,
   ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
+import { useStyles } from '../../src/shared/hooks';
+import { colors, shadows, spacing, typography } from '../../src/shared/styles/tokens';
 import { TransactionType } from '../../types/transaction';
-import styles from '@/src/shared/styles/components/choose-category';
-import colors from '../../src/shared/styles/themes';
 
 // Mapa de íconos locales con nombres exactos de Ionicons
 const ICONS: Record<string, any> = {
@@ -45,6 +44,176 @@ const ICONS: Record<string, any> = {
 export default function ChooseCategory() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
+  
+  const chooseCategoryStyles = useStyles(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.dark,
+    },
+    statusBarArea: {
+      backgroundColor: colors.background.dark,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: spacing.layout.screenPadding,
+      paddingVertical: spacing[3],
+      backgroundColor: colors.background.dark,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.background.dark,
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: typography.fontSize.xl,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    backButton: {
+      padding: spacing[1],
+      width: 38,
+      height: 38,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 25,
+    },
+    placeholder: {
+      width: 38,
+    },
+    contentContainer: {
+      flex: 1,
+      backgroundColor: colors.neutral.white,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: spacing.layout.screenPadding,
+    },
+    summaryContainer: {
+      backgroundColor: colors.neutral.gray[100],
+      margin: spacing.layout.screenPadding,
+      padding: spacing.component.cardPadding,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border.light,
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: spacing[2],
+    },
+    summaryLabel: {
+      fontSize: typography.fontSize.sm,
+      color: colors.text.tertiary,
+      fontWeight: typography.fontWeight.medium,
+    },
+    summaryValue: {
+      fontSize: typography.fontSize.base,
+      color: colors.text.secondary,
+      fontWeight: typography.fontWeight.semibold,
+    },
+    categoriesGrid: {
+      gap: spacing.component.listItemGap,
+    },
+    categoryItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: spacing.component.cardPadding,
+      backgroundColor: colors.neutral.white,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: colors.border.light,
+      marginBottom: spacing[2],
+    },
+    selectedCategoryItem: {
+      borderColor: colors.primary[500],
+      backgroundColor: colors.secondary[50],
+    },
+    categoryIcon: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: spacing[4],
+    },
+    categoryInfo: {
+      flex: 1,
+    },
+    categoryName: {
+      flex: 1,
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.text.secondary,
+    },
+    confirmButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primary[500],
+      marginHorizontal: spacing.layout.screenPadding,
+      marginBottom: spacing.layout.screenPadding,
+      paddingVertical: spacing.component.buttonPadding,
+      borderRadius: 25,
+      ...shadows.specific.button,
+    },
+    confirmButtonText: {
+      fontSize: typography.fontSize.base,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+      marginRight: spacing[2],
+    },
+    createCategoryButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.component.cardPadding,
+      backgroundColor: colors.neutral.gray[100],
+      gap: spacing[2],
+      marginBottom: spacing[4],
+    },
+    createCategoryText: {
+      fontSize: typography.fontSize.sm,
+      color: colors.primary[500],
+      fontWeight: typography.fontWeight.semibold,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: spacing[12],
+    },
+    loadingText: {
+      marginTop: spacing[4],
+      fontSize: typography.fontSize.base,
+      color: colors.text.secondary,
+    },
+         emptyState: {
+       alignItems: 'center',
+       paddingVertical: spacing[12],
+       gap: spacing[4],
+     },
+         emptyStateText: {
+       fontSize: typography.fontSize.base,
+       color: colors.neutral.gray[300],
+       textAlign: 'center',
+     },
+     sectionTitle: {
+       fontSize: typography.fontSize.base,
+       fontWeight: typography.fontWeight.semibold,
+       color: colors.text.primary,
+       marginBottom: spacing[4],
+     },
+     disabledButton: {
+       backgroundColor: colors.neutral.gray[300],
+     },
+     disabledButtonText: {
+       color: colors.neutral.gray[500],
+     },
+   }));
   const { categories, addTransaction, currentAccount } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -126,23 +295,23 @@ export default function ChooseCategory() {
     <TouchableOpacity
       key={category.id}
       style={[
-        styles.categoryItem,
-        selectedCategory === category.id && styles.selectedCategoryItem,
+        chooseCategoryStyles.categoryItem,
+        selectedCategory === category.id && chooseCategoryStyles.selectedCategoryItem,
       ]}
       onPress={() => setSelectedCategory(category.id)}
     >
-      <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
+      <View style={[chooseCategoryStyles.categoryIcon, { backgroundColor: category.color }]}>
         <Image
           source={ICONS[category.icon as string]}
-          style={{ width: 28, height: 28, tintColor: colors.white }}
+                     style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
           resizeMode="contain"
         />
       </View>
-      <Text style={styles.categoryName}>{category.name}</Text>
+      <Text style={chooseCategoryStyles.categoryName}>{category.name}</Text>
       {selectedCategory === category.id && (
         <Image
           source={ICONS['checkmark-circle']}
-          style={{ width: 24, height: 24, tintColor: colors.primary }}
+                         style={{ width: 24, height: 24, tintColor: colors.primary[500] }}
           resizeMode="contain"
         />
       )}
@@ -150,73 +319,73 @@ export default function ChooseCategory() {
   );
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.grayDark} />
+    <View style={chooseCategoryStyles.container}>
+             <StatusBar barStyle="light-content" backgroundColor={colors.background.dark} />
       
       {/* Área superior con color del header */}
-      <View style={[styles.statusBarArea, { height: insets.top }]} />
+      <View style={[chooseCategoryStyles.statusBarArea, { height: insets.top }]} />
       
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+      <View style={chooseCategoryStyles.header}>
+        <TouchableOpacity onPress={goBack} style={chooseCategoryStyles.backButton}>
           <Image
             source={ICONS['arrow-back']}
-            style={{ width: 28, height: 28, tintColor: colors.white }}
+            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>
+        <View style={chooseCategoryStyles.headerCenter}>
+          <Text style={chooseCategoryStyles.headerTitle}>
             Elegir Categoría de {transactionType === 'GASTO' ? 'Gasto' : 'Ingreso'}
           </Text>
         </View>
-        <View style={styles.placeholder} />
+        <View style={chooseCategoryStyles.placeholder} />
       </View>
 
       {/* Contenido principal */}
-      <SafeAreaView style={styles.contentContainer} edges={['left', 'right', 'bottom']}>
+      <SafeAreaView style={chooseCategoryStyles.contentContainer} edges={['left', 'right', 'bottom']}>
         {/* Resumen de la transacción */}
-        <View style={styles.summaryContainer}>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Tipo:</Text>
-            <Text style={[
-              styles.summaryValue,
-              { color: transactionType === 'GASTO' ? colors.error : colors.success }
-            ]}>
+        <View style={chooseCategoryStyles.summaryContainer}>
+          <View style={chooseCategoryStyles.summaryRow}>
+            <Text style={chooseCategoryStyles.summaryLabel}>Tipo:</Text>
+                         <Text style={[
+               chooseCategoryStyles.summaryValue,
+               { color: transactionType === 'GASTO' ? colors.semantic.error : colors.semantic.success }
+             ]}>
               {transactionType}
             </Text>
           </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Monto:</Text>
-            <Text style={styles.summaryValue}>
+          <View style={chooseCategoryStyles.summaryRow}>
+            <Text style={chooseCategoryStyles.summaryLabel}>Monto:</Text>
+            <Text style={chooseCategoryStyles.summaryValue}>
               {parseFloat(amount).toLocaleString('es-CO')} {currentAccount?.currency || 'COP'}
             </Text>
           </View>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView style={chooseCategoryStyles.content} showsVerticalScrollIndicator={false}>
           
           {/* Título de sección */}
-          <Text style={styles.sectionTitle}>
+          <Text style={chooseCategoryStyles.sectionTitle}>
             Selecciona una categoría:
           </Text>
 
           {/* Grid de categorías */}
-          <View style={styles.categoriesGrid}>
+          <View style={chooseCategoryStyles.categoriesGrid}>
             {filteredCategories.map(renderCategoryItem)}
           </View>
 
           {/* Opción de crear nueva categoría */}
           <TouchableOpacity 
-            style={styles.createCategoryButton}
+            style={chooseCategoryStyles.createCategoryButton}
             onPress={handleCreateCategory}
           >
             <Image
               source={ICONS['add-circle-outline']}
-              style={{ width: 24, height: 24, tintColor: colors.primary }}
+                             style={{ width: 24, height: 24, tintColor: colors.primary[500] }}
               resizeMode="contain"
             />
-            <Text style={styles.createCategoryText}>Crear Nueva Categoría</Text>
+            <Text style={chooseCategoryStyles.createCategoryText}>Crear Nueva Categoría</Text>
           </TouchableOpacity>
 
         </ScrollView>
@@ -224,25 +393,25 @@ export default function ChooseCategory() {
         {/* Botón Confirmar */}
         <TouchableOpacity 
           style={[
-            styles.confirmButton,
-            (!selectedCategory || isLoading) && styles.disabledButton
+            chooseCategoryStyles.confirmButton,
+            (!selectedCategory || isLoading) && chooseCategoryStyles.disabledButton
           ]}
           onPress={handleConfirm}
           disabled={!selectedCategory || isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator size="small" color={colors.white} />
+                         <ActivityIndicator size="small" color={colors.neutral.white} />
           ) : (
             <>
               <Text style={[
-                styles.confirmButtonText,
-                (!selectedCategory || isLoading) && styles.disabledButtonText
+                chooseCategoryStyles.confirmButtonText,
+                (!selectedCategory || isLoading) && chooseCategoryStyles.disabledButtonText
               ]}>
                 Confirmar
               </Text>
               <Image
                 source={ICONS['checkmark']}
-                style={{ width: 20, height: 20, tintColor: colors.white }}
+                                 style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                 resizeMode="contain"
               />
             </>

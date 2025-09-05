@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { DatabaseAccount, DatabaseCategory, databaseService, DatabaseTransaction } from '../services/database';
 
@@ -38,12 +38,33 @@ export function AppProvider({ children }: AppProviderProps) {
   const [categories, setCategories] = useState<DatabaseCategory[]>([]);
   const [currentAccount, setCurrentAccountState] = useState<DatabaseAccount | null>(null);
 
-  // Inicializar la base de datos
-  useEffect(() => {
-    initializeApp();
+  const refreshData = useCallback(async () => {
+    try {
+      const [accountsData, categoriesData] = await Promise.all([
+        databaseService.getAccounts(),
+        databaseService.getCategories()
+      ]);
+      
+      setAccounts(accountsData);
+      setCategories(categoriesData);
+      
+      // Sincronizar la cuenta actual con los datos más recientes
+      if (accountsData.length > 0) {
+        setCurrentAccountState(prev => {
+          if (!prev) {
+            return accountsData[0];
+          } else {
+            const updated = accountsData.find(acc => acc.id === prev.id);
+            return updated || prev;
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    }
   }, []);
 
-  const initializeApp = async () => {
+  const initializeApp = useCallback(async () => {
     try {
       setIsLoading(true);
       
@@ -53,7 +74,21 @@ export function AppProvider({ children }: AppProviderProps) {
       }
       
       await databaseService.init();
-      await refreshData();
+      
+      // Cargar datos directamente sin usar refreshData para evitar bucles
+      const [accountsData, categoriesData] = await Promise.all([
+        databaseService.getAccounts(),
+        databaseService.getCategories()
+      ]);
+      
+      setAccounts(accountsData);
+      setCategories(categoriesData);
+      
+      // Establecer la primera cuenta como activa si existe
+      if (accountsData.length > 0) {
+        setCurrentAccountState(accountsData[0]);
+      }
+      
       setIsInitialized(true);
     } catch (error) {
       console.error('Error initializing app:', error);
@@ -62,7 +97,12 @@ export function AppProvider({ children }: AppProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Inicializar la base de datos
+  useEffect(() => {
+    initializeApp();
+  }, [initializeApp]);
 
   const deleteCategory = async (id: string) => {
     try {
@@ -84,30 +124,6 @@ export function AppProvider({ children }: AppProviderProps) {
     } catch (error) {
       console.error('Error updating category:', error);
       throw error;
-    }
-  };
-
-  const refreshData = async () => {
-    try {
-      const [accountsData, categoriesData] = await Promise.all([
-        databaseService.getAccounts(),
-        databaseService.getCategories()
-      ]);
-      
-      setAccounts(accountsData);
-      setCategories(categoriesData);
-      
-      // Sincronizar la cuenta actual con los datos más recientes
-      if (accountsData.length > 0) {
-        if (!currentAccount) {
-          setCurrentAccountState(accountsData[0]);
-        } else {
-          const updated = accountsData.find(acc => acc.id === currentAccount.id);
-          if (updated) setCurrentAccountState(updated);
-        }
-      }
-    } catch (error) {
-      console.error('Error refreshing data:', error);
     }
   };
 
