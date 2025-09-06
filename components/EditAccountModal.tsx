@@ -1,14 +1,13 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Modal,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useStyles } from '../src/shared/hooks';
 import { DatabaseAccount } from '../src/shared/services/database';
@@ -25,13 +24,14 @@ const AVAILABLE_SYMBOLS = [
   '💰', '🏦', '💳', '💵', '💴', '💶', '💷', '🪙',
   '💎', '🏧', '📱', '💻', '🏠', '🚗', '✈️', '🎯',
   '⭐', '🔥', '💡', '🎨', '🎵', '🎮', '📚', '🎓',
-  '💼', '🔧', '⚡', '🌟', '🎪', '🎭', '🎨', '🎯'
+  '💼', '🔧', '⚡', '🌟', '🎪', '🎭', '🏆', '🎲'
 ];
 
 export default function EditAccountModal({ visible, account, onClose, onSave }: EditAccountModalProps) {
   const [name, setName] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('💰');
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const editAccountModalStyles = useStyles(() => ({
     overlay: {
@@ -70,7 +70,17 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
       color: colors.text.primary,
     },
     closeButton: {
-      padding: 4,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.background.surface,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeButtonText: {
+      fontSize: 18,
+      color: colors.text.tertiary,
+      fontWeight: 'bold',
     },
     content: {
       maxHeight: 400,
@@ -115,7 +125,9 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
     symbolGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 8,
+      gap: 16,
+      alignContent: 'center',
+      justifyContent: 'flex-start',
     },
     symbolButton: {
       width: 44,
@@ -222,11 +234,19 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
   }));
 
   React.useEffect(() => {
-    if (account && visible) {
-      setName(account.name);
-      setSelectedSymbol(account.symbol);
+    if (account && visible && !isInitialized) {
+      // Usar setTimeout para evitar bloqueos en el render
+      const timer = setTimeout(() => {
+        setName(account.name);
+        setSelectedSymbol(account.symbol);
+        setIsInitialized(true);
+      }, 0);
+      
+      return () => clearTimeout(timer);
+    } else if (!visible) {
+      setIsInitialized(false);
     }
-  }, [account, visible]);
+  }, [account, visible, isInitialized]);
 
   const handleSave = async () => {
     if (!account) return;
@@ -252,10 +272,15 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
 
     setIsLoading(true);
     try {
-      await onSave(account.id, {
-        name: trimmedName,
-        symbol: selectedSymbol
-      });
+      const result = await Promise.race([
+        onSave(account.id, {
+          name: trimmedName,
+          symbol: selectedSymbol
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout: onSave tardó más de 5 segundos")), 5000)
+        )
+      ]);
       onClose();
     } catch (error: any) {
       let errorMessage = 'Error al actualizar la cuenta';
@@ -264,6 +289,8 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
         errorMessage = 'Ya existe una cuenta con ese nombre';
       } else if (error.message === 'DUPLICATE_ACCOUNT_SYMBOL') {
         errorMessage = 'Ya existe una cuenta con ese símbolo';
+      } else if (error.message.includes('Timeout')) {
+        errorMessage = 'La operación tardó demasiado. Inténtalo de nuevo.';
       }
 
       if (Platform.OS === 'web') {
@@ -282,13 +309,13 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
     }
   };
 
-  if (!account) return null;
+  if (!account || !isInitialized) return null;
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={handleClose}
     >
       <View style={editAccountModalStyles.overlay}>
@@ -301,14 +328,14 @@ export default function EditAccountModal({ visible, account, onClose, onSave }: 
               style={editAccountModalStyles.closeButton}
               disabled={isLoading}
             >
-              <Ionicons name="close" size={24} color={colors.text.tertiary} />
+              <Text style={editAccountModalStyles.closeButtonText}>✕</Text>
             </TouchableOpacity>
           </View>
 
           <ScrollView style={editAccountModalStyles.content} showsVerticalScrollIndicator={false}>
             {/* Información no editable */}
             <View style={editAccountModalStyles.infoSection}>
-              <Text style={editAccountModalStyles.infoLabel}>Saldo actual (no editable)</Text>
+              <Text style={editAccountModalStyles.infoLabel}>Saldo actual (No editable)</Text>
               <Text style={editAccountModalStyles.infoValue}>
                 {account.balance.toLocaleString('es-CO')} {account.currency}
               </Text>

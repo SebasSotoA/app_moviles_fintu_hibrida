@@ -17,6 +17,7 @@ import { useApp } from '../../src/shared/context/AppProvider';
 import { DatabaseAccount } from '../../src/shared/services/database';
 
 import { useStyles } from '../../src/shared/hooks';
+import { headerStyles } from '../../src/shared/styles/components';
 import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 // Mapa de íconos locales siguiendo el patrón de add-transaction.tsx
@@ -45,28 +46,11 @@ export default function Cuentas() {
     statusBarArea: {
       backgroundColor: colors.background.dark,
     },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      backgroundColor: colors.background.dark,
-    },
-    menuButton: {
-      padding: 8,
-    },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: typography.fontSize.lg,
-      fontWeight: typography.fontWeight.bold,
-      color: colors.neutral.white,
-    },
-    placeholder: {
-      width: 44,
-    },
+    header: headerStyles.dashboard,
+    menuButton: headerStyles.menuButton,
+    headerCenter: headerStyles.center,
+    headerTitle: headerStyles.title,
+    placeholder: headerStyles.placeholder,
     contentContainer: {
       flex: 1,
       backgroundColor: colors.neutral.white,
@@ -127,9 +111,14 @@ export default function Cuentas() {
       backgroundColor: colors.primary[500],
     },
     addButton: {
-      backgroundColor: colors.semantic.success,
+      backgroundColor: colors.background.toggleUnpressed,
     },
     actionButtonText: {
+      fontSize: typography.fontSize.sm,
+      fontWeight: typography.fontWeight.semibold,
+      color: colors.neutral.white,
+    },
+    newButtonText: {
       fontSize: typography.fontSize.sm,
       fontWeight: typography.fontWeight.semibold,
       color: colors.neutral.white,
@@ -294,7 +283,19 @@ export default function Cuentas() {
   };
 
   const handleSaveAccount = async (accountId: string, updates: { name: string; symbol: string }) => {
-    await updateAccount(accountId, updates);
+    try {
+      // Agregar timeout de 5 segundos
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout: La operación tardó demasiado')), 5000)
+      );
+      
+      const updatePromise = updateAccount(accountId, updates);
+      
+      await Promise.race([updatePromise, timeoutPromise]);
+    } catch (error) {
+      console.error('Error al actualizar cuenta:', error);
+      throw error;
+    }
   };
 
   const handleCloseEditModal = () => {
@@ -433,7 +434,7 @@ export default function Cuentas() {
                 style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
                 resizeMode="contain"
               />
-              <Text style={accountsStyles.actionButtonText}>Añadir</Text>
+              <Text style={accountsStyles.newButtonText}>Añadir</Text>
             </TouchableOpacity>
           </View>
 

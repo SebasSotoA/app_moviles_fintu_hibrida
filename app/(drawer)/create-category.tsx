@@ -1,19 +1,20 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
-    Alert,
-    Image,
-    Platform,
-    ScrollView,
-    StatusBar,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  Platform,
+  ScrollView,
+  StatusBar,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { useStyles } from '../../src/shared/hooks';
+import { headerStyles } from '../../src/shared/styles/components';
 import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 // Mapa de íconos locales (SVG) siguiendo el patrón de add-transaction.tsx
@@ -45,28 +46,11 @@ export default function CreateCategory() {
     statusBarArea: {
       backgroundColor: colors.background.dark,
     },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      backgroundColor: colors.background.dark,
-    },
-    backButton: {
-      padding: 8,
-    },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: typography.fontSize.lg,
-      fontWeight: typography.fontWeight.bold,
-      color: colors.neutral.white,
-    },
-    placeholder: {
-      width: 44,
-    },
+    header: headerStyles.standard,
+    backButton: headerStyles.actionButton,
+    headerCenter: headerStyles.center,
+    headerTitle: headerStyles.title,
+    placeholder: headerStyles.placeholder,
     contentContainer: {
       flex: 1,
       backgroundColor: colors.neutral.white,
@@ -104,6 +88,7 @@ export default function CreateCategory() {
       paddingVertical: spacing[3],
       alignItems: 'center',
       borderRadius: 8,
+      backgroundColor: colors.background.lighter,
     },
     activeToggleButton: {
       backgroundColor: colors.primary[500],
@@ -111,7 +96,7 @@ export default function CreateCategory() {
     toggleText: {
       fontSize: typography.fontSize.sm,
       fontWeight: typography.fontWeight.medium,
-      color: colors.text.tertiary,
+      color: colors.text.primary,
     },
     activeToggleText: {
       color: colors.neutral.white,

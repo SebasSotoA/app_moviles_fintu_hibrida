@@ -3,8 +3,8 @@ import { router, usePathname } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { Image, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useStyles } from '../../src/shared/hooks';
-import { colors, spacing, typography } from '../../src/shared/styles/tokens';
+import { drawerStyles, drawerTextStyles } from '../../src/shared/styles/components';
+import { colors } from '../../src/shared/styles/tokens';
 
 interface CustomDrawerContentProps {
   state: any;
@@ -14,78 +14,6 @@ interface CustomDrawerContentProps {
 
 function CustomDrawerContent(props: CustomDrawerContentProps) {
   const pathname = usePathname();
-  
-  const styles = useStyles(() => ({
-    drawerContainer: {
-      flex: 1,
-      backgroundColor: colors.background.dark,
-    },
-    drawerHeader: {
-      padding: spacing.layout.screenPadding,
-      paddingTop: spacing[8],
-      borderBottomWidth: 1,
-      borderBottomColor: colors.background.dark,
-    },
-    logoContainer: {
-      alignItems: 'center',
-      marginBottom: spacing[6],
-    },
-    logo: {
-      width: 60,
-      height: 60,
-      marginBottom: spacing[2],
-    },
-    appName: {
-      fontSize: typography.fontSize.lg,
-      fontWeight: typography.fontWeight.bold,
-      color: colors.neutral.white,
-    },
-    drawerItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: spacing[3],
-      paddingHorizontal: spacing.layout.screenPadding,
-      marginHorizontal: spacing[2],
-      borderRadius: 8,
-    },
-    activeDrawerItem: {
-      backgroundColor: colors.primary[500],
-    },
-    drawerItemIcon: {
-      marginRight: spacing[3],
-    },
-    drawerItemText: {
-      fontSize: typography.fontSize.base,
-      color: colors.neutral.white,
-      fontWeight: typography.fontWeight.medium,
-    },
-    activeDrawerItemText: {
-      color: colors.neutral.white,
-      fontWeight: typography.fontWeight.semibold,
-    },
-    drawerContent: {
-      flex: 1,
-    },
-    userText: {
-      fontSize: typography.fontSize.lg,
-      fontWeight: typography.fontWeight.bold,
-      color: colors.neutral.white,
-      marginTop: spacing[2],
-    },
-    menuItems: {
-      flex: 1,
-      paddingTop: spacing[4],
-    },
-    drawerLabel: {
-      fontSize: typography.fontSize.base,
-      color: colors.neutral.white,
-      fontWeight: typography.fontWeight.medium,
-    },
-    activeDrawerLabel: {
-      color: colors.neutral.white,
-      fontWeight: typography.fontWeight.semibold,
-    },
-  }));
 
   // Mapa de íconos locales
   const ICONS: Record<string, any> = {
@@ -132,20 +60,23 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
   ];
 
   return (
-    <SafeAreaView style={styles.drawerContainer}>
-      <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
+    <SafeAreaView style={drawerStyles.container}>
+      <DrawerContentScrollView {...props} contentContainerStyle={drawerStyles.content}>
         {/* Encabezado del Drawer */}
-                 <View style={styles.drawerHeader}>
-           <Image
-             source={ICONS['person-circle-outline']}
-             style={{ width: 60, height: 60, tintColor: colors.neutral.white }}
-             resizeMode="contain"
-           />
-           <Text style={styles.userText}>Usuario</Text>
-         </View>
+        <View style={drawerStyles.header}>
+          <View style={drawerStyles.logoContainer}>
+            <Image
+              source={ICONS['person-circle-outline']}
+              style={drawerStyles.logo}
+              tintColor={colors.neutral.white}
+              resizeMode="contain"
+            />
+            <Text style={drawerTextStyles.userText}>Usuario</Text>
+          </View>
+        </View>
 
         {/* Items del menú */}
-        <View style={styles.menuItems}>
+        <View style={drawerStyles.menuItems}>
           {menuItems.map((item, index) => (
             <DrawerItem
               key={index}
@@ -163,12 +94,12 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
               )}
               onPress={() => router.push(item.route as any)}
               labelStyle={[
-                styles.drawerLabel,
-                pathname === item.route && styles.activeDrawerLabel,
+                drawerTextStyles.label,
+                pathname === item.route && drawerTextStyles.activeLabel,
               ]}
               style={[
-                styles.drawerItem,
-                pathname === item.route && styles.activeDrawerItem,
+                drawerStyles.item,
+                pathname === item.route && drawerStyles.activeItem,
               ]}
             />
           ))}

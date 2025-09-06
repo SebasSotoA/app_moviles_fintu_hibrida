@@ -295,77 +295,7 @@ export default function Home() {
   const [isCalendarLoading, setIsCalendarLoading] = useState(false);
   
   const insets = useSafeAreaInsets();
-
-  // Función para obtener los días del calendario (optimizada) - no utilizada actualmente
-  // const getCalendarDaysFor = React.useCallback((baseDate: Date) => {
-  //   const year = baseDate.getFullYear();
-  //   const month = baseDate.getMonth();
-  //   
-  //   // Obtener el primer día del mes
-  //   const firstDayOfMonth = new Date(year, month, 1);
-  //   // Obtener el último día del mes
-  //   const lastDayOfMonth = new Date(year, month + 1, 0);
-  //   
-  //   // Obtener el día de la semana del primer día (0 = domingo, 1 = lunes, etc.)
-  //   const firstDayWeekday = firstDayOfMonth.getDay();
-  //   
-  //   // Calcular cuántos días del mes anterior mostrar
-  //   const daysFromPreviousMonth = firstDayWeekday;
-  //   
-  //   // Calcular cuántos días del mes siguiente mostrar para completar 6 semanas
-  //   const totalDaysToShow = 42; // 6 semanas * 7 días
-  //   const daysFromNextMonth = totalDaysToShow - daysFromPreviousMonth - lastDayOfMonth.getDate();
-  //   
-  //   const days = [];
-  //   
-  //   // Agregar días del mes anterior
-  //   for (let i = daysFromPreviousMonth - 1; i >= 0; i--) {
-  //     const date = new Date(year, month, -i);
-  //     days.push({
-  //       date,
-  //       isCurrentMonth: false,
-  //       isSelected: customStartDate && customEndDate && 
-  //         date >= customStartDate && date <= customEndDate,
-  //       isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
-  //       isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
-  //       isInRange: customStartDate && customEndDate && 
-  //         date > customStartDate && date < customEndDate,
-  //     });
-  //   }
-  //   
-  //   // Agregar días del mes actual
-  //   for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
-  //     const date = new Date(year, month, day);
-  //     days.push({
-  //       date,
-  //       isCurrentMonth: true,
-  //       isSelected: customStartDate && customEndDate && 
-  //         date >= customStartDate && date <= customEndDate,
-  //       isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
-  //       isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
-  //       isInRange: customStartDate && customEndDate && 
-  //         date > customStartDate && date < customEndDate,
-  //     });
-  //   }
-  //   
-  //   // Agregar días del mes siguiente
-  //   for (let day = 1; day <= daysFromNextMonth; day++) {
-  //     const date = new Date(year, month + 1, day);
-  //     days.push({
-  //       date,
-  //       isCurrentMonth: false,
-  //       isSelected: customStartDate && customEndDate && 
-  //         date >= customStartDate && date <= customEndDate,
-  //       isStartDate: customStartDate && date.getTime() === customStartDate.getTime(),
-  //       isEndDate: customEndDate && date.getTime() === customEndDate.getTime(),
-  //       isInRange: customStartDate && customEndDate && 
-  //         date > customStartDate && date < customEndDate,
-  //     });
-  //   }
-  //   
-  //   return days;
-  // }, [customStartDate, customEndDate]);
-
+  
   // Generar lista de meses alredor del mes actual para scroll continuo
   const monthsForScroll = React.useMemo(() => {
     const center = new Date(calendarDate);
@@ -1060,7 +990,7 @@ const pieData = validCategories.map((category, index) => {
             style={styles.newButton}
             onPress={() => router.push('/(drawer)/add-transaction')}
           >
-            <Text style={styles.newButtonText}>+ Nueva Transacción</Text>
+            <Text style={dashboardStyles.newButtonText}>+ Nueva Transacción</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

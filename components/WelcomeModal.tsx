@@ -1,15 +1,15 @@
 import { BlurView } from 'expo-blur';
 import { useEffect, useRef } from 'react';
 import {
-  Animated,
-  Dimensions,
-  Easing,
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Easing,
+    Image,
+    Modal,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { colors } from '../src/shared/styles/tokens';
 import FintuLogo from './FintuLogo';

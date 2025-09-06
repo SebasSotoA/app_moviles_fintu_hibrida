@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import {
   Dimensions,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
-import { CalculatorState } from '../types/transaction';
 import breakpoints from '../src/shared/styles/breakpoints';
 import colors from '../src/shared/styles/themes';
+import { CalculatorState } from '../types/transaction';
 
 const { width } = Dimensions.get('window');
 
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.notCompletelyLightGray,
     borderRadius: 16,
     padding: 16,
-    marginVertical: 20,
+    marginBottom: 50,
   },
   calculatorContainer : {
     maxWidth: 600,
@@ -248,12 +248,12 @@ const styles = StyleSheet.create({
   displayContainer: {
     backgroundColor: colors.white,
     borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    paddingVertical: 1,
+    paddingHorizontal: 10,
+    marginBottom: 8,
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     borderWidth: 2,
     borderColor: colors.notCompletelyLightGray,
   },
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   keypad: {
-    gap: 12,
+    gap: 8,
   },
   row: {
     flexDirection: 'row',
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.notCompletelyLightGray,
     shadowColor: colors.black,
     shadowOffset: {

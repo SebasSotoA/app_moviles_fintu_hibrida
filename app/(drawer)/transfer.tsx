@@ -15,6 +15,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useApp } from '../../src/shared/context/AppProvider';
 import { useStyles } from '../../src/shared/hooks';
 import type { DatabaseAccount } from '../../src/shared/services/database';
+import { headerStyles } from '../../src/shared/styles/components';
 import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 // Mapa de íconos locales con nombres exactos de Ionicons
@@ -39,36 +40,11 @@ export default function Transfer() {
     statusBarArea: {
       backgroundColor: colors.background.dark,
     },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: spacing.layout.screenPadding,
-      paddingVertical: spacing[3],
-      backgroundColor: colors.background.dark,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.background.dark,
-    },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: typography.fontSize.xl,
-      fontWeight: typography.fontWeight.semibold,
-      color: colors.neutral.white,
-    },
-    backButton: {
-      padding: spacing[1],
-      width: 38,
-      height: 38,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 25,
-    },
-    placeholder: {
-      width: 38,
-    },
+    header: headerStyles.standard,
+    headerCenter: headerStyles.center,
+    headerTitle: headerStyles.title,
+    backButton: headerStyles.actionButton,
+    placeholder: headerStyles.placeholder,
     contentContainer: {
       flex: 1,
       backgroundColor: colors.neutral.white,

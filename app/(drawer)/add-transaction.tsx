@@ -15,6 +15,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Calculator from '../../components/Calculator';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { useStyles } from '../../src/shared/hooks';
+import { headerStyles } from '../../src/shared/styles/components';
 import { colors, shadows, spacing, typography } from '../../src/shared/styles/tokens';
 import { TransactionType } from '../../types/transaction';
 
@@ -249,36 +250,11 @@ export default function AddTransaction() {
     statusBarArea: {
       backgroundColor: colors.background.dark,
     },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: spacing.layout.screenPadding,
-      paddingVertical: spacing[3],
-      backgroundColor: colors.background.dark,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.background.dark,
-    },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: typography.fontSize.xl,
-      fontWeight: typography.fontWeight.semibold,
-      color: colors.neutral.white,
-    },
-    backButton: {
-      padding: spacing[1],
-      width: 38,
-      height: 38,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 25,
-    },
-    placeholder: {
-      width: 38,
-    },
+    header: headerStyles.standard,
+    headerCenter: headerStyles.center,
+    headerTitle: headerStyles.title,
+    backButton: headerStyles.actionButton,
+    placeholder: headerStyles.placeholder,
     contentContainer: {
       flex: 1,
       backgroundColor: colors.neutral.white,
@@ -286,19 +262,22 @@ export default function AddTransaction() {
     content: {
       flex: 1,
       paddingHorizontal: spacing.layout.screenPadding,
+      paddingTop: spacing[2],
     },
     calculatorSection: {
       backgroundColor: colors.neutral.white,
       paddingHorizontal: spacing.layout.screenPadding,
-      paddingVertical: spacing[4],
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border.light,
+      paddingVertical: spacing[1],
+      marginBottom: spacing[1],
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border.light,
     },
     calculatorTitle: {
       fontSize: typography.fontSize.sm,
       fontWeight: typography.fontWeight.semibold,
       color: colors.text.secondary,
-      marginBottom: spacing[3],
+
     },
     floatingButtonContainer: {
       position: 'absolute',
@@ -307,7 +286,7 @@ export default function AddTransaction() {
       right: 0,
       backgroundColor: colors.neutral.white,
       paddingHorizontal: spacing.layout.screenPadding,
-      paddingVertical: spacing[4],
+      paddingVertical: spacing[2],
       borderTopWidth: 1,
       borderTopColor: colors.border.light,
       ...shadows.specific.card,
@@ -317,7 +296,7 @@ export default function AddTransaction() {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: colors.primary[500],
-      paddingVertical: spacing.component.buttonPadding,
+      paddingVertical: spacing[3],
       borderRadius: 25,
       ...shadows.specific.button,
     },
@@ -367,7 +346,6 @@ export default function AddTransaction() {
       backgroundColor: colors.neutral.gray[100],
       textAlignVertical: 'top',
       minHeight: 80,
-      marginBottom: spacing[4],
     },
     continueButton: {
       flexDirection: 'row',
@@ -732,19 +710,11 @@ export default function AddTransaction() {
 
       {/* Contenido principal */}
       <SafeAreaView style={addTransactionStyles.contentContainer} edges={['left', 'right', 'bottom']}>
-        {/* Calculadora al inicio */}
-        <View style={addTransactionStyles.calculatorSection}>
-          <Text style={addTransactionStyles.calculatorTitle}>Monto</Text>
-          <Calculator 
-            key={calcResetKey}
-            onAmountChange={setAmount}
-            initialValue={amount}
-          />
-        </View>
-
+      
         <ScrollView style={addTransactionStyles.content} showsVerticalScrollIndicator={false}>
+  
           {/* Selector de fecha */}
-          <View style={{ marginBottom: spacing[4] }}>
+          <View style={{ marginBottom: spacing[1], marginTop: spacing[2] }}>
             <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Fecha</Text>
             <TouchableOpacity 
               style={addTransactionStyles.dateSelector}
@@ -760,7 +730,7 @@ export default function AddTransaction() {
           </View>
 
           {/* Selector de cuenta */}
-          <View style={{ marginBottom: spacing[4] }}>
+          <View style={{ marginBottom: spacing[1] }}>
             <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Cuenta</Text>
             <TouchableOpacity 
               style={addTransactionStyles.accountSelector}
@@ -786,7 +756,7 @@ export default function AddTransaction() {
           </View>
 
           {/* Toggle tipo de transacción */}
-          <View style={{ marginBottom: spacing[4] }}>
+          <View style={{ marginBottom: spacing[1] }}>
             <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Tipo</Text>
             <View style={addTransactionStyles.toggleContainer}>
               <TouchableOpacity
@@ -825,7 +795,7 @@ export default function AddTransaction() {
           </View>
 
           {/* Campo de nota */}
-          <View style={{ marginBottom: spacing[4] }}>
+          <View style={{ marginBottom: spacing[2] }}>
             <Text style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.text.secondary, marginBottom: spacing[2] }}>Nota (opcional)</Text>
             <TextInput
               style={addTransactionStyles.noteInput}
@@ -837,11 +807,15 @@ export default function AddTransaction() {
               numberOfLines={3}
             />
           </View>
-
-          {/* Espacio para el botón flotante */}
-          <View style={{ height: 100 }} />
         </ScrollView>
-
+        {/* Calculadora al inicio */}
+        <View style={addTransactionStyles.calculatorSection}>
+            <Calculator 
+              key={calcResetKey}
+              onAmountChange={setAmount}
+              initialValue={amount}
+            />
+          </View>
         {/* Botón Continuar Flotante */}
         <View style={addTransactionStyles.floatingButtonContainer}>
           <TouchableOpacity 

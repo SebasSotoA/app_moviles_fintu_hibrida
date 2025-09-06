@@ -4,6 +4,7 @@
  */
 
 import { colors, spacing, typography } from '../tokens';
+import { headerStyles } from './headers';
 
 export const dashboardStyles = {
   container: {
@@ -14,11 +15,10 @@ export const dashboardStyles = {
     backgroundColor: colors.background.dark,
   },
   header: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
+    ...headerStyles.dashboard,
+    // Mantener el padding específico del dashboard
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: colors.background.header,
   },
   menuButton: {
     padding: 8,
@@ -26,10 +26,7 @@ export const dashboardStyles = {
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center' as const,
-  },
+  headerCenter: headerStyles.center,
   placeholder: {
     width: 70,
   },

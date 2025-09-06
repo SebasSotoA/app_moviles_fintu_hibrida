@@ -35,14 +35,14 @@ import { colors } from '../src/shared/styles/tokens';
     const styles = StyleSheet.create({
     logoWrapper: {
         width: 120,   // fixed header space
-        height: 48,   // fixed header space
+        height: 50,   // fixed header space
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
     },
     logo: {
         pointerEvents: 'none', // El logo no intercepta toques, pero mantiene su tamaño visual
-        transform: [{ scale: 5 }], // scale up visually without growing parent height
+        transform: [{ scale: 6 }], // scale up visually without growing parent height
     },
     });
 

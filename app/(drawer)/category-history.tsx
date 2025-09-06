@@ -3,20 +3,21 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Image,
-  Modal, Platform, StatusBar,
-  Text,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    Image,
+    Modal, Platform, StatusBar,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { useStyles } from '../../src/shared/hooks';
 import { DatabaseTransaction } from '../../src/shared/services/database';
 import { deleteTransaction, getTransactionsByCategory } from '../../src/shared/services/transactions';
+import { headerStyles } from '../../src/shared/styles/components';
 import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 interface TransactionWithAccount extends DatabaseTransaction {
@@ -41,26 +42,13 @@ export default function CategoryHistory() {
     statusBarArea: {
       backgroundColor: colors.background.dark,
     },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: spacing.layout.screenPadding,
-      paddingVertical: spacing[3],
-      backgroundColor: colors.background.dark,
-    },
+    header: headerStyles.standard,
     backButton: {
-      padding: spacing[1],
+      ...headerStyles.actionButton,
       marginRight: spacing[3],
     },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: typography.fontSize.xl,
-      fontWeight: typography.fontWeight.semibold,
-      color: colors.neutral.white,
-    },
+    headerCenter: headerStyles.center,
+    headerTitle: headerStyles.title,
     contentContainer: {
       flex: 1,
       backgroundColor: colors.neutral.white,

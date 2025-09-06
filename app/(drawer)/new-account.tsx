@@ -1,19 +1,20 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
-    Alert,
-    Image,
-    Platform,
-    ScrollView,
-    StatusBar,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  Platform,
+  ScrollView,
+  StatusBar,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '../../src/shared/context/AppProvider';
 import { useStyles } from '../../src/shared/hooks';
+import { headerStyles } from '../../src/shared/styles/components';
 import { colors, spacing, typography } from '../../src/shared/styles/tokens';
 
 
@@ -42,7 +43,7 @@ const SYMBOL_OPTIONS = [
 
 const COLOR_OPTIONS = [
   '#3A7691', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
-  '#FFEAA7', '#DDA0DD', '#FF9800', '#9C27B0', '#E91E63',
+  '#e0bb38', '#DDA0DD', '#FF9800', '#9C27B0', '#E91E63',
 ];
 
 export default function NewAccount() {
@@ -73,28 +74,11 @@ export default function NewAccount() {
     statusBarArea: {
       backgroundColor: colors.background.dark,
     },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      backgroundColor: colors.background.dark,
-    },
-    backButton: {
-      padding: 8,
-    },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: typography.fontSize.lg,
-      fontWeight: typography.fontWeight.bold,
-      color: colors.neutral.white,
-    },
-    placeholder: {
-      width: 44,
-    },
+    header: headerStyles.standard,
+    backButton: headerStyles.actionButton,
+    headerCenter: headerStyles.center,
+    headerTitle: headerStyles.title,
+    placeholder: headerStyles.placeholder,
     contentContainer: {
       flex: 1,
       backgroundColor: colors.neutral.white,
@@ -174,7 +158,9 @@ export default function NewAccount() {
     symbolGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: spacing[2],
+      gap: 16,
+      alignContent: 'center',
+      justifyContent: 'space-between',
     },
     symbolOption: {
       width: 50,
@@ -240,10 +226,13 @@ export default function NewAccount() {
     },
     createButton: {
       backgroundColor: colors.primary[500],
-      paddingHorizontal: spacing[6],
-      paddingVertical: spacing[4],
+      paddingHorizontal: spacing[3],
+      paddingVertical: spacing[3],
       borderRadius: 25,
       alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: spacing[2],
       marginHorizontal: spacing[4],
       marginBottom: spacing[4],
     },
