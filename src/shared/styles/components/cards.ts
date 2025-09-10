@@ -3,8 +3,8 @@
  * Basados en los patrones existentes del proyecto
  */
 
-import { StyleSheet } from 'react-native';
-import { borders, colors, shadows, spacing } from '../tokens';
+import { StyleSheet } from "react-native";
+import { borders, colors, shadows, spacing, typography } from "../tokens";
 
 export const cardStyles = StyleSheet.create({
   // Tarjeta base - basada en accountCard, categoryCard
@@ -58,7 +58,7 @@ export const cardStyles = StyleSheet.create({
     padding: spacing.component.cardPadding,
     borderWidth: borders.width[1],
     borderColor: colors.border.light,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   // Tarjeta de gráfico - basada en chartSection, categoriesSection
@@ -78,8 +78,8 @@ export const cardStyles = StyleSheet.create({
     ...shadows.specific.card,
     borderWidth: borders.width[1],
     borderColor: colors.border.light,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   // Tarjeta de cuenta - basada en accountCard
@@ -103,7 +103,7 @@ export const cardStyles = StyleSheet.create({
     backgroundColor: colors.neutral.white,
     borderRadius: borders.specific.modal,
     padding: spacing.component.modalPadding,
-    width: '85%',
+    width: "85%",
     borderWidth: borders.width[1],
     borderColor: colors.border.light,
     ...shadows.specific.modal,
@@ -116,9 +116,28 @@ export const cardStyles = StyleSheet.create({
     padding: spacing.component.cardPadding,
     borderWidth: borders.width[1],
     borderColor: colors.border.light,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+});
+
+// Estilos para badges
+export const badgeStyles = StyleSheet.create({
+  primary: {
+    backgroundColor: colors.primary[100],
+    paddingHorizontal: spacing[2],
+    paddingVertical: spacing[1],
+    borderRadius: 12,
+    marginRight: spacing[2],
+  },
+});
+
+export const badgeTextStyles = StyleSheet.create({
+  primary: {
+    fontSize: typography.fontSize.xs,
+    color: colors.primary[600],
+    fontWeight: typography.fontWeight.semibold,
   },
 });
 

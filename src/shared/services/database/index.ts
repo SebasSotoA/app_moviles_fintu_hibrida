@@ -16,7 +16,7 @@ export interface DatabaseCategory {
   name: string;
   icon: string;
   color: string;
-  type: 'GASTO' | 'INGRESO';
+  type: "GASTO" | "INGRESO";
   createdAt: string;
   updatedAt: string;
 }
@@ -25,7 +25,7 @@ export interface DatabaseTransaction {
   id: string;
   accountId: string;
   categoryId: string;
-  type: 'GASTO' | 'INGRESO';
+  type: "GASTO" | "INGRESO";
   amount: number;
   date: string;
   note?: string;
@@ -46,32 +46,55 @@ export interface DatabaseTransfer {
 // Interface común para el servicio
 export interface IDatabaseService {
   init(): Promise<void>;
-  
+
   // Cuentas
   getAccounts(): Promise<DatabaseAccount[]>;
   getAccountById(id: string): Promise<DatabaseAccount | null>;
-  createAccount(account: Omit<DatabaseAccount, 'createdAt' | 'updatedAt'>): Promise<void>;
-  updateAccount(id: string, updates: Partial<Omit<DatabaseAccount, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void>;
-  
+  createAccount(
+    account: Omit<DatabaseAccount, "createdAt" | "updatedAt">,
+  ): Promise<void>;
+  updateAccount(
+    id: string,
+    updates: Partial<Omit<DatabaseAccount, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<void>;
+  deleteAccount(id: string): Promise<void>;
+
   // Categorías
   getCategories(): Promise<DatabaseCategory[]>;
-  getCategoriesByType(type: 'GASTO' | 'INGRESO'): Promise<DatabaseCategory[]>;
-  createCategory(category: Omit<DatabaseCategory, 'createdAt' | 'updatedAt'>): Promise<void>;
-  updateCategory(id: string, updates: Partial<Omit<DatabaseCategory, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void>;
+  getCategoriesByType(type: "GASTO" | "INGRESO"): Promise<DatabaseCategory[]>;
+  createCategory(
+    category: Omit<DatabaseCategory, "createdAt" | "updatedAt">,
+  ): Promise<void>;
+  updateCategory(
+    id: string,
+    updates: Partial<Omit<DatabaseCategory, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<void>;
   deleteCategory(id: string): Promise<void>;
-  
+
   // Transacciones
   getTransactions(): Promise<DatabaseTransaction[]>;
-  getTransactionsByDateRange(startDate: string, endDate: string): Promise<DatabaseTransaction[]>;
-  createTransaction(transaction: Omit<DatabaseTransaction, 'createdAt' | 'updatedAt'>): Promise<void>;
+  getTransactionsByDateRange(
+    startDate: string,
+    endDate: string,
+  ): Promise<DatabaseTransaction[]>;
+  createTransaction(
+    transaction: Omit<DatabaseTransaction, "createdAt" | "updatedAt">,
+  ): Promise<void>;
   deleteTransaction(transactionId: string): Promise<void>;
-  
+
   // Transferencias
-  createTransfer(transfer: Omit<DatabaseTransfer, 'createdAt' | 'updatedAt'>): Promise<void>;
-  
+  createTransfer(
+    transfer: Omit<DatabaseTransfer, "createdAt" | "updatedAt">,
+  ): Promise<void>;
+
   // Estadísticas
-  getTransactionStats(startDate: string, endDate: string, type?: 'GASTO' | 'INGRESO', accountId?: string): Promise<any[]>;
+  getTransactionStats(
+    startDate: string,
+    endDate: string,
+    type?: "GASTO" | "INGRESO",
+    accountId?: string,
+  ): Promise<any[]>;
 }
 
 // Re-exportar el servicio de localStorage para todas las plataformas
-export { databaseService } from './databaseService.web';
+export { databaseService } from "./databaseService.web";

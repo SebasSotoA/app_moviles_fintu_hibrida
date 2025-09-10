@@ -1,0 +1,253 @@
+import { StyleSheet } from "react-native";
+import { colors, spacing, typography } from "../tokens";
+import { headerStyles } from "./headers";
+
+export const newAccountStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background.dark,
+  },
+  statusBarArea: {
+    backgroundColor: colors.background.dark,
+  },
+  header: headerStyles.standard,
+  backButton: headerStyles.actionButton,
+  headerCenter: headerStyles.center,
+  headerTitle: headerStyles.title,
+  placeholder: headerStyles.placeholder,
+  contentContainer: {
+    flex: 1,
+    backgroundColor: colors.neutral.white,
+  },
+  content: {
+    flex: 1,
+    padding: spacing[4],
+  },
+  accountPreview: {
+    alignItems: "center",
+    padding: spacing[6],
+    borderRadius: 16,
+    marginBottom: spacing[6],
+  },
+  previewSymbol: {
+    fontSize: typography.fontSize["4xl"],
+    marginBottom: spacing[2],
+  },
+  previewName: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.neutral.white,
+    marginBottom: spacing[1],
+  },
+  previewBalance: {
+    fontSize: typography.fontSize.base,
+    color: colors.neutral.white,
+  },
+  section: {
+    marginBottom: spacing[6],
+  },
+  sectionTitle: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.secondary,
+    marginBottom: spacing[2],
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    borderRadius: 12,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    fontSize: typography.fontSize.base,
+    backgroundColor: colors.neutral.white,
+  },
+  balanceInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing[2],
+  },
+  balanceInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    borderRadius: 12,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    fontSize: typography.fontSize.base,
+    backgroundColor: colors.neutral.white,
+  },
+  currencyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    borderRadius: 12,
+    backgroundColor: colors.neutral.white,
+    gap: spacing[2],
+  },
+  currencyButtonText: {
+    fontSize: typography.fontSize.base,
+    color: colors.text.primary,
+  },
+  symbolGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+    alignContent: "center",
+    justifyContent: "space-between",
+  },
+  symbolOption: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: colors.background.surface,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: colors.border.light,
+  },
+  selectedSymbolOption: {
+    borderColor: colors.primary[500],
+    backgroundColor: colors.primary[50],
+  },
+  symbolText: {
+    fontSize: typography.fontSize.lg,
+  },
+  colorGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing[2],
+  },
+  colorOption: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: colors.border.light,
+  },
+  selectedColorOption: {
+    borderColor: colors.neutral.black,
+    borderWidth: 3,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing[2],
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: colors.border.light,
+    marginRight: spacing[2],
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  checkedCheckbox: {
+    backgroundColor: colors.primary[500],
+    borderColor: colors.primary[500],
+  },
+  checkboxLabel: {
+    fontSize: typography.fontSize.base,
+    color: colors.text.primary,
+  },
+  checkboxDescription: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
+  },
+  createButton: {
+    backgroundColor: colors.primary[500],
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[3],
+    borderRadius: 25,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: spacing[2],
+    marginHorizontal: spacing[4],
+    marginBottom: spacing[4],
+  },
+  disabledButton: {
+    backgroundColor: colors.text.tertiary,
+  },
+  createButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.neutral.white,
+  },
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  currencySelectorModal: {
+    backgroundColor: colors.neutral.white,
+    borderRadius: 20,
+    margin: spacing[4],
+    maxHeight: "80%",
+    width: "90%",
+    maxWidth: 400,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: spacing[4],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.light,
+  },
+  modalTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text.primary,
+  },
+  closeButton: {
+    padding: spacing[2],
+  },
+  currencyList: {
+    maxHeight: 300,
+  },
+  currencyItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: spacing[4],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.light,
+  },
+  selectedCurrencyItem: {
+    backgroundColor: colors.primary[50],
+  },
+  currencyCode: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.text.primary,
+    marginRight: spacing[2],
+  },
+  currencyName: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
+  },
+  currencyItemInfo: {
+    flex: 1,
+  },
+  currencyItemCode: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.text.primary,
+    marginRight: spacing[2],
+  },
+  currencyItemName: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
+  },
+});

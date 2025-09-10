@@ -11,9 +11,9 @@ export const borders = {
     md: 8,
     lg: 12,
     xl: 16,
-    '2xl': 20,
-    '3xl': 24,
-    '4xl': 25,    // borderRadius: 25 (patrón común en botones)
+    "2xl": 20,
+    "3xl": 24,
+    "4xl": 25, // borderRadius: 25 (patrón común en botones)
     full: 9999,
   },
 
@@ -28,9 +28,9 @@ export const borders = {
 
   // Estilos de borde
   style: {
-    solid: 'solid',
-    dashed: 'dashed',
-    dotted: 'dotted',
+    solid: "solid",
+    dashed: "dashed",
+    dotted: "dotted",
   },
 
   // Bordes específicos basados en los patrones existentes
@@ -39,26 +39,26 @@ export const borders = {
     button: 25,
     buttonSmall: 20,
     buttonLarge: 30,
-    
+
     // Tarjetas
     card: 16,
     cardSmall: 12,
     cardLarge: 20,
-    
+
     // Inputs
     input: 12,
     inputSmall: 8,
-    
+
     // Modales
     modal: 20,
     modalSmall: 16,
-    
+
     // Elementos redondos
     round: 9999,
     roundSmall: 20,
     roundMedium: 25,
     roundLarge: 35,
-  }
+  },
 } as const;
 
 export default borders;

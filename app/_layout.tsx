@@ -1,13 +1,13 @@
-import 'react-native-reanimated';
 import { Stack } from "expo-router";
-import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { AppProvider } from '../src/shared/context/AppProvider';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-reanimated";
+import { AppProvider } from "../src/shared/context/AppProvider";
+import { layoutStyles } from "../src/shared/styles/components";
 
 export default function RootLayout() {
   return (
     <AppProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={layoutStyles.fullHeight}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="(drawer)" />

@@ -3,10 +3,11 @@
  * Separados del componente para mejor mantenibilidad y reutilización
  */
 
-import { colors, spacing, typography } from '../tokens';
-import { headerStyles } from './headers';
+import { StyleSheet } from "react-native";
+import { colors, spacing, typography } from "../tokens";
+import { headerStyles } from "./headers";
 
-export const dashboardStyles = {
+export const dashboardStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background.dark,
@@ -21,10 +22,10 @@ export const dashboardStyles = {
     paddingVertical: 16,
   },
   menuButton: {
-    padding: 8,
-    width: 70,      // same as placeholder
-    alignItems: 'flex-start',
-    justifyContent: 'center',
+    padding: spacing[2],
+    width: 70, // same as placeholder
+    alignItems: "flex-start",
+    justifyContent: "center",
   },
   headerCenter: headerStyles.center,
   placeholder: {
@@ -40,8 +41,8 @@ export const dashboardStyles = {
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     backgroundColor: colors.neutral.white,
   },
   loadingText: {
@@ -51,25 +52,25 @@ export const dashboardStyles = {
   },
   accountSection: {
     marginBottom: spacing[3],
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
   },
   accountLabel: {
     fontSize: typography.fontSize.sm,
     color: colors.text.secondary,
     marginBottom: spacing[2],
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
   },
   accountSelector: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'space-between' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     backgroundColor: colors.background.lighter,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
     borderRadius: 12,
     marginBottom: spacing[2],
-    width: '80%',           // 👈 centrado relativo al padre
-    maxWidth: 300,          // 👈 opcional, no crecer demasiado
+    width: "80%", // 👈 centrado relativo al padre
+    maxWidth: 300, // 👈 opcional, no crecer demasiado
   },
   accountSymbol: {
     fontSize: typography.fontSize.lg,
@@ -77,28 +78,28 @@ export const dashboardStyles = {
   },
   accountName: {
     flex: 1,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
     color: colors.text.primary,
   },
   balance: {
-    fontSize: typography.fontSize['3xl'],
+    fontSize: typography.fontSize["3xl"],
     fontWeight: typography.fontWeight.bold,
     color: colors.text.primary,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
   },
   toggleContainer: {
-    flexDirection: 'row' as const,
+    flexDirection: "row" as const,
     backgroundColor: colors.background.light,
     borderRadius: 12,
-    padding: 4,
+    padding: spacing[1],
     marginBottom: spacing[4],
   },
   toggleButton: {
     flex: 1,
     paddingVertical: spacing[3],
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     borderRadius: 8,
     backgroundColor: colors.background.lighter,
   },
@@ -115,17 +116,17 @@ export const dashboardStyles = {
   },
   periodFilterContainer: {
     marginBottom: spacing[4],
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
   },
   periodFilterGrid: {
-    flexDirection: 'row' as const,
-    flexWrap: 'nowrap' as const,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    flexDirection: "row" as const,
+    flexWrap: "nowrap" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     gap: spacing[2],
-    maxWidth: '90%',
+    maxWidth: "90%",
     paddingHorizontal: spacing[4],
-    alignSelf: 'center' as const,
+    alignSelf: "center" as const,
   },
   periodButton: {
     paddingHorizontal: spacing[2],
@@ -136,8 +137,8 @@ export const dashboardStyles = {
     borderColor: colors.border.light,
     minWidth: 60,
     flex: 0,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   activePeriodButton: {
     backgroundColor: colors.background.togglePressed,
@@ -155,9 +156,9 @@ export const dashboardStyles = {
     marginBottom: spacing[6],
   },
   dateHeader: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     marginBottom: spacing[4],
     gap: spacing[4],
   },
@@ -173,28 +174,28 @@ export const dashboardStyles = {
     padding: spacing[2],
   },
   pieChartContainer: {
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     marginBottom: spacing[4],
   },
   loadingChart: {
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     paddingVertical: spacing[8],
   },
   chartWrapper: {
-    position: 'relative' as const,
-    alignItems: 'center' as const,
+    position: "relative" as const,
+    alignItems: "center" as const,
   },
   svgChart: {
     marginBottom: spacing[4],
   },
   centerValue: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   centerAmount: {
     fontSize: typography.fontSize.sm,
@@ -206,19 +207,19 @@ export const dashboardStyles = {
     color: colors.text.secondary,
   },
   emptyChart: {
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     paddingVertical: spacing[8],
   },
   emptyChartText: {
     fontSize: typography.fontSize.base,
     color: colors.text.secondary,
     marginTop: spacing[2],
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
   },
   swipeHint: {
     fontSize: typography.fontSize.xs,
     color: colors.text.tertiary,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
   },
   categoriesSection: {
     flex: 1,
@@ -230,9 +231,9 @@ export const dashboardStyles = {
     marginBottom: spacing[4],
   },
   loadingCategories: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     paddingVertical: spacing[4],
     gap: spacing[2],
   },
@@ -240,8 +241,8 @@ export const dashboardStyles = {
     gap: spacing[3],
   },
   categoryCard: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     backgroundColor: colors.neutral.white,
     padding: spacing[4],
     borderRadius: 12,
@@ -252,8 +253,8 @@ export const dashboardStyles = {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     marginRight: spacing[3],
   },
   categoryInfo: {
@@ -274,17 +275,17 @@ export const dashboardStyles = {
     color: colors.primary[500],
   },
   emptyCategories: {
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     paddingVertical: spacing[8],
   },
   emptyCategoriesText: {
     fontSize: typography.fontSize.base,
     color: colors.text.secondary,
     marginTop: spacing[2],
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
   },
   newButtonContainer: {
-    position: 'absolute' as const,
+    position: "absolute" as const,
     bottom: 0,
     left: 0,
     right: 0,
@@ -297,11 +298,11 @@ export const dashboardStyles = {
   },
   newButton: {
     backgroundColor: colors.background.toggleUnpressed,
-    width: '100%',
+    width: "100%",
     height: 56,
     borderRadius: 12,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     shadowColor: colors.neutral.black,
     shadowOffset: {
       width: 0,
@@ -317,35 +318,35 @@ export const dashboardStyles = {
     color: colors.neutral.white,
   },
   modalOverlay: {
-    position: 'absolute' as const,
+    position: "absolute" as const,
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   periodSelectorModal: {
     backgroundColor: colors.neutral.white,
     borderRadius: 20,
     margin: spacing[4],
-    maxHeight: '80%',
-    width: '90%',
+    maxHeight: "80%",
+    width: "90%",
     maxWidth: 400,
   },
   accountSelectorModal: {
     backgroundColor: colors.neutral.white,
     borderRadius: 20,
     margin: spacing[4],
-    maxHeight: '80%',
-    width: '90%',
+    maxHeight: "80%",
+    width: "90%",
     maxWidth: 400,
   },
   modalHeader: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'space-between' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     padding: spacing[4],
     borderBottomWidth: 1,
     borderBottomColor: colors.border.light,
@@ -364,9 +365,9 @@ export const dashboardStyles = {
     borderBottomColor: colors.border.light,
   },
   includeAllRow: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'space-between' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     paddingVertical: spacing[2],
   },
   includeAllText: {
@@ -377,7 +378,7 @@ export const dashboardStyles = {
     flex: 1,
   },
   calendarLoadingContainer: {
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     paddingVertical: spacing[8],
   },
   calendarLoadingText: {
@@ -400,13 +401,13 @@ export const dashboardStyles = {
   calendarInfoText: {
     fontSize: typography.fontSize.sm,
     color: colors.text.secondary,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
   },
   calendarContainer: {
     marginBottom: spacing[4],
   },
   calendarHeader: {
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     marginBottom: spacing[2],
   },
   calendarMonthYear: {
@@ -415,28 +416,28 @@ export const dashboardStyles = {
     color: colors.text.primary,
   },
   calendarDaysHeader: {
-    flexDirection: 'row' as const,
+    flexDirection: "row" as const,
     marginBottom: spacing[2],
   },
   calendarDayHeader: {
     flex: 1,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
     color: colors.text.secondary,
     paddingVertical: spacing[2],
   },
   calendarGrid: {
-    flexDirection: 'row' as const,
-    flexWrap: 'wrap' as const,
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
   },
   calendarDay: {
-    width: '14.28%',
+    width: "14.28%",
     aspectRatio: 1,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     borderRadius: 8,
-    margin: 1,
+    margin: spacing[0],
   },
   calendarDayCurrentMonth: {
     backgroundColor: colors.neutral.white,
@@ -480,8 +481,8 @@ export const dashboardStyles = {
     marginBottom: spacing[2],
   },
   clearDatesButton: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: spacing[2],
   },
   clearDatesText: {
@@ -489,7 +490,7 @@ export const dashboardStyles = {
     color: colors.text.tertiary,
   },
   allPeriodsInfo: {
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
     padding: spacing[6],
   },
   allPeriodsTitle: {
@@ -502,10 +503,10 @@ export const dashboardStyles = {
   allPeriodsDescription: {
     fontSize: typography.fontSize.base,
     color: colors.text.secondary,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
   },
   periodSelectorActions: {
-    flexDirection: 'row' as const,
+    flexDirection: "row" as const,
     gap: spacing[3],
     padding: spacing[4],
     borderTopWidth: 1,
@@ -515,7 +516,7 @@ export const dashboardStyles = {
     flex: 1,
     paddingVertical: spacing[3],
     borderRadius: 12,
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
   },
   cancelButton: {
     backgroundColor: colors.background.light,
@@ -539,8 +540,8 @@ export const dashboardStyles = {
     maxHeight: 300,
   },
   accountItem: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     padding: spacing[4],
     borderBottomWidth: 1,
     borderBottomColor: colors.border.light,
@@ -550,8 +551,8 @@ export const dashboardStyles = {
   },
   accountItemLeft: {
     flex: 1,
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
   },
   accountItemSymbol: {
     fontSize: typography.fontSize.lg,
@@ -570,9 +571,9 @@ export const dashboardStyles = {
     color: colors.text.secondary,
   },
   newAccountButton: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     backgroundColor: colors.primary[500],
     paddingVertical: spacing[3],
     margin: spacing[4],
@@ -594,4 +595,4 @@ export const dashboardStyles = {
     borderWidth: 1,
     borderColor: colors.border.light,
   },
-} as const;
+});

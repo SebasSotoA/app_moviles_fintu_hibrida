@@ -1,172 +1,202 @@
-/**
- * Estilos específicos para el componente EditAccountModal
- * Migrado del sistema anterior al nuevo sistema de tokens
- */
-
-import { StyleSheet } from 'react-native';
-import { borders, colors, shadows, spacing, typography } from '../tokens';
+import { StyleSheet } from "react-native";
+import { colors, spacing, typography } from "../tokens";
 
 export const editAccountModalStyles = StyleSheet.create({
-  // Modal overlay
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-
-  // Modal container
   modalContainer: {
     backgroundColor: colors.neutral.white,
-    borderRadius: borders.specific.modal,
-    margin: spacing.component.modalMargin,
-    maxHeight: '80%',
-    width: '90%',
-    ...shadows.specific.modal,
+    borderRadius: 20,
+    margin: 20,
+    maxHeight: "80%",
+    width: "90%",
+    maxWidth: 400,
+    shadowColor: colors.neutral.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-
-  // Header
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: spacing.component.modalPadding,
-    borderBottomWidth: borders.width[1],
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border.light,
   },
-
-  modalTitle: {
+  title: {
     fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text.primary,
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.background.surface,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: colors.text.tertiary,
+    fontWeight: "bold",
+  },
+  content: {
+    maxHeight: 400,
+  },
+  infoSection: {
+    padding: 20,
+    backgroundColor: colors.background.surface,
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+  },
+  infoLabel: {
+    fontSize: typography.fontSize.xs,
+    color: colors.text.tertiary,
+    marginBottom: 4,
+  },
+  infoValue: {
+    fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text.primary,
   },
-
-  closeButton: {
-    padding: spacing[1],
-    alignItems: 'center',
-    justifyContent: 'center',
+  inputSection: {
+    padding: 20,
   },
-
-  // Content
-  modalContent: {
-    padding: spacing.component.modalPadding,
-  },
-
-  // Form fields
-  fieldGroup: {
-    marginBottom: spacing[4],
-  },
-
   label: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.text.tertiary,
-    marginBottom: spacing[1],
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.primary,
+    marginBottom: 8,
   },
-
-  input: {
-    borderWidth: borders.width[1],
+  textInput: {
+    borderWidth: 1,
     borderColor: colors.border.light,
-    borderRadius: borders.specific.input,
-    padding: spacing.component.inputPadding,
+    borderRadius: 12,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
-    backgroundColor: colors.neutral.gray[100],
-  },
-
-  inputFocused: {
-    borderColor: colors.primary[500],
     backgroundColor: colors.neutral.white,
   },
-
-  // Symbol selector
-  symbolSelector: {
-    marginTop: spacing[2],
-  },
-
   symbolGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing[2],
-    marginTop: spacing[2],
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+    alignContent: "center",
+    justifyContent: "flex-start",
   },
-
   symbolButton: {
-    width: 50,
-    height: 50,
-    borderRadius: borders.radius.full,
-    backgroundColor: colors.neutral.gray[100],
-    borderWidth: borders.width[2],
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.background.surface,
+    borderWidth: 2,
     borderColor: colors.border.light,
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: spacing[1],
+    justifyContent: "center",
+    alignItems: "center",
   },
-
   selectedSymbolButton: {
-    backgroundColor: colors.secondary[50],
     borderColor: colors.primary[500],
+    backgroundColor: colors.primary[50],
   },
-
   symbolText: {
     fontSize: typography.fontSize.lg,
+    color: colors.text.primary,
   },
-
-  // Actions
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing[3],
-    marginTop: spacing[4],
-    width: '100%',
+  previewSection: {
+    padding: 20,
   },
-
-  actionButton: {
-    flex: 1,
-    paddingVertical: spacing[3],
-    borderRadius: borders.specific.input,
-    alignItems: 'center',
-  },
-
-  cancelButton: {
-    backgroundColor: colors.neutral.gray[100],
-    borderWidth: borders.width[1],
+  previewCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.background.surface,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
     borderColor: colors.border.light,
   },
-
-  saveButton: {
-    backgroundColor: colors.primary[500],
+  previewSymbol: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
-
-  buttonText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
-  },
-
-  cancelButtonText: {
-    color: colors.text.secondary,
-  },
-
-  saveButtonText: {
+  previewSymbolText: {
+    fontSize: typography.fontSize.lg,
     color: colors.neutral.white,
   },
-
-  // Loading
-  loadingContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing[8],
+  previewInfo: {
+    flex: 1,
   },
-
-  loadingText: {
-    marginTop: spacing[2],
+  previewName: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.primary,
+  },
+  previewCurrency: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.tertiary,
+    color: colors.text.secondary,
+  },
+  previewBalance: {
+    alignItems: "flex-end",
+  },
+  previewBalanceAmount: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text.primary,
+  },
+  previewBalanceCurrency: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
+  },
+  actions: {
+    flexDirection: "row",
+    padding: 20,
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    backgroundColor: colors.background.surface,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.text.secondary,
+  },
+  saveButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    backgroundColor: colors.primary[500],
+    alignItems: "center",
+  },
+  disabledButton: {
+    backgroundColor: colors.text.tertiary,
+  },
+  saveButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.neutral.white,
   },
 });
-
-export default editAccountModalStyles;

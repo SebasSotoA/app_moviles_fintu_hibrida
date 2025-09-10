@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { borders, colors, spacing, typography } from '../tokens';
+import { StyleSheet } from "react-native";
+import { borders, colors, spacing, typography } from "../tokens";
 
 /**
  * Estilos para el componente Drawer
@@ -22,7 +22,7 @@ export const drawerStyles = StyleSheet.create({
 
   // Contenedor del logo
   logoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: spacing[6],
   },
 
@@ -61,8 +61,8 @@ export const drawerStyles = StyleSheet.create({
 
   // Elemento del drawer (estado normal)
   item: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: spacing[3],
     paddingHorizontal: spacing.layout.screenPadding,
     marginHorizontal: spacing[1],
@@ -155,7 +155,7 @@ export const drawerVariants = {
   },
   item: {
     normal: {
-      backgroundColor: 'transparent',
+      backgroundColor: "transparent",
     },
     active: {
       backgroundColor: colors.primary[500],
@@ -165,4 +165,3 @@ export const drawerVariants = {
     },
   },
 } as const;
-

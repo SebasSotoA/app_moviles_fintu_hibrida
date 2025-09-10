@@ -1,10 +1,13 @@
-import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import { router, usePathname } from 'expo-router';
-import { Drawer } from 'expo-router/drawer';
-import { Image, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { drawerStyles, drawerTextStyles } from '../../src/shared/styles/components';
-import { colors } from '../../src/shared/styles/tokens';
+import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import { router, usePathname } from "expo-router";
+import { Drawer } from "expo-router/drawer";
+import { Image, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  drawerStyles,
+  drawerTextStyles,
+} from "../../src/shared/styles/components";
+import { colors } from "../../src/shared/styles/tokens";
 
 interface CustomDrawerContentProps {
   state: any;
@@ -17,56 +20,59 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
 
   // Mapa de íconos locales
   const ICONS: Record<string, any> = {
-    'person-circle-outline': require('../../assets/icons/person-circle-outline.svg'),
-    'home-outline': require('../../assets/icons/home-outline.svg'),
-    'wallet-outline': require('../../assets/icons/wallet-outline.svg'),
-    'bar-chart-outline': require('../../assets/icons/bar-chart-outline.svg'),
-    'list-outline': require('../../assets/icons/list-outline.svg'),
-    'notifications-outline': require('../../assets/icons/notifications-outline.svg'),
-    'settings-outline': require('../../assets/icons/settings-outline.svg'),
+    "person-circle-outline": require("../../assets/icons/person-circle-outline.svg"),
+    "home-outline": require("../../assets/icons/home-outline.svg"),
+    "wallet-outline": require("../../assets/icons/wallet-outline.svg"),
+    "bar-chart-outline": require("../../assets/icons/bar-chart-outline.svg"),
+    "list-outline": require("../../assets/icons/list-outline.svg"),
+    "notifications-outline": require("../../assets/icons/notifications-outline.svg"),
+    "settings-outline": require("../../assets/icons/settings-outline.svg"),
   };
 
   const menuItems = [
     {
-      label: 'Inicio',
-      icon: 'home-outline',
-      route: '/(drawer)',
+      label: "Inicio",
+      icon: "home-outline",
+      route: "/(drawer)",
     },
     {
-      label: 'Cuentas',
-      icon: 'wallet-outline',
-      route: '/(drawer)/cuentas',
+      label: "Cuentas",
+      icon: "wallet-outline",
+      route: "/(drawer)/accounts",
     },
     {
-      label: 'Gráficos',
-      icon: 'bar-chart-outline',
-      route: '/(drawer)/graficos',
+      label: "Gráficos",
+      icon: "bar-chart-outline",
+      route: "/(drawer)/charts",
     },
     {
-      label: 'Categorías',
-      icon: 'list-outline',
-      route: '/(drawer)/categorias',
+      label: "Categorías",
+      icon: "list-outline",
+      route: "/(drawer)/categories",
     },
     {
-      label: 'Recordatorios',
-      icon: 'notifications-outline',
-      route: '/(drawer)/recordatorios',
+      label: "Recordatorios",
+      icon: "notifications-outline",
+      route: "/(drawer)/reminders",
     },
     {
-      label: 'Ajustes',
-      icon: 'settings-outline',
-      route: '/(drawer)/ajustes',
+      label: "Ajustes",
+      icon: "settings-outline",
+      route: "/(drawer)/settings",
     },
   ];
 
   return (
     <SafeAreaView style={drawerStyles.container}>
-      <DrawerContentScrollView {...props} contentContainerStyle={drawerStyles.content}>
+      <DrawerContentScrollView
+        {...props}
+        contentContainerStyle={drawerStyles.content}
+      >
         {/* Encabezado del Drawer */}
         <View style={drawerStyles.header}>
           <View style={drawerStyles.logoContainer}>
             <Image
-              source={ICONS['person-circle-outline']}
+              source={ICONS["person-circle-outline"]}
               style={drawerStyles.logo}
               tintColor={colors.neutral.white}
               resizeMode="contain"
@@ -87,7 +93,10 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
                   style={{
                     width: size,
                     height: size,
-                    tintColor: pathname === item.route ? colors.primary[500] : colors.neutral.white,
+                    tintColor:
+                      pathname === item.route
+                        ? colors.primary[500]
+                        : colors.neutral.white,
                   }}
                   resizeMode="contain"
                 />
@@ -115,7 +124,7 @@ export default function DrawerLayout() {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: false,
-        drawerType: 'front',
+        drawerType: "front",
         drawerStyle: {
           width: 280,
         },
@@ -124,65 +133,65 @@ export default function DrawerLayout() {
       <Drawer.Screen
         name="index"
         options={{
-          drawerLabel: 'Inicio',
+          drawerLabel: "Inicio",
         }}
       />
       <Drawer.Screen
-        name="cuentas"
+        name="accounts"
         options={{
-          drawerLabel: 'Cuentas',
+          drawerLabel: "Cuentas",
         }}
       />
       <Drawer.Screen
-        name="graficos"
+        name="charts"
         options={{
-          drawerLabel: 'Gráficos',
+          drawerLabel: "Gráficos",
         }}
       />
       <Drawer.Screen
-        name="categorias"
+        name="categories"
         options={{
-          drawerLabel: 'Categorías',
+          drawerLabel: "Categorías",
         }}
       />
       <Drawer.Screen
-        name="recordatorios"
+        name="reminders"
         options={{
-          drawerLabel: 'Recordatorios',
+          drawerLabel: "Recordatorios",
         }}
       />
       <Drawer.Screen
-        name="ajustes"
+        name="settings"
         options={{
-          drawerLabel: 'Ajustes',
+          drawerLabel: "Ajustes",
         }}
       />
       <Drawer.Screen
         name="add-transaction"
         options={{
-          drawerLabel: 'Añadir Transacción',
-          drawerItemStyle: { display: 'none' }, // Ocultar del drawer
+          drawerLabel: "Añadir Transacción",
+          drawerItemStyle: { display: "none" }, // Ocultar del drawer
         }}
       />
       <Drawer.Screen
         name="choose-category"
         options={{
-          drawerLabel: 'Elegir Categoría',
-          drawerItemStyle: { display: 'none' }, // Ocultar del drawer
+          drawerLabel: "Elegir Categoría",
+          drawerItemStyle: { display: "none" }, // Ocultar del drawer
         }}
       />
       <Drawer.Screen
         name="new-account"
         options={{
-          drawerLabel: 'Nueva Cuenta',
-          drawerItemStyle: { display: 'none' }, // Ocultar del drawer
+          drawerLabel: "Nueva Cuenta",
+          drawerItemStyle: { display: "none" }, // Ocultar del drawer
         }}
       />
       <Drawer.Screen
         name="transfer"
         options={{
-          drawerLabel: 'Transferencia',
-          drawerItemStyle: { display: 'none' }, // Ocultar del drawer
+          drawerLabel: "Transferencia",
+          drawerItemStyle: { display: "none" }, // Ocultar del drawer
         }}
       />
     </Drawer>

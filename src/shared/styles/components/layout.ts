@@ -3,8 +3,8 @@
  * Basados en los patrones existentes del proyecto
  */
 
-import { StyleSheet } from 'react-native';
-import { borders, colors, spacing, typography } from '../tokens';
+import { StyleSheet } from "react-native";
+import { borders, colors, spacing, typography } from "../tokens";
 
 export const layoutStyles = StyleSheet.create({
   // Contenedor principal - basado en container
@@ -27,9 +27,9 @@ export const layoutStyles = StyleSheet.create({
 
   // Header - basado en header
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing[3],
     backgroundColor: colors.background.dark,
@@ -40,13 +40,13 @@ export const layoutStyles = StyleSheet.create({
   // Centro del header - basado en headerCenter
   headerCenter: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   // Lado derecho del header - basado en headerRight
   headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing[4],
   },
 
@@ -82,16 +82,16 @@ export const layoutStyles = StyleSheet.create({
 
   // Item de lista - basado en accountItem, categoryItem
   listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: spacing.component.listItemPadding,
     backgroundColor: colors.neutral.white,
   },
 
   // Item de lista con borde - basado en accountItem con borderBottom
   listItemBordered: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: spacing.component.listItemPadding,
     backgroundColor: colors.neutral.white,
     borderBottomWidth: 1,
@@ -106,8 +106,8 @@ export const layoutStyles = StyleSheet.create({
   // Contenedor de carga - basado en loadingContainer
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: spacing[12],
   },
 
@@ -120,7 +120,7 @@ export const layoutStyles = StyleSheet.create({
 
   // Estado vacío - basado en emptyState
   emptyState: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: spacing[20],
     gap: spacing[4],
   },
@@ -129,12 +129,12 @@ export const layoutStyles = StyleSheet.create({
   emptyStateText: {
     fontSize: typography.fontSize.base,
     color: colors.neutral.gray[300],
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   // Contenedor de botones de acción - basado en actionButtons
   actionButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: spacing[8],
     gap: spacing[3],
   },
@@ -142,9 +142,9 @@ export const layoutStyles = StyleSheet.create({
   // Botón de acción - basado en actionButton
   actionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: spacing[3],
     borderRadius: 25,
     gap: spacing[2],
@@ -173,14 +173,14 @@ export const layoutStyles = StyleSheet.create({
     borderRadius: borders.specific.card,
     padding: spacing[6],
     marginVertical: spacing[5],
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border.light,
   },
 
   // Título principal - basado en title
   title: {
-    fontSize: typography.fontSize['2xl'],
+    fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
     color: colors.text.primary,
     marginBottom: spacing[2],
@@ -194,7 +194,7 @@ export const layoutStyles = StyleSheet.create({
 
   // Cantidad total - basado en totalAmount
   totalAmount: {
-    fontSize: typography.fontSize['4xl'],
+    fontSize: typography.fontSize["4xl"],
     fontWeight: typography.fontWeight.bold,
     color: colors.text.primary,
   },
@@ -202,6 +202,60 @@ export const layoutStyles = StyleSheet.create({
   // Placeholder - basado en placeholder
   placeholder: {
     width: 38,
+  },
+
+  // Nuevos estilos para migración
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  centerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  centerColumn: {
+    alignItems: "center",
+    flex: 1,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing[3],
+  },
+  divider: {
+    width: 1,
+    height: 40,
+    backgroundColor: colors.border.light,
+    marginHorizontal: spacing[4],
+  },
+  spacer: {
+    height: spacing[8],
+  },
+  fullHeight: {
+    flex: 1,
+  },
+});
+
+// Estilos de texto adicionales
+export const textStyles = StyleSheet.create({
+  sectionTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.primary,
+    marginBottom: spacing[2],
+  },
+  description: {
+    fontSize: typography.fontSize.base,
+    color: colors.text.secondary,
+    lineHeight: 20,
+    marginBottom: spacing[4],
+  },
+  statNumber: {
+    fontSize: typography.fontSize["2xl"],
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary[500],
   },
 });
 

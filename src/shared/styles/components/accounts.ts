@@ -1,330 +1,286 @@
-
 /**
  * Estilos específicos para el componente de cuentas
  * Migrado del sistema anterior al nuevo sistema de tokens
  */
 
-import { StyleSheet } from 'react-native';
-import { borders, colors, shadows, spacing, typography } from '../tokens';
+import { StyleSheet } from "react-native";
+import { colors, spacing, typography } from "../tokens";
+import { headerStyles } from "./headers";
 
 export const accountsStyles = StyleSheet.create({
-  // Contenedor principal
   container: {
     flex: 1,
     backgroundColor: colors.background.dark,
   },
-
-  // Área de estado
   statusBarArea: {
     backgroundColor: colors.background.dark,
   },
-
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.layout.screenPadding,
-    paddingVertical: spacing[3],
-    backgroundColor: colors.background.dark,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.background.dark,
-  },
-
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-
-  headerTitle: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral.white,
-  },
-
-  menuButton: {
-    padding: spacing[1],
-    width: 38,
-    height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: borders.radius.full,
-  },
-
-  placeholder: {
-    width: 38,
-  },
-
-  // Contenedor de contenido
+  header: headerStyles.standard,
+  menuButton: headerStyles.menuButton,
+  headerCenter: headerStyles.center,
+  headerTitle: headerStyles.title,
+  placeholder: headerStyles.placeholder,
   contentContainer: {
     flex: 1,
     backgroundColor: colors.neutral.white,
   },
-
   content: {
     flex: 1,
-    paddingHorizontal: spacing.layout.screenPadding,
+    padding: spacing[4],
   },
-
-  // Sección de totales
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.neutral.white,
+  },
+  loadingText: {
+    fontSize: typography.fontSize.base,
+    color: colors.text.secondary,
+    marginTop: spacing[2],
+  },
   totalSection: {
-    backgroundColor: colors.neutral.gray[100],
-    borderRadius: borders.specific.card,
-    padding: spacing[6],
-    marginVertical: spacing[5],
-    alignItems: 'center',
-    borderWidth: borders.width[1],
-    borderColor: colors.border.light,
+    backgroundColor: colors.primary[50],
+    padding: spacing[4],
+    borderRadius: 12,
+    marginBottom: spacing[4],
+    alignItems: "center",
   },
-
   totalLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.tertiary,
-    marginBottom: spacing[2],
-  },
-
-  totalAmount: {
-    fontSize: typography.fontSize['4xl'],
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
+    color: colors.primary[600],
     marginBottom: spacing[1],
   },
-
+  totalAmount: {
+    fontSize: typography.fontSize["2xl"],
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary[600],
+  },
   totalSubtext: {
     fontSize: typography.fontSize.xs,
-    color: colors.neutral.gray[300],
-  },
-
-  // Filas de divisa
-  currencyRow: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing[2],
-    borderBottomWidth: borders.width[1],
-    borderBottomColor: colors.border.light,
-  },
-
-  currencyCode: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.text.secondary,
-  },
-
-  currencyTotal: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
     color: colors.primary[500],
+    marginTop: spacing[1],
   },
-
-  currencyCount: {
-    fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
-  },
-
-  // Botones de acción
   actionButtons: {
-    flexDirection: 'row',
-    marginBottom: spacing[8],
+    flexDirection: "row",
     gap: spacing[3],
+    marginBottom: spacing[6],
   },
-
   actionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: spacing[3],
-    borderRadius: borders.specific.button,
+    paddingHorizontal: spacing[4],
+    borderRadius: 12,
     gap: spacing[2],
   },
-
   transferButton: {
-    backgroundColor: colors.primary[600], // darken(0.15, colors.primary)
-  },
-
-  addButton: {
     backgroundColor: colors.primary[500],
   },
-
+  addButton: {
+    backgroundColor: colors.background.toggleUnpressed,
+  },
   actionButtonText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral.white,
   },
-
-  // Sección de cuentas
+  newButtonText: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.neutral.white,
+  },
   accountsSection: {
-    marginBottom: spacing[8],
+    flex: 1,
   },
-
+  sectionTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text.primary,
+    marginBottom: spacing[4],
+  },
   accountsList: {
-    gap: spacing.component.listItemGap,
+    gap: spacing[3],
   },
-
-  // Tarjetas de cuenta
   accountCard: {
     backgroundColor: colors.neutral.white,
-    borderRadius: borders.specific.card,
-    padding: spacing.component.cardPadding,
-    borderWidth: borders.width[2],
+    borderRadius: 12,
+    padding: spacing[4],
+    borderWidth: 1,
     borderColor: colors.border.light,
-    ...shadows.specific.card,
   },
-
   activeAccountCard: {
     borderColor: colors.primary[500],
-    backgroundColor: colors.secondary[50],
+    borderWidth: 2,
   },
-
   accountHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
-
   accountSymbol: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing[4],
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: spacing[3],
   },
-
+  symbolText: {
+    fontSize: typography.fontSize.lg,
+  },
   accountInfo: {
     flex: 1,
   },
-
   accountName: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.secondary,
-    marginBottom: spacing[0],
+    color: colors.text.primary,
   },
-
   accountCurrency: {
-    fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
   },
-
   accountActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing[3],
   },
-
   editButton: {
     padding: spacing[2],
-    borderRadius: borders.specific.button,
-    backgroundColor: colors.secondary[50],
-    borderWidth: borders.width[1],
-    borderColor: colors.primary[500],
   },
-
+  deleteButton: {
+    padding: spacing[2],
+  },
   accountBalance: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
-
   balanceAmount: {
-    fontSize: typography.fontSize.lg,
+    fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
   },
-
   balanceCurrency: {
-    fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
-    marginTop: spacing[0],
+    fontSize: typography.fontSize.sm,
+    color: colors.text.secondary,
   },
-
-  // Indicador activo
   activeIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: spacing[3],
-    paddingTop: spacing[3],
-    borderTopWidth: borders.width[1],
-    borderTopColor: colors.border.light,
-    gap: spacing[1],
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: spacing[2],
+    gap: spacing[2],
   },
-
   activeText: {
-    fontSize: typography.fontSize.xs,
+    fontSize: typography.fontSize.sm,
     color: colors.primary[500],
     fontWeight: typography.fontWeight.medium,
   },
-
-  // Indicador excluido
   excludedIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: spacing[2],
-    gap: spacing[1],
+    gap: spacing[2],
   },
-
   excludedText: {
-    fontSize: typography.fontSize.xs,
-    color: colors.neutral.gray[300],
-    fontStyle: 'italic',
+    fontSize: typography.fontSize.sm,
+    color: colors.text.tertiary,
   },
-
-  // Estado vacío
   emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing[20],
-    gap: spacing[4],
+    alignItems: "center",
+    paddingVertical: spacing[8],
   },
-
   emptyStateText: {
     fontSize: typography.fontSize.base,
-    color: colors.neutral.gray[300],
-    textAlign: 'center',
+    color: colors.text.secondary,
+    marginTop: spacing[2],
+    textAlign: "center",
   },
-
   createFirstAccountButton: {
     backgroundColor: colors.primary[500],
-    paddingHorizontal: spacing[6],
+    paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderRadius: borders.specific.button,
+    borderRadius: 12,
+    marginTop: spacing[4],
   },
-
   createFirstAccountText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral.white,
   },
-
-  // Botón de nueva cuenta
-  newAccountButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primary[500],
-    margin: spacing.layout.screenPadding,
-    paddingVertical: spacing[3],
-    borderRadius: borders.specific.input,
+  // Modal de confirmación de eliminación
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-
-  newAccountButtonText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral.white,
-    marginLeft: spacing[2],
+  confirmModal: {
+    backgroundColor: colors.neutral.white,
+    borderRadius: 20,
+    padding: spacing[6],
+    margin: spacing[4],
+    maxWidth: 400,
+    width: "90%",
   },
-
-  // Contenedor de carga
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: spacing[12],
+  modalTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text.primary,
+    marginBottom: spacing[4],
   },
-
-  loadingText: {
-    marginTop: spacing[4],
+  confirmText: {
     fontSize: typography.fontSize.base,
     color: colors.text.secondary,
+    marginBottom: spacing[4],
+  },
+  confirmInstruction: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.tertiary,
+    marginBottom: spacing[4],
+  },
+  confirmInput: {
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    borderRadius: 12,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    fontSize: typography.fontSize.base,
+    backgroundColor: colors.neutral.white,
+    marginBottom: spacing[4],
+  },
+  confirmActions: {
+    flexDirection: "row",
+    gap: spacing[3],
+  },
+  confirmButton: {
+    flex: 1,
+    paddingVertical: spacing[3],
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: colors.background.light,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+  },
+  cancelButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.text.secondary,
+  },
+  deleteConfirmButton: {
+    backgroundColor: colors.semantic.error,
+  },
+  disabledDeleteButton: {
+    backgroundColor: colors.text.tertiary,
+  },
+  deleteConfirmButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.neutral.white,
   },
 });
-
-export default accountsStyles;

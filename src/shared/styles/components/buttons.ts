@@ -3,8 +3,8 @@
  * Basados en los patrones existentes del proyecto
  */
 
-import { StyleSheet } from 'react-native';
-import { borders, colors, shadows, spacing, typography } from '../tokens';
+import { StyleSheet } from "react-native";
+import { borders, colors, shadows, spacing, typography } from "../tokens";
 
 export const buttonStyles = StyleSheet.create({
   // Botón principal - basado en createButton, confirmButton
@@ -13,9 +13,9 @@ export const buttonStyles = StyleSheet.create({
     paddingVertical: spacing.component.buttonPadding,
     paddingHorizontal: spacing[4],
     borderRadius: borders.specific.button,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     ...shadows.specific.button,
   },
 
@@ -25,35 +25,35 @@ export const buttonStyles = StyleSheet.create({
     paddingVertical: spacing.component.buttonPadding,
     paddingHorizontal: spacing[4],
     borderRadius: borders.specific.button,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     borderWidth: borders.width[1],
     borderColor: colors.border.light,
   },
 
   // Botón outline - basado en editButton
   outline: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     paddingVertical: spacing.component.buttonPadding,
     paddingHorizontal: spacing[4],
     borderRadius: borders.specific.button,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     borderWidth: borders.width[2],
     borderColor: colors.primary[500],
   },
 
   // Botón ghost - sin fondo
   ghost: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     paddingVertical: spacing.component.buttonPadding,
     paddingHorizontal: spacing[4],
     borderRadius: borders.specific.button,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
   },
 
   // Botón deshabilitado
@@ -62,9 +62,9 @@ export const buttonStyles = StyleSheet.create({
     paddingVertical: spacing.component.buttonPadding,
     paddingHorizontal: spacing[4],
     borderRadius: borders.specific.button,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
   },
 
   // Tamaños de botón
@@ -86,9 +86,9 @@ export const buttonStyles = StyleSheet.create({
     paddingVertical: spacing[4],
     paddingHorizontal: spacing[6],
     borderRadius: borders.specific.button,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     ...shadows.specific.floating,
   },
 
@@ -96,7 +96,7 @@ export const buttonStyles = StyleSheet.create({
   toggle: {
     flex: 1,
     paddingVertical: spacing[3],
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: borders.specific.button,
   },
 
@@ -110,16 +110,16 @@ export const buttonStyles = StyleSheet.create({
     padding: spacing[1],
     width: 38,
     height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: borders.radius.full,
   },
 
   // Botón de cierre - basado en closeButton
   close: {
     padding: spacing[1],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

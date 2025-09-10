@@ -1,4 +1,4 @@
-export type TransactionType = 'GASTO' | 'INGRESO';
+export type TransactionType = "GASTO" | "INGRESO";
 
 export interface Transaction {
   id: string;
@@ -24,4 +24,3 @@ export interface CalculatorState {
   currentOperation: string | null;
   waitingForOperand: boolean;
 }
-

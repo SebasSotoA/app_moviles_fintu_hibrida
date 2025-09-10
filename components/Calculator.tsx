@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import breakpoints from '../src/shared/styles/breakpoints';
-import colors from '../src/shared/styles/themes';
-import { CalculatorState } from '../types/transaction';
+import React, { useState } from "react";
+import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import { iconStyles } from "../src/shared/styles/components";
+import { calculatorStyles } from "../src/shared/styles/components/calculator";
+import { colors } from "../src/shared/styles/tokens";
+import { CalculatorState } from "../types/transaction";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
-const isTablet = width >= breakpoints.tablet;
+const isTablet = width >= 768;
 
 // Mapa de íconos locales con nombres exactos de Ionicons
 const ICONS: Record<string, any> = {
-  'backspace-outline': require('../assets/icons/backspace-outline.svg'),
+  "backspace-outline": require("../assets/icons/backspace-outline.svg"),
 };
 
 interface CalculatorProps {
@@ -25,7 +19,10 @@ interface CalculatorProps {
   initialValue?: string;
 }
 
-export default function Calculator({ onAmountChange, initialValue = '0' }: CalculatorProps) {
+export default function Calculator({
+  onAmountChange,
+  initialValue = "0",
+}: CalculatorProps) {
   const [state, setState] = useState<CalculatorState>({
     display: initialValue,
     previousValue: null,
@@ -33,16 +30,22 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
     waitingForOperand: false,
   });
 
-  const calculate = (firstOperand: number, secondOperand: number, operation: string): number => {
+  const calculate = (
+    firstOperand: number,
+    secondOperand: number,
+    operation: string,
+  ): number => {
     switch (operation) {
-      case '+':
+      case "+":
         return firstOperand + secondOperand;
-      case '-':
+      case "-":
         return firstOperand - secondOperand;
-      case '×':
+      case "×":
         return firstOperand * secondOperand;
-      case '÷':
-        return secondOperand !== 0 ? firstOperand / secondOperand : firstOperand;
+      case "÷":
+        return secondOperand !== 0
+          ? firstOperand / secondOperand
+          : firstOperand;
       default:
         return secondOperand;
     }
@@ -50,14 +53,15 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
 
   const handleNumber = (digit: string) => {
     if (state.waitingForOperand) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         display: String(digit),
         waitingForOperand: false,
       }));
     } else {
-      const newDisplay = state.display === '0' ? String(digit) : state.display + digit;
-      setState(prev => ({ ...prev, display: newDisplay }));
+      const newDisplay =
+        state.display === "0" ? String(digit) : state.display + digit;
+      setState((prev) => ({ ...prev, display: newDisplay }));
     }
   };
 
@@ -65,7 +69,7 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
     const inputValue = parseFloat(state.display);
 
     if (state.previousValue === null) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         previousValue: inputValue,
         currentOperation: nextOperation,
@@ -73,9 +77,13 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
       }));
     } else if (state.currentOperation) {
       const currentValue = state.previousValue || 0;
-      const newValue = calculate(currentValue, inputValue, state.currentOperation);
+      const newValue = calculate(
+        currentValue,
+        inputValue,
+        state.currentOperation,
+      );
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         display: String(newValue),
         previousValue: newValue,
@@ -90,12 +98,16 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
     const inputValue = parseFloat(state.display);
 
     if (state.previousValue !== null && state.currentOperation) {
-      const newValue = calculate(state.previousValue, inputValue, state.currentOperation);
+      const newValue = calculate(
+        state.previousValue,
+        inputValue,
+        state.currentOperation,
+      );
       setState({
         display: String(newValue),
         previousValue: null,
         currentOperation: null,
-        waitingForOperand: false // Cambiamos a false para permitir edición
+        waitingForOperand: false, // Cambiamos a false para permitir edición
       });
       onAmountChange(String(newValue));
     }
@@ -103,24 +115,24 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
 
   const handleDecimal = () => {
     if (state.waitingForOperand) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        display: '0.',
+        display: "0.",
         waitingForOperand: false,
       }));
-    } else if (state.display.indexOf('.') === -1) {
-      setState(prev => ({
+    } else if (state.display.indexOf(".") === -1) {
+      setState((prev) => ({
         ...prev,
-        display: prev.display + '.',
+        display: prev.display + ".",
       }));
     }
   };
 
   const handleBackspace = () => {
     if (state.waitingForOperand) return;
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      display: prev.display.length > 1 ? prev.display.slice(0, -1) : '0',
+      display: prev.display.length > 1 ? prev.display.slice(0, -1) : "0",
     }));
   };
 
@@ -131,185 +143,113 @@ export default function Calculator({ onAmountChange, initialValue = '0' }: Calcu
     }
   }, [state.display, state.waitingForOperand, onAmountChange]);
 
-  const CalculatorButton = ({ 
-    onPress, 
-    title, 
-    style, 
-    textStyle 
-  }: { 
-    onPress: () => void; 
-    title: string; 
-    style?: any; 
-    textStyle?: any; 
+  const CalculatorButton = ({
+    onPress,
+    title,
+    style,
+    textStyle,
+  }: {
+    onPress: () => void;
+    title: string;
+    style?: any;
+    textStyle?: any;
   }) => (
-    <TouchableOpacity 
-      style={[styles.button, style]} 
+    <TouchableOpacity
+      style={[calculatorStyles.button, style]}
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+      <Text style={[calculatorStyles.buttonText, textStyle]}>{title}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View
       style={[
-        styles.container,
-        isTablet && styles.calculatorContainer,
+        calculatorStyles.container,
+        isTablet && calculatorStyles.calculatorContainer,
       ]}
     >
       {/* Display del resultado */}
-      <View style={styles.displayContainer}>
-        <Text style={styles.displayText} numberOfLines={1} ellipsizeMode="head">{state.display}</Text>
-        <TouchableOpacity onPress={handleBackspace} style={styles.backspaceButton}>
+      <View style={calculatorStyles.displayContainer}>
+        <Text
+          style={calculatorStyles.displayText}
+          numberOfLines={1}
+          ellipsizeMode="head"
+        >
+          {state.display}
+        </Text>
+        <TouchableOpacity
+          onPress={handleBackspace}
+          style={calculatorStyles.backspaceButton}
+        >
           <Image
-            source={ICONS['backspace-outline']}
-            style={{ width: 28, height: 28, tintColor: colors.grayDark }}
+            source={ICONS["backspace-outline"]}
+            style={[iconStyles.medium, { tintColor: colors.border.dark }]}
             resizeMode="contain"
           />
         </TouchableOpacity>
       </View>
 
       {/* Teclado */}
-      <View style={styles.keypad}>
+      <View style={calculatorStyles.keypad}>
         {/* Primera fila */}
-        <View style={styles.row}>
-          <CalculatorButton onPress={() => handleNumber('1')} title="1" />
-          <CalculatorButton onPress={() => handleNumber('2')} title="2" />
-          <CalculatorButton onPress={() => handleNumber('3')} title="3" />
-          <CalculatorButton 
-            onPress={() => handleOperation('+')} 
-            title="+" 
-            style={styles.operationButton}
-            textStyle={styles.operationText}
+        <View style={calculatorStyles.row}>
+          <CalculatorButton onPress={() => handleNumber("1")} title="1" />
+          <CalculatorButton onPress={() => handleNumber("2")} title="2" />
+          <CalculatorButton onPress={() => handleNumber("3")} title="3" />
+          <CalculatorButton
+            onPress={() => handleOperation("+")}
+            title="+"
+            style={calculatorStyles.operationButton}
+            textStyle={calculatorStyles.operationText}
           />
         </View>
 
         {/* Segunda fila */}
-        <View style={styles.row}>
-          <CalculatorButton onPress={() => handleNumber('4')} title="4" />
-          <CalculatorButton onPress={() => handleNumber('5')} title="5" />
-          <CalculatorButton onPress={() => handleNumber('6')} title="6" />
-          <CalculatorButton 
-            onPress={() => handleOperation('-')} 
-            title="-" 
-            style={styles.operationButton}
-            textStyle={styles.operationText}
+        <View style={calculatorStyles.row}>
+          <CalculatorButton onPress={() => handleNumber("4")} title="4" />
+          <CalculatorButton onPress={() => handleNumber("5")} title="5" />
+          <CalculatorButton onPress={() => handleNumber("6")} title="6" />
+          <CalculatorButton
+            onPress={() => handleOperation("-")}
+            title="-"
+            style={calculatorStyles.operationButton}
+            textStyle={calculatorStyles.operationText}
           />
         </View>
 
         {/* Tercera fila */}
-        <View style={styles.row}>
-          <CalculatorButton onPress={() => handleNumber('7')} title="7" />
-          <CalculatorButton onPress={() => handleNumber('8')} title="8" />
-          <CalculatorButton onPress={() => handleNumber('9')} title="9" />
-          <CalculatorButton 
-            onPress={() => handleOperation('×')} 
-            title="×" 
-            style={styles.operationButton}
-            textStyle={styles.operationText}
+        <View style={calculatorStyles.row}>
+          <CalculatorButton onPress={() => handleNumber("7")} title="7" />
+          <CalculatorButton onPress={() => handleNumber("8")} title="8" />
+          <CalculatorButton onPress={() => handleNumber("9")} title="9" />
+          <CalculatorButton
+            onPress={() => handleOperation("×")}
+            title="×"
+            style={calculatorStyles.operationButton}
+            textStyle={calculatorStyles.operationText}
           />
         </View>
 
         {/* Cuarta fila */}
-        <View style={styles.row}>
+        <View style={calculatorStyles.row}>
           <CalculatorButton onPress={handleDecimal} title="." />
-          <CalculatorButton onPress={() => handleNumber('0')} title="0" />
-          <CalculatorButton 
-            onPress={handleEquals} 
-            title="=" 
-            style={styles.equalsButton}
-            textStyle={styles.equalsText}
+          <CalculatorButton onPress={() => handleNumber("0")} title="0" />
+          <CalculatorButton
+            onPress={handleEquals}
+            title="="
+            style={calculatorStyles.equalsButton}
+            textStyle={calculatorStyles.equalsText}
           />
-          <CalculatorButton 
-            onPress={() => handleOperation('÷')} 
-            title="÷" 
-            style={styles.operationButton}
-            textStyle={styles.operationText}
+          <CalculatorButton
+            onPress={() => handleOperation("÷")}
+            title="÷"
+            style={calculatorStyles.operationButton}
+            textStyle={calculatorStyles.operationText}
           />
         </View>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.notCompletelyLightGray,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 50,
-  },
-  calculatorContainer : {
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  displayContainer: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    paddingVertical: 1,
-    paddingHorizontal: 10,
-    marginBottom: 8,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    borderWidth: 2,
-    borderColor: colors.notCompletelyLightGray,
-  },
-  displayText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: colors.grayDark,
-    flex: 1,
-    textAlign: 'right',
-    marginRight: 10,
-  },
-  backspaceButton: {
-    padding: 5,
-  },
-  keypad: {
-    gap: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  button: {
-    flex: 1,
-    aspectRatio: 1,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 0.5,
-    borderColor: colors.notCompletelyLightGray,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  buttonText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.grayDark,
-  },
-  operationButton: {
-    backgroundColor: colors.primary,
-  },
-  operationText: {
-    color: colors.white,
-    fontSize: 22,
-  },
-  equalsButton: {
-    backgroundColor: colors.grayDark,
-  },
-  equalsText: {
-    color: colors.white,
-    fontSize: 22,
-  },
-});
