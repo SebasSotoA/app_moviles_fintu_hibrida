@@ -1,13 +1,23 @@
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { router, usePathname } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import React from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   drawerStyles,
   drawerTextStyles,
 } from "../../src/shared/styles/components";
 import { colors } from "../../src/shared/styles/tokens";
+
+// Importar SVGs
+import PersonCircleOutline from "../../assets/icons/person-circle-outline.svg";
+import HomeOutline from "../../assets/icons/home-outline.svg";
+import WalletOutline from "../../assets/icons/wallet-outline.svg";
+import BarChartOutline from "../../assets/icons/bar-chart-outline.svg";
+import ListOutline from "../../assets/icons/list-outline.svg";
+import NotificationsOutline from "../../assets/icons/notifications-outline.svg";
+import SettingsOutline from "../../assets/icons/settings-outline.svg";
 
 interface CustomDrawerContentProps {
   state: any;
@@ -20,13 +30,13 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
 
   // Mapa de íconos locales
   const ICONS: Record<string, any> = {
-    "person-circle-outline": require("../../assets/icons/person-circle-outline.svg"),
-    "home-outline": require("../../assets/icons/home-outline.svg"),
-    "wallet-outline": require("../../assets/icons/wallet-outline.svg"),
-    "bar-chart-outline": require("../../assets/icons/bar-chart-outline.svg"),
-    "list-outline": require("../../assets/icons/list-outline.svg"),
-    "notifications-outline": require("../../assets/icons/notifications-outline.svg"),
-    "settings-outline": require("../../assets/icons/settings-outline.svg"),
+    "person-circle-outline": PersonCircleOutline,
+    "home-outline": HomeOutline,
+    "wallet-outline": WalletOutline,
+    "bar-chart-outline": BarChartOutline,
+    "list-outline": ListOutline,
+    "notifications-outline": NotificationsOutline,
+    "settings-outline": SettingsOutline,
   };
 
   const menuItems = [
@@ -71,12 +81,10 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
         {/* Encabezado del Drawer */}
         <View style={drawerStyles.header}>
           <View style={drawerStyles.logoContainer}>
-            <Image
-              source={ICONS["person-circle-outline"]}
-              style={drawerStyles.logo}
-              tintColor={colors.neutral.white}
-              resizeMode="contain"
-            />
+            {React.createElement(ICONS["person-circle-outline"], {
+              style: drawerStyles.logo,
+              fill: colors.neutral.white
+            })}
             <Text style={drawerTextStyles.userText}>Usuario</Text>
           </View>
         </View>
@@ -87,20 +95,16 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
             <DrawerItem
               key={index}
               label={item.label}
-              icon={({ size }) => (
-                <Image
-                  source={ICONS[item.icon]}
-                  style={{
-                    width: size,
-                    height: size,
-                    tintColor:
-                      pathname === item.route
-                        ? colors.primary[500]
-                        : colors.neutral.white,
-                  }}
-                  resizeMode="contain"
-                />
-              )}
+              icon={({ size }) => {
+                const IconComponent = ICONS[item.icon];
+                return (
+                  <IconComponent
+                    width={size}
+                    height={size}
+                    fill={pathname === item.route ? colors.primary[500] : colors.neutral.white}
+                  />
+                );
+              }}
               onPress={() => router.push(item.route as any)}
               labelStyle={[
                 drawerTextStyles.label,
