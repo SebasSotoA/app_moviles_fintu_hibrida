@@ -96,23 +96,5 @@ export const colors = {
   },
 } as const;
 
-// Alias para compatibilidad con el sistema existente
-export const legacyColors = {
-  primary: colors.primary[500], // #38837C
-  tertiary: colors.secondary[50], // Alice Blue
-  black: colors.neutral.black,
-  almostBlack: colors.text.primary,
-  white: colors.neutral.white,
-  notCompletelyLightGray: colors.neutral.gray[100],
-  gray: colors.neutral.gray[300],
-  grayMedium: colors.neutral.gray[500],
-  grayDark: colors.neutral.gray[700],
-  success: colors.semantic.success,
-  warning: colors.semantic.warning,
-  error: colors.semantic.error,
-  info: colors.semantic.info,
-  backgroundLight: colors.background.light,
-  backgroundDark: colors.background.dark,
-} as const;
 
 export default colors;

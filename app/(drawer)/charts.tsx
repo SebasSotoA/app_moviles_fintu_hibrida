@@ -1,17 +1,14 @@
 import { chartsStyles } from "@/src/shared/styles/components/charts";
 import { colors } from "@/src/shared/styles/tokens";
 import { router } from "expo-router";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import {
-  SafeAreaView,
-  useSafeAreaInsets,
+    SafeAreaView,
+    useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-// Mapa de íconos locales
-const ICONS: Record<string, any> = {
-  "arrow-back": require("../../assets/icons/arrow-back.svg"),
-  menu: require("../../assets/icons/menu.svg"),
-};
+// Importar SVGs
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
 
 export default function Charts() {
   const insets = useSafeAreaInsets();
@@ -32,10 +29,10 @@ export default function Charts() {
       {/* Header */}
       <View style={chartsStyles.header}>
         <TouchableOpacity onPress={goBack} style={chartsStyles.backButton}>
-          <Image
-            source={ICONS["arrow-back"]}
-            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <ArrowBackIcon
+            width={28}
+            height={28}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={chartsStyles.headerCenter}>

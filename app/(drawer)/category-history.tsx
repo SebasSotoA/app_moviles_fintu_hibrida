@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Image,
   Modal,
   Platform,
   StatusBar,
@@ -27,10 +26,42 @@ import {
 import { categoryHistoryStyles } from "../../src/shared/styles/components/category-history";
 import { colors, spacing } from "../../src/shared/styles/tokens";
 
+// Importar SVGs
+import AirplaneOutlineIcon from "../../assets/icons/airplane-outline.svg";
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
+import ArrowForwardOutlineIcon from "../../assets/icons/arrow-forward-outline.svg";
+import ArrowForwardIcon from "../../assets/icons/arrow-forward.svg";
+import BarChartOutlineIcon from "../../assets/icons/bar-chart-outline.svg";
+import BriefcaseOutlineIcon from "../../assets/icons/briefcase-outline.svg";
+import BusOutlineIcon from "../../assets/icons/bus-outline.svg";
+import CalendarOutlineIcon from "../../assets/icons/calendar-outline.svg";
+import CarOutlineIcon from "../../assets/icons/car-outline.svg";
+import CartOutlineIcon from "../../assets/icons/cart-outline.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import ChevronDownIcon from "../../assets/icons/chevron-down.svg";
+import CloseIcon from "../../assets/icons/close.svg";
+import GameControllerOutlineIcon from "../../assets/icons/game-controller-outline.svg";
+import GiftOutlineIcon from "../../assets/icons/gift-outline.svg";
+import HomeOutlineIcon from "../../assets/icons/home-outline.svg";
+import LaptopOutlineIcon from "../../assets/icons/laptop-outline.svg";
+import ListOutlineIcon from "../../assets/icons/list-outline.svg";
+import MedicalOutlineIcon from "../../assets/icons/medical-outline.svg";
+import PersonCircleOutlineIcon from "../../assets/icons/person-circle-outline.svg";
+import ReceiptOutlineIcon from "../../assets/icons/receipt-outline.svg";
+import RestaurantOutlineIcon from "../../assets/icons/restaurant-outline.svg";
+import SchoolOutlineIcon from "../../assets/icons/school-outline.svg";
+import SchoolIcon from "../../assets/icons/school.svg";
+import SettingsOutlineIcon from "../../assets/icons/settings-outline.svg";
+import TrendingUpOutlineIcon from "../../assets/icons/trending-up-outline.svg";
+import WalletOutlineIcon from "../../assets/icons/wallet-outline.svg";
+
 interface TransactionWithAccount extends DatabaseTransaction {
   accountName: string;
   accountSymbol: string;
   accountColor: string;
+  categoryName: string;
+  categoryIcon: string;
+  categoryColor: string;
 }
 
 type SortOption = "amount" | "date" | "account";
@@ -41,24 +72,36 @@ export default function CategoryHistory() {
   const { accounts } = useApp();
   const insets = useSafeAreaInsets();
 
-  // Mapa de íconos locales (puedes agregar los SVG/PNG luego en assets/icons)
-  const ICONS: Record<string, any> = {
-    "arrow-back": require("../../assets/icons/arrow-back.svg"),
-    card: require("../../assets/icons/home-outline.svg"),
-    "chevron-down": require("../../assets/icons/chevron-down.svg"),
-    calendar: require("../../assets/icons/calendar-outline.svg"),
-    "trending-up": require("../../assets/icons/bar-chart-outline.svg"),
-    "receipt-outline": require("../../assets/icons/wallet-outline.svg"),
-    close: require("../../assets/icons/close.svg"),
-    apps: require("../../assets/icons/person-circle-outline.svg"),
-    checkmark: require("../../assets/icons/checkmark-circle.svg"),
-    infinite: require("../../assets/icons/arrow-forward.svg"),
-    today: require("../../assets/icons/arrow-forward-outline.svg"),
-    "calendar-outline": require("../../assets/icons/calendar-outline.svg"),
-    "calendar-number": require("../../assets/icons/calendar-outline.svg"),
-    "information-circle": require("../../assets/icons/settings-outline.svg"),
-    add: require("../../assets/icons/arrow-forward-outline.svg"),
-    "list-outline": require("../../assets/icons/list-outline.svg"),
+  // Mapa de componentes SVG
+  const ICON_COMPONENTS: Record<string, any> = {
+    "arrow-back": ArrowBackIcon,
+    "chevron-down": ChevronDownIcon,
+    close: CloseIcon,
+    checkmark: CheckmarkCircleIcon,
+    "list-outline": ListOutlineIcon,
+    // Categorías de gastos
+    "airplane-outline": AirplaneOutlineIcon,
+    "briefcase-outline": BriefcaseOutlineIcon,
+    "bus-outline": BusOutlineIcon,
+    "car-outline": CarOutlineIcon,
+    "cart-outline": CartOutlineIcon,
+    "game-controller-outline": GameControllerOutlineIcon,
+    "gift-outline": GiftOutlineIcon,
+    "laptop-outline": LaptopOutlineIcon,
+    "medical-outline": MedicalOutlineIcon,
+    "receipt-outline": ReceiptOutlineIcon,
+    "restaurant-outline": RestaurantOutlineIcon,
+    "school-outline": SchoolOutlineIcon,
+    "school": SchoolIcon,
+    "trending-up-outline": TrendingUpOutlineIcon,
+    // Categorías de ingresos
+    "wallet-outline": WalletOutlineIcon,
+    "home-outline": HomeOutlineIcon,
+    // Otros
+    "calendar-outline": CalendarOutlineIcon,
+    "bar-chart-outline": BarChartOutlineIcon,
+    "settings-outline": SettingsOutlineIcon,
+    "person-circle-outline": PersonCircleOutlineIcon,
   };
 
   // Parámetros de la categoría con validación
@@ -106,15 +149,8 @@ export default function CategoryHistory() {
   // Estados de filtros
   const [filterMode, setFilterMode] = useState<"date" | "amount">("date");
   const [dateFilter, setDateFilter] = useState<
-    "all" | "today" | "week" | "month" | "custom"
+    "all" | "today" | "week" | "month"
   >("all");
-  const [customDateRange, setCustomDateRange] = useState<{
-    startDate: Date;
-    endDate: Date;
-  }>({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
 
   // Estados de modales
   const [showAccountFilter, setShowAccountFilter] = useState(false);
@@ -166,12 +202,6 @@ export default function CategoryHistory() {
         setSelectedAccount(filters.selectedAccount || "all");
         setFilterMode(filters.filterMode || "date");
         setDateFilter(filters.dateFilter || "all");
-        if (filters.customDateRange) {
-          setCustomDateRange({
-            startDate: new Date(filters.customDateRange.startDate),
-            endDate: new Date(filters.customDateRange.endDate),
-          });
-        }
       }
     } catch (error) {
       console.error("Error loading saved filters:", error);
@@ -185,7 +215,6 @@ export default function CategoryHistory() {
         selectedAccount,
         filterMode,
         dateFilter,
-        customDateRange,
       };
       await storageWrapper.setItem(STORAGE_KEY, JSON.stringify(filters));
     } catch (error) {
@@ -195,12 +224,11 @@ export default function CategoryHistory() {
     selectedAccount,
     filterMode,
     dateFilter,
-    customDateRange,
     STORAGE_KEY,
     storageWrapper,
   ]);
 
-  // Cargar transacciones de la categoría con información de cuentas
+  // Cargar transacciones de la categoría con información de cuentas y categorías
   const loadCategoryTransactions = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -218,17 +246,27 @@ export default function CategoryHistory() {
         return;
       }
 
-      // Enriquecer transacciones con información de cuentas
+      // Obtener todas las categorías para enriquecer las transacciones
+      const { databaseService } = await import("../../src/shared/services/database");
+      const allCategories = await databaseService.getCategories();
+
+      // Enriquecer transacciones con información de cuentas y categorías
       const transactionsWithAccounts: TransactionWithAccount[] =
         categoryTransactions.map((transaction) => {
           const account = accounts.find(
             (acc) => acc.id === transaction.accountId,
+          );
+          const category = allCategories.find(
+            (cat) => cat.id === transaction.categoryId,
           );
           return {
             ...transaction,
             accountName: account?.name || "Cuenta desconocida",
             accountSymbol: account?.symbol || "💰",
             accountColor: account?.color || colors.text.tertiary,
+            categoryName: category?.name || "Categoría desconocida",
+            categoryIcon: category?.icon || "list-outline",
+            categoryColor: category?.color || colors.text.tertiary,
           };
         });
 
@@ -319,10 +357,6 @@ export default function CategoryHistory() {
                 59,
               );
               break;
-            case "custom":
-              startDate = customDateRange.startDate;
-              endDate = customDateRange.endDate;
-              break;
             default:
               startDate = new Date(0);
               endDate = new Date();
@@ -401,7 +435,6 @@ export default function CategoryHistory() {
     selectedAccount,
     filterMode,
     dateFilter,
-    customDateRange,
     sortBy,
     sortDirection,
   ]);
@@ -409,7 +442,7 @@ export default function CategoryHistory() {
   // Guardar filtros cuando cambien
   useEffect(() => {
     saveFilters();
-  }, [selectedAccount, filterMode, dateFilter, customDateRange, saveFilters]);
+  }, [selectedAccount, filterMode, dateFilter, saveFilters]);
 
   // Cargar datos al enfocar la pantalla
   useFocusEffect(
@@ -432,42 +465,47 @@ export default function CategoryHistory() {
   // Función para eliminar transacción
   const handleDeleteTransaction = async (transactionId: string) => {
     console.log("🔴 handleDeleteTransaction called with ID:", transactionId);
-    try {
-      // Mostrar confirmación usando window.confirm para web
-      const confirmed = window.confirm(
-        "¿Estás seguro de que quieres eliminar esta transacción? Esta acción no se puede deshacer.",
-      );
+    
+    Alert.alert(
+      "Eliminar Transacción",
+      "¿Estás seguro de que quieres eliminar esta transacción? Esta acción no se puede deshacer.",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+          onPress: () => console.log("🔴 User cancelled deletion"),
+        },
+        {
+          text: "Eliminar",
+          style: "destructive",
+          onPress: async () => {
+            console.log("🔴 User confirmed deletion");
+            try {
+              // Eliminar de la base de datos
+              console.log("🔴 Calling deleteTransaction...");
+              await deleteTransaction(transactionId);
+              console.log("🔴 Transaction deleted successfully");
 
-      if (confirmed) {
-        console.log("🔴 User confirmed deletion");
-        try {
-          // Eliminar de la base de datos
-          console.log("🔴 Calling deleteTransaction...");
-          await deleteTransaction(transactionId);
-          console.log("🔴 Transaction deleted successfully");
+              // Actualizar el estado local
+              const updatedTransactions = transactions.filter(
+                (t) => t.id !== transactionId,
+              );
+              setTransactions(updatedTransactions);
 
-          // Actualizar el estado local
-          const updatedTransactions = transactions.filter(
-            (t) => t.id !== transactionId,
-          );
-          setTransactions(updatedTransactions);
+              // Cerrar modal
+              setShowTransactionModal(false);
+              setSelectedTransaction(null);
 
-          // Cerrar modal
-          setShowTransactionModal(false);
-          setSelectedTransaction(null);
-
-          // Mostrar confirmación de éxito
-          alert("Transacción eliminada correctamente");
-        } catch (error) {
-          console.error("Error deleting transaction:", error);
-          alert("No se pudo eliminar la transacción");
-        }
-      } else {
-        console.log("🔴 User cancelled deletion");
-      }
-    } catch (error) {
-      console.error("Error in delete confirmation:", error);
-    }
+              // Mostrar confirmación de éxito
+              Alert.alert("Éxito", "Transacción eliminada correctamente");
+            } catch (error) {
+              console.error("Error deleting transaction:", error);
+              Alert.alert("Error", "No se pudo eliminar la transacción");
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Agrupar transacciones por fecha
@@ -498,7 +536,7 @@ export default function CategoryHistory() {
 
   // Función para cambiar filtro de fecha
   const handleDateFilterChange = (
-    filter: "all" | "today" | "week" | "month" | "custom",
+    filter: "all" | "today" | "week" | "month",
   ) => {
     setDateFilter(filter);
     setShowDateFilter(false);
@@ -536,8 +574,6 @@ export default function CategoryHistory() {
         return "Esta semana";
       case "month":
         return "Este mes";
-      case "custom":
-        return "Rango personalizado";
       default:
         return "Todas";
     }
@@ -547,31 +583,34 @@ export default function CategoryHistory() {
     item,
   }: {
     item: TransactionWithAccount;
-  }) => (
-    <TouchableOpacity
-      style={categoryHistoryStyles.transactionItem}
-      onPress={() => {
-        setSelectedTransaction(item);
-        setShowTransactionModal(true);
-      }}
-      activeOpacity={0.7}
-    >
-      <View style={categoryHistoryStyles.transactionLeft}>
-        <View
-          style={[
-            categoryHistoryStyles.transactionIcon,
-            { backgroundColor: categoryColor },
-          ]}
-        >
-          <Image
-            source={ICONS[categoryIcon] || ICONS["list-outline"]}
-            style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
-            resizeMode="contain"
-          />
-        </View>
+  }) => {
+    const IconComponent = ICON_COMPONENTS[item.categoryIcon] || ListOutlineIcon;
+    
+    return (
+      <TouchableOpacity
+        style={categoryHistoryStyles.transactionItem}
+        onPress={() => {
+          setSelectedTransaction(item);
+          setShowTransactionModal(true);
+        }}
+        activeOpacity={0.7}
+      >
+        <View style={categoryHistoryStyles.transactionLeft}>
+          <View
+            style={[
+              categoryHistoryStyles.transactionIcon,
+              { backgroundColor: item.categoryColor },
+            ]}
+          >
+            <IconComponent
+              width={20}
+              height={20}
+              color={colors.neutral.white}
+            />
+          </View>
         <View style={categoryHistoryStyles.transactionInfo}>
           <Text style={categoryHistoryStyles.transactionDescription}>
-            {categoryName}
+            {item.categoryName}
           </Text>
           <View style={categoryHistoryStyles.accountInfo}>
             <Text
@@ -600,7 +639,8 @@ export default function CategoryHistory() {
         {item.amount.toLocaleString("es-CO")} COL$
       </Text>
     </TouchableOpacity>
-  );
+    );
+  };
 
   const renderDateGroup = ({
     item,
@@ -641,10 +681,10 @@ export default function CategoryHistory() {
           }}
           style={categoryHistoryStyles.backButton}
         >
-          <Image
-            source={ICONS["arrow-back"]}
-            style={{ width: 24, height: 24, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <ArrowBackIcon
+            width={24}
+            height={24}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={categoryHistoryStyles.headerCenter}>
@@ -679,26 +719,18 @@ export default function CategoryHistory() {
               onPress={() => setShowAccountFilter(true)}
             >
               <View style={categoryHistoryStyles.filterButtonContent}>
-                <Image
-                  source={ICONS["card"]}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <HomeOutlineIcon
+                  width={16}
+                  height={16}
+                  color={colors.text.tertiary}
                 />
                 <Text style={categoryHistoryStyles.filterButtonText}>
                   {getAccountFilterText()}
                 </Text>
-                <Image
-                  source={ICONS["chevron-down"]}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <ChevronDownIcon
+                  width={16}
+                  height={16}
+                  color={colors.text.tertiary}
                 />
               </View>
             </TouchableOpacity>
@@ -711,28 +743,26 @@ export default function CategoryHistory() {
               onPress={() => setShowDateFilter(true)}
             >
               <View style={categoryHistoryStyles.filterButtonContent}>
-                <Image
-                  source={
-                    ICONS[filterMode === "date" ? "calendar" : "trending-up"]
-                  }
-                  style={{
-                    width: 16,
-                    height: 16,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
-                />
+                {filterMode === "date" ? (
+                  <CalendarOutlineIcon
+                    width={16}
+                    height={16}
+                    color={colors.text.tertiary}
+                  />
+                ) : (
+                  <BarChartOutlineIcon
+                    width={16}
+                    height={16}
+                    color={colors.text.tertiary}
+                  />
+                )}
                 <Text style={categoryHistoryStyles.filterButtonText}>
                   {filterMode === "date" ? getDateFilterText() : "Por cantidad"}
                 </Text>
-                <Image
-                  source={ICONS["chevron-down"]}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <ChevronDownIcon
+                  width={16}
+                  height={16}
+                  color={colors.text.tertiary}
                 />
               </View>
             </TouchableOpacity>
@@ -757,10 +787,10 @@ export default function CategoryHistory() {
           />
         ) : (
           <View style={categoryHistoryStyles.emptyContainer}>
-            <Image
-              source={ICONS["receipt-outline"]}
-              style={{ width: 60, height: 60, tintColor: colors.text.tertiary }}
-              resizeMode="contain"
+            <WalletOutlineIcon
+              width={60}
+              height={60}
+                    color={colors.text.tertiary}
             />
             <Text style={categoryHistoryStyles.emptyText}>
               {selectedAccount !== "all"
@@ -785,10 +815,10 @@ export default function CategoryHistory() {
           style={categoryHistoryStyles.fab}
           onPress={() => router.push("/(drawer)/add-transaction")}
         >
-          <Image
-            source={ICONS["add"]}
-            style={{ width: 24, height: 24, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <ArrowForwardOutlineIcon
+            width={24}
+            height={24}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
       </SafeAreaView>
@@ -810,14 +840,10 @@ export default function CategoryHistory() {
                 onPress={() => setShowAccountFilter(false)}
                 style={categoryHistoryStyles.closeButton}
               >
-                <Image
-                  source={ICONS["close"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -832,14 +858,10 @@ export default function CategoryHistory() {
                 onPress={() => handleAccountFilterChange("all")}
               >
                 <View style={categoryHistoryStyles.filterOptionContent}>
-                  <Image
-                    source={ICONS["apps"]}
-                    style={{
-                      width: 20,
-                      height: 20,
-                      tintColor: colors.text.tertiary,
-                    }}
-                    resizeMode="contain"
+                  <PersonCircleOutlineIcon
+                    width={20}
+                    height={20}
+                    color={colors.text.tertiary}
                   />
                   <Text
                     style={[
@@ -852,14 +874,10 @@ export default function CategoryHistory() {
                   </Text>
                 </View>
                 {selectedAccount === "all" && (
-                  <Image
-                    source={ICONS["checkmark"]}
-                    style={{
-                      width: 20,
-                      height: 20,
-                      tintColor: colors.primary[500],
-                    }}
-                    resizeMode="contain"
+                  <CheckmarkCircleIcon
+                    width={20}
+                    height={20}
+                    color={colors.primary[500]}
                   />
                 )}
               </TouchableOpacity>
@@ -894,14 +912,10 @@ export default function CategoryHistory() {
                     </Text>
                   </View>
                   {selectedAccount === account.id && (
-                    <Image
-                      source={ICONS["checkmark"]}
-                      style={{
-                        width: 20,
-                        height: 20,
-                        tintColor: colors.primary[500],
-                      }}
-                      resizeMode="contain"
+                    <CheckmarkCircleIcon
+                      width={20}
+                      height={20}
+                      color={colors.primary[500]}
                     />
                   )}
                 </TouchableOpacity>
@@ -926,14 +940,10 @@ export default function CategoryHistory() {
                 onPress={() => setShowDateFilter(false)}
                 style={categoryHistoryStyles.closeButton}
               >
-                <Image
-                  source={ICONS["close"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -949,14 +959,10 @@ export default function CategoryHistory() {
                   ]}
                   onPress={() => handleFilterModeChange("date")}
                 >
-                  <Image
-                    source={ICONS["calendar"]}
-                    style={{
-                      width: 16,
-                      height: 16,
-                      tintColor: filterMode === "date" ? "#FFFFFF" : "#666666",
-                    }}
-                    resizeMode="contain"
+                  <CalendarOutlineIcon
+                    width={16}
+                    height={16}
+                    fill={filterMode === "date" ? "#FFFFFF" : "#666666"}
                   />
                   <Text
                     style={[
@@ -977,14 +983,10 @@ export default function CategoryHistory() {
                   ]}
                   onPress={() => handleFilterModeChange("amount")}
                 >
-                  <Image
-                    source={ICONS["trending-up"]}
-                    style={{
-                      width: 16,
-                      height: 16,
-                      tintColor: filterMode === "date" ? "#FFFFFF" : "#666666",
-                    }}
-                    resizeMode="contain"
+                  <BarChartOutlineIcon
+                    width={16}
+                    height={16}
+                    fill={filterMode === "amount" ? "#FFFFFF" : "#666666"}
                   />
                   <Text
                     style={[
@@ -1010,14 +1012,10 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange("all")}
                   >
                     <View style={categoryHistoryStyles.filterOptionContent}>
-                      <Image
-                        source={ICONS["infinite"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.text.tertiary,
-                        }}
-                        resizeMode="contain"
+                      <ArrowForwardIcon
+                        width={20}
+                        height={20}
+                        color={colors.text.tertiary}
                       />
                       <Text
                         style={[
@@ -1030,14 +1028,10 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === "all" && (
-                      <Image
-                        source={ICONS["checkmark"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.primary[500],
-                        }}
-                        resizeMode="contain"
+                      <CheckmarkCircleIcon
+                        width={20}
+                        height={20}
+                        color={colors.primary[500]}
                       />
                     )}
                   </TouchableOpacity>
@@ -1051,14 +1045,10 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange("today")}
                   >
                     <View style={categoryHistoryStyles.filterOptionContent}>
-                      <Image
-                        source={ICONS["today"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.text.tertiary,
-                        }}
-                        resizeMode="contain"
+                      <ArrowForwardOutlineIcon
+                        width={20}
+                        height={20}
+                        color={colors.text.tertiary}
                       />
                       <Text
                         style={[
@@ -1071,14 +1061,10 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === "today" && (
-                      <Image
-                        source={ICONS["checkmark"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.primary[500],
-                        }}
-                        resizeMode="contain"
+                      <CheckmarkCircleIcon
+                        width={20}
+                        height={20}
+                        color={colors.primary[500]}
                       />
                     )}
                   </TouchableOpacity>
@@ -1092,14 +1078,10 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange("week")}
                   >
                     <View style={categoryHistoryStyles.filterOptionContent}>
-                      <Image
-                        source={ICONS["calendar-outline"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.text.tertiary,
-                        }}
-                        resizeMode="contain"
+                      <CalendarOutlineIcon
+                        width={20}
+                        height={20}
+                        color={colors.text.tertiary}
                       />
                       <Text
                         style={[
@@ -1112,14 +1094,10 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === "week" && (
-                      <Image
-                        source={ICONS["checkmark"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.primary[500],
-                        }}
-                        resizeMode="contain"
+                      <CheckmarkCircleIcon
+                        width={20}
+                        height={20}
+                        color={colors.primary[500]}
                       />
                     )}
                   </TouchableOpacity>
@@ -1133,14 +1111,10 @@ export default function CategoryHistory() {
                     onPress={() => handleDateFilterChange("month")}
                   >
                     <View style={categoryHistoryStyles.filterOptionContent}>
-                      <Image
-                        source={ICONS["calendar"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.text.tertiary,
-                        }}
-                        resizeMode="contain"
+                      <CalendarOutlineIcon
+                        width={20}
+                        height={20}
+                        color={colors.text.tertiary}
                       />
                       <Text
                         style={[
@@ -1153,72 +1127,24 @@ export default function CategoryHistory() {
                       </Text>
                     </View>
                     {dateFilter === "month" && (
-                      <Image
-                        source={ICONS["checkmark"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.primary[500],
-                        }}
-                        resizeMode="contain"
+                      <CheckmarkCircleIcon
+                        width={20}
+                        height={20}
+                        color={colors.primary[500]}
                       />
                     )}
                   </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={[
-                      categoryHistoryStyles.filterOption,
-                      dateFilter === "custom" &&
-                        categoryHistoryStyles.selectedFilterOption,
-                    ]}
-                    onPress={() => handleDateFilterChange("custom")}
-                  >
-                    <View style={categoryHistoryStyles.filterOptionContent}>
-                      <Image
-                        source={ICONS["calendar-number"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.text.tertiary,
-                        }}
-                        resizeMode="contain"
-                      />
-                      <Text
-                        style={[
-                          categoryHistoryStyles.filterOptionText,
-                          dateFilter === "custom" &&
-                            categoryHistoryStyles.selectedFilterOptionText,
-                        ]}
-                      >
-                        Rango personalizado
-                      </Text>
-                    </View>
-                    {dateFilter === "custom" && (
-                      <Image
-                        source={ICONS["checkmark"]}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          tintColor: colors.primary[500],
-                        }}
-                        resizeMode="contain"
-                      />
-                    )}
-                  </TouchableOpacity>
                 </>
               )}
 
               {/* Información del modo cantidad */}
               {filterMode === "amount" && (
                 <View style={categoryHistoryStyles.infoBox}>
-                  <Image
-                    source={ICONS["information-circle"]}
-                    style={{
-                      width: 20,
-                      height: 20,
-                      tintColor: colors.primary[500],
-                    }}
-                    resizeMode="contain"
+                  <SettingsOutlineIcon
+                    width={20}
+                    height={20}
+                    color={colors.primary[500]}
                   />
                   <Text style={categoryHistoryStyles.infoText}>
                     Las transacciones se ordenarán por cantidad de mayor a
@@ -1255,14 +1181,10 @@ export default function CategoryHistory() {
                 style={categoryHistoryStyles.transactionModalCloseButton}
                 onPress={() => setShowTransactionModal(false)}
               >
-                <Image
-                  source={ICONS["close"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -1322,37 +1244,32 @@ export default function CategoryHistory() {
                   <Text style={categoryHistoryStyles.detailLabel}>
                     Categoría
                   </Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                    }}
-                  >
+                  <View style={categoryHistoryStyles.detailValueContainer}>
+                    <Text style={categoryHistoryStyles.detailValue}>
+                      {selectedTransaction.categoryName}
+                    </Text>
                     <View
                       style={[
                         categoryHistoryStyles.transactionIcon,
                         {
-                          backgroundColor: categoryColor,
+                          backgroundColor: selectedTransaction.categoryColor,
                           width: 24,
                           height: 24,
-                          marginRight: spacing[4],
+                          marginLeft: spacing[2],
                         },
                       ]}
                     >
-                      <Image
-                        source={ICONS[categoryIcon] || ICONS["list-outline"]}
-                        style={{
-                          width: 12,
-                          height: 12,
-                          tintColor: colors.neutral.white,
-                        }}
-                        resizeMode="contain"
-                      />
+                      {(() => {
+                        const IconComponent = ICON_COMPONENTS[selectedTransaction.categoryIcon] || ListOutlineIcon;
+                        return (
+                          <IconComponent
+                            width={12}
+                            height={12}
+                            color={colors.neutral.white}
+                          />
+                        );
+                      })()}
                     </View>
-                    <Text style={categoryHistoryStyles.detailValue}>
-                      {categoryName}
-                    </Text>
                   </View>
                 </View>
 
@@ -1360,7 +1277,7 @@ export default function CategoryHistory() {
                 <View
                   style={[
                     categoryHistoryStyles.detailRow,
-                    { borderBottomWidth: 0 },
+                    { borderBottomWidth: 1 },
                   ]}
                 >
                   <Text style={categoryHistoryStyles.detailLabel}>Fecha</Text>

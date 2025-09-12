@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   StatusBar,
   Text,
@@ -15,34 +14,33 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { useApp } from "../../src/shared/context/AppProvider";
+import { buttonStyles, buttonTextStyles } from "../../src/shared/styles/components";
 import { chooseCategoryStyles } from "../../src/shared/styles/components/choose-category";
-import { colors } from "../../src/shared/styles/tokens";
+import { colors, spacing } from "../../src/shared/styles/tokens";
 import { TransactionType } from "../../types/transaction";
 
-// Mapa de íconos locales con nombres exactos de Ionicons
-const ICONS: Record<string, any> = {
-  "arrow-back": require("../../assets/icons/arrow-back.svg"),
-  "checkmark-circle": require("../../assets/icons/checkmark-circle.svg"),
-  "add-circle-outline": require("../../assets/icons/add-circle-outline.svg"),
-  checkmark: require("../../assets/icons/checkmark.svg"),
-  "wallet-outline": require("../../assets/icons/wallet-outline.svg"),
-  "cart-outline": require("../../assets/icons/cart-outline.svg"),
-  "car-outline": require("../../assets/icons/car-outline.svg"),
-  "home-outline": require("../../assets/icons/home-outline.svg"),
-  "restaurant-outline": require("../../assets/icons/restaurant-outline.svg"),
-  "medical-outline": require("../../assets/icons/medical-outline.svg"),
-  "bus-outline": require("../../assets/icons/bus-outline.svg"),
-  "airplane-outline": require("../../assets/icons/airplane-outline.svg"),
-  "list-outline": require("../../assets/icons/list-outline.svg"),
-  school: require("../../assets/icons/school.svg"),
-  "school-outline": require("../../assets/icons/school-outline.svg"),
-  "game-controller-outline": require("../../assets/icons/game-controller-outline.svg"),
-  "receipt-outline": require("../../assets/icons/receipt-outline.svg"),
-  "briefcase-outline": require("../../assets/icons/briefcase-outline.svg"),
-  "laptop-outline": require("../../assets/icons/laptop-outline.svg"),
-  "trending-up-outline": require("../../assets/icons/trending-up-outline.svg"),
-  "gift-outline": require("../../assets/icons/gift-outline.svg"),
-};
+// Importar SVGs
+import AddCircleOutlineIcon from "../../assets/icons/add-circle-outline.svg";
+import AirplaneOutlineIcon from "../../assets/icons/airplane-outline.svg";
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
+import BriefcaseOutlineIcon from "../../assets/icons/briefcase-outline.svg";
+import BusOutlineIcon from "../../assets/icons/bus-outline.svg";
+import CarOutlineIcon from "../../assets/icons/car-outline.svg";
+import CartOutlineIcon from "../../assets/icons/cart-outline.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import CheckmarkIcon from "../../assets/icons/checkmark.svg";
+import GameControllerOutlineIcon from "../../assets/icons/game-controller-outline.svg";
+import GiftOutlineIcon from "../../assets/icons/gift-outline.svg";
+import HomeOutlineIcon from "../../assets/icons/home-outline.svg";
+import LaptopOutlineIcon from "../../assets/icons/laptop-outline.svg";
+import ListOutlineIcon from "../../assets/icons/list-outline.svg";
+import MedicalOutlineIcon from "../../assets/icons/medical-outline.svg";
+import ReceiptOutlineIcon from "../../assets/icons/receipt-outline.svg";
+import RestaurantOutlineIcon from "../../assets/icons/restaurant-outline.svg";
+import SchoolOutlineIcon from "../../assets/icons/school-outline.svg";
+import SchoolIcon from "../../assets/icons/school.svg";
+import TrendingUpOutlineIcon from "../../assets/icons/trending-up-outline.svg";
+import WalletOutlineIcon from "../../assets/icons/wallet-outline.svg";
 
 export default function ChooseCategory() {
   const insets = useSafeAreaInsets();
@@ -50,6 +48,31 @@ export default function ChooseCategory() {
   const { categories, addTransaction, currentAccount } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Mapa de componentes SVG
+  const ICON_COMPONENTS: Record<string, any> = {
+    "arrow-back": ArrowBackIcon,
+    "checkmark-circle": CheckmarkCircleIcon,
+    "add-circle-outline": AddCircleOutlineIcon,
+    checkmark: CheckmarkIcon,
+    "wallet-outline": WalletOutlineIcon,
+    "cart-outline": CartOutlineIcon,
+    "car-outline": CarOutlineIcon,
+    "home-outline": HomeOutlineIcon,
+    "restaurant-outline": RestaurantOutlineIcon,
+    "medical-outline": MedicalOutlineIcon,
+    "bus-outline": BusOutlineIcon,
+    "airplane-outline": AirplaneOutlineIcon,
+    "list-outline": ListOutlineIcon,
+    school: SchoolIcon,
+    "school-outline": SchoolOutlineIcon,
+    "game-controller-outline": GameControllerOutlineIcon,
+    "receipt-outline": ReceiptOutlineIcon,
+    "briefcase-outline": BriefcaseOutlineIcon,
+    "laptop-outline": LaptopOutlineIcon,
+    "trending-up-outline": TrendingUpOutlineIcon,
+    "gift-outline": GiftOutlineIcon,
+  };
 
   // Obtener parámetros de la pantalla anterior
   const transactionType = params.type as TransactionType;
@@ -64,7 +87,17 @@ export default function ChooseCategory() {
   );
 
   const goBack = () => {
-    router.back();
+    // Regresar a add-transaction con los datos preservados
+    router.push({
+      pathname: "/(drawer)/add-transaction",
+      params: {
+        type: transactionType,
+        amount: amount,
+        date: date,
+        note: note,
+        accountId: accountId,
+      },
+    });
   };
 
   // Add this function to handle navigation to create category
@@ -128,38 +161,42 @@ export default function ChooseCategory() {
     }
   };
 
-  const renderCategoryItem = (category: any) => (
-    <TouchableOpacity
-      key={category.id}
-      style={[
-        chooseCategoryStyles.categoryItem,
-        selectedCategory === category.id &&
-          chooseCategoryStyles.selectedCategoryItem,
-      ]}
-      onPress={() => setSelectedCategory(category.id)}
-    >
-      <View
+  const renderCategoryItem = (category: any) => {
+    const IconComponent = ICON_COMPONENTS[category.icon as string] || ListOutlineIcon;
+    
+    return (
+      <TouchableOpacity
+        key={category.id}
         style={[
-          chooseCategoryStyles.categoryIcon,
-          { backgroundColor: category.color },
+          chooseCategoryStyles.categoryItem,
+          selectedCategory === category.id &&
+            chooseCategoryStyles.selectedCategoryItem,
         ]}
+        onPress={() => setSelectedCategory(category.id)}
       >
-        <Image
-          source={ICONS[category.icon as string]}
-          style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
-          resizeMode="contain"
-        />
-      </View>
-      <Text style={chooseCategoryStyles.categoryName}>{category.name}</Text>
-      {selectedCategory === category.id && (
-        <Image
-          source={ICONS["checkmark-circle"]}
-          style={{ width: 24, height: 24, tintColor: colors.primary[500] }}
-          resizeMode="contain"
-        />
-      )}
-    </TouchableOpacity>
-  );
+        <View
+          style={[
+            chooseCategoryStyles.categoryIcon,
+            { backgroundColor: category.color },
+          ]}
+        >
+          <IconComponent
+            width={28}
+            height={28}
+            color={colors.neutral.white}
+          />
+        </View>
+        <Text style={chooseCategoryStyles.categoryName}>{category.name}</Text>
+        {selectedCategory === category.id && (
+          <CheckmarkCircleIcon
+            width={24}
+            height={24}
+            color={colors.primary[500]}
+          />
+        )}
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={chooseCategoryStyles.container}>
@@ -179,16 +216,15 @@ export default function ChooseCategory() {
           onPress={goBack}
           style={chooseCategoryStyles.backButton}
         >
-          <Image
-            source={ICONS["arrow-back"]}
-            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <ArrowBackIcon
+            width={28}
+            height={28}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={chooseCategoryStyles.headerCenter}>
           <Text style={chooseCategoryStyles.headerTitle}>
-            Elegir Categoría de{" "}
-            {transactionType === "GASTO" ? "Gasto" : "Ingreso"}
+            {transactionType === "GASTO" ? "Categoría de Gasto" : "Categoría de Ingreso"}
           </Text>
         </View>
         <View style={chooseCategoryStyles.placeholder} />
@@ -242,17 +278,16 @@ export default function ChooseCategory() {
 
           {/* Opción de crear nueva categoría */}
           <TouchableOpacity
-            style={chooseCategoryStyles.createCategoryButton}
+            style={[buttonStyles.outline, { marginBottom: spacing[2] }]}
             onPress={handleCreateCategory}
           >
-            <Image
-              source={ICONS["add-circle-outline"]}
-              style={{ width: 24, height: 24, tintColor: colors.primary[500] }}
-              resizeMode="contain"
+            <AddCircleOutlineIcon
+              width={20}
+              height={20}
+              color={colors.primary[500]}
+              style={{ marginRight: spacing[2] }}
             />
-            <Text style={chooseCategoryStyles.createCategoryText}>
-              Crear Nueva Categoría
-            </Text>
+            <Text style={buttonTextStyles.outline}>Crear nueva categoría</Text>
           </TouchableOpacity>
         </ScrollView>
 
@@ -279,14 +314,10 @@ export default function ChooseCategory() {
               >
                 Confirmar
               </Text>
-              <Image
-                source={ICONS["checkmark"]}
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: colors.neutral.white,
-                }}
-                resizeMode="contain"
+              <CheckmarkIcon
+                width={20}
+                height={20}
+                color={colors.neutral.white}
               />
             </>
           )}

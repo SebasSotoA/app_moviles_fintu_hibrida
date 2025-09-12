@@ -1,9 +1,3 @@
-/**
- * Sistema de sombras basado en los patrones existentes
- * Proporciona sombras consistentes para toda la aplicación
- * Compatible con web (boxShadow) y móvil (shadow*)
- */
-
 import { Platform } from "react-native";
 
 // Helper para crear sombras compatibles con web

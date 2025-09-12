@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Platform,
   ScrollView,
   StatusBar,
@@ -25,35 +24,84 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import Svg, { Circle, Path } from "react-native-svg";
-import HeaderLogo from "../../components/HeaderLogo";
 import WelcomeModal from "../../components/WelcomeModal";
 import { useApp } from "../../src/shared/context/AppProvider";
 import { dashboardStyles } from "../../src/shared/styles/components/dashboard";
 import { dateRangeCalendarStyles } from "../../src/shared/styles/components/date-range-calendar";
 import { colors } from "../../src/shared/styles/tokens";
 
-// Mapa de íconos locales siguiendo el patrón de _layout.tsx
-const ICONS: Record<string, any> = {
-  // Generales
-  "list-outline": require("../../assets/icons/list-outline.svg"),
-  "arrow-forward": require("../../assets/icons/arrow-forward.svg"),
-  "arrow-forward-outline": require("../../assets/icons/arrow-forward-outline.svg"),
-  "chevron-down": require("../../assets/icons/chevron-down.svg"),
-  close: require("../../assets/icons/close.svg"),
-  "checkmark-circle": require("../../assets/icons/checkmark-circle.svg"),
-  "wallet-outline": require("../../assets/icons/wallet-outline.svg"),
-  "home-outline": require("../../assets/icons/home-outline.svg"),
-  "bar-chart-outline": require("../../assets/icons/bar-chart-outline.svg"),
-  "person-circle-outline": require("../../assets/icons/person-circle-outline.svg"),
-  "settings-outline": require("../../assets/icons/settings-outline.svg"),
-  "calendar-outline": require("../../assets/icons/calendar-outline.svg"),
-  menu: require("../../assets/icons/menu.svg"),
-  "chevron-back": require("../../assets/icons/chevron-back.svg"),
-  "chevron-forward": require("../../assets/icons/chevron-forward.svg"),
-  today: require("../../assets/icons/today.svg"),
-  "pie-chart-outline": require("../../assets/icons/pie-chart-outline.svg"),
-  "folder-open-outline": require("../../assets/icons/folder-open-outline.svg"),
-  add: require("../../assets/icons/add.svg"),
+// Importar SVGs
+import AddIcon from "../../assets/icons/add.svg";
+import AirplaneOutlineIcon from "../../assets/icons/airplane-outline.svg";
+import ArrowForwardOutlineIcon from "../../assets/icons/arrow-forward-outline.svg";
+import ArrowForwardIcon from "../../assets/icons/arrow-forward.svg";
+import BarChartOutlineIcon from "../../assets/icons/bar-chart-outline.svg";
+import BriefcaseOutlineIcon from "../../assets/icons/briefcase-outline.svg";
+import BusOutlineIcon from "../../assets/icons/bus-outline.svg";
+import CalendarOutlineIcon from "../../assets/icons/calendar-outline.svg";
+import CarOutlineIcon from "../../assets/icons/car-outline.svg";
+import CartOutlineIcon from "../../assets/icons/cart-outline.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import ChevronBackIcon from "../../assets/icons/chevron-back.svg";
+import ChevronDownIcon from "../../assets/icons/chevron-down.svg";
+import ChevronForwardIcon from "../../assets/icons/chevron-forward.svg";
+import CloseIcon from "../../assets/icons/close.svg";
+import FintuLogoIcon from "../../assets/icons/fintu-logo.svg";
+import FolderOpenOutlineIcon from "../../assets/icons/folder-open-outline.svg";
+import GameControllerOutlineIcon from "../../assets/icons/game-controller-outline.svg";
+import GiftOutlineIcon from "../../assets/icons/gift-outline.svg";
+import HomeOutlineIcon from "../../assets/icons/home-outline.svg";
+import LaptopOutlineIcon from "../../assets/icons/laptop-outline.svg";
+import ListOutlineIcon from "../../assets/icons/list-outline.svg";
+import MedicalOutlineIcon from "../../assets/icons/medical-outline.svg";
+import MenuIcon from "../../assets/icons/menu.svg";
+import PersonCircleOutlineIcon from "../../assets/icons/person-circle-outline.svg";
+import PieChartOutlineIcon from "../../assets/icons/pie-chart-outline.svg";
+import ReceiptOutlineIcon from "../../assets/icons/receipt-outline.svg";
+import RestaurantOutlineIcon from "../../assets/icons/restaurant-outline.svg";
+import SchoolOutlineIcon from "../../assets/icons/school-outline.svg";
+import SchoolIcon from "../../assets/icons/school.svg";
+import SettingsOutlineIcon from "../../assets/icons/settings-outline.svg";
+import TodayIcon from "../../assets/icons/today.svg";
+import TrendingUpOutlineIcon from "../../assets/icons/trending-up-outline.svg";
+import WalletOutlineIcon from "../../assets/icons/wallet-outline.svg";
+
+// Mapa de componentes SVG
+const ICON_COMPONENTS: Record<string, any> = {
+  "list-outline": ListOutlineIcon,
+  "arrow-forward": ArrowForwardIcon,
+  "arrow-forward-outline": ArrowForwardOutlineIcon,
+  "chevron-down": ChevronDownIcon,
+  close: CloseIcon,
+  "checkmark-circle": CheckmarkCircleIcon,
+  "wallet-outline": WalletOutlineIcon,
+  "home-outline": HomeOutlineIcon,
+  "bar-chart-outline": BarChartOutlineIcon,
+  "person-circle-outline": PersonCircleOutlineIcon,
+  "settings-outline": SettingsOutlineIcon,
+  "calendar-outline": CalendarOutlineIcon,
+  menu: MenuIcon,
+  "chevron-back": ChevronBackIcon,
+  "chevron-forward": ChevronForwardIcon,
+  today: TodayIcon,
+  "pie-chart-outline": PieChartOutlineIcon,
+  "folder-open-outline": FolderOpenOutlineIcon,
+  add: AddIcon,
+  // Íconos de categorías
+  "cart-outline": CartOutlineIcon,
+  "car-outline": CarOutlineIcon,
+  "restaurant-outline": RestaurantOutlineIcon,
+  "medical-outline": MedicalOutlineIcon,
+  "bus-outline": BusOutlineIcon,
+  "airplane-outline": AirplaneOutlineIcon,
+  school: SchoolIcon,
+  "school-outline": SchoolOutlineIcon,
+  "game-controller-outline": GameControllerOutlineIcon,
+  "receipt-outline": ReceiptOutlineIcon,
+  "briefcase-outline": BriefcaseOutlineIcon,
+  "laptop-outline": LaptopOutlineIcon,
+  "trending-up-outline": TrendingUpOutlineIcon,
+  "gift-outline": GiftOutlineIcon,
 };
 
 // Helper para renderizar íconos locales con tamaño y color
@@ -62,14 +110,17 @@ const renderIcon = (
   size: number,
   color?: string,
   style?: any,
-) => (
-  <Image
-    source={ICONS[name] || ICONS["list-outline"]}
-    style={[{ width: size, height: size }, style]}
-    tintColor={color}
-    resizeMode="contain"
-  />
-);
+) => {
+  const IconComponent = ICON_COMPONENTS[name] || ListOutlineIcon;
+  return (
+    <IconComponent
+      width={size}
+      height={size}
+      color={color}
+      style={style}
+    />
+  );
+};
 
 type TransactionType = "GASTOS" | "INGRESOS";
 type FilterPeriod = "Día" | "Semana" | "Mes" | "Año" | "Período";
@@ -204,7 +255,7 @@ const CalendarMonth = React.memo(
             {month.toLocaleDateString("es-CO", {
               month: "long",
               year: "numeric",
-            })}
+            }).replace(/^\w/, c => c.toUpperCase())}
           </Text>
         </View>
 
@@ -239,6 +290,8 @@ const CalendarMonth = React.memo(
                     dateRangeCalendarStyles.calendarDayTextCurrentMonth,
                   day.isSelected &&
                     dateRangeCalendarStyles.calendarDayTextSelected,
+                  day.isInRange &&
+                    dateRangeCalendarStyles.calendarDayTextInRange,
                 ]}
               >
                 {day.date.getDate()}
@@ -794,10 +847,20 @@ export default function Home() {
           onPress={openDrawer}
           style={dashboardStyles.menuButton}
         >
-          {renderIcon("menu", 35, colors.neutral.white)}
+          <MenuIcon
+            width={35}
+            height={35}
+            color={colors.neutral.white}
+          />
         </TouchableOpacity>
         <View style={dashboardStyles.headerCenter}>
-          <HeaderLogo size={140} color={colors.neutral.white} />
+          <View style={dashboardStyles.logoContainer}>
+            <FintuLogoIcon
+              width="100%" 
+              height="100%"
+              color={colors.neutral.white}
+            />
+          </View>
         </View>
         <View style={dashboardStyles.placeholder} />
       </View>
@@ -1032,11 +1095,6 @@ export default function Home() {
                 </View>
               )}
             </View>
-
-            {/* Instrucción de deslizamiento */}
-            <Text style={dashboardStyles.swipeHint}>
-              Desliza sobre la fecha para navegar entre períodos
-            </Text>
           </View>
 
           {/* Tarjetas de categorías */}

@@ -28,6 +28,14 @@ export const dashboardStyles = StyleSheet.create({
     justifyContent: "center",
   },
   headerCenter: headerStyles.center,
+  logoContainer: {
+    // Contenedor específico para el logo con tamaño fijo
+    width: 80,
+    height: 40,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    overflow: "hidden",
+  },
   placeholder: {
     width: 70,
   },
@@ -175,7 +183,6 @@ export const dashboardStyles = StyleSheet.create({
   },
   pieChartContainer: {
     alignItems: "center" as const,
-    marginBottom: spacing[4],
   },
   loadingChart: {
     alignItems: "center" as const,
@@ -223,6 +230,7 @@ export const dashboardStyles = StyleSheet.create({
   },
   categoriesSection: {
     flex: 1,
+    marginBottom: spacing[5],
   },
   categoriesTitle: {
     fontSize: typography.fontSize.lg,
@@ -331,9 +339,10 @@ export const dashboardStyles = StyleSheet.create({
     backgroundColor: colors.neutral.white,
     borderRadius: 20,
     margin: spacing[4],
-    maxHeight: "80%",
-    width: "90%",
+    maxHeight: "85%", // Aumentado para móvil
+    width: "95%", // Aumentado para móvil
     maxWidth: 400,
+    flex: 1, // Permitir que se ajuste al contenido
   },
   accountSelectorModal: {
     backgroundColor: colors.neutral.white,
@@ -347,11 +356,12 @@ export const dashboardStyles = StyleSheet.create({
     flexDirection: "row" as const,
     alignItems: "center" as const,
     justifyContent: "space-between" as const,
-    padding: spacing[4],
+    padding: spacing[2],
     borderBottomWidth: 1,
     borderBottomColor: colors.border.light,
   },
   modalTitle: {
+    marginLeft: spacing[4],
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
     color: colors.text.primary,
@@ -360,7 +370,7 @@ export const dashboardStyles = StyleSheet.create({
     padding: spacing[2],
   },
   fixedIncludeAllSection: {
-    padding: spacing[4],
+    padding: spacing[2],
     borderBottomWidth: 1,
     borderBottomColor: colors.border.light,
   },
@@ -371,11 +381,14 @@ export const dashboardStyles = StyleSheet.create({
     paddingVertical: spacing[2],
   },
   includeAllText: {
+    fontWeight: typography.fontWeight.medium,
+    marginLeft: spacing[4],
     fontSize: typography.fontSize.base,
     color: colors.text.primary,
   },
   periodSelectorContent: {
     flex: 1,
+    justifyContent: "space-between" as const,
   },
   calendarLoadingContainer: {
     alignItems: "center" as const,
@@ -387,16 +400,17 @@ export const dashboardStyles = StyleSheet.create({
     marginTop: spacing[2],
   },
   calendarScrollView: {
-    maxHeight: 400,
+    flex: 1, // Usar todo el espacio disponible
+    minHeight: 200, // Altura mínima para asegurar visibilidad
   },
   calendarScrollContent: {
-    padding: spacing[4],
+    padding: spacing[4], // Reducido de spacing[4] a spacing[2]
   },
   calendarInfo: {
     padding: spacing[2],
     backgroundColor: colors.background.light,
     borderRadius: 8,
-    marginBottom: spacing[4],
+    marginBottom: spacing[2],
   },
   calendarInfoText: {
     fontSize: typography.fontSize.sm,
@@ -511,6 +525,9 @@ export const dashboardStyles = StyleSheet.create({
     padding: spacing[4],
     borderTopWidth: 1,
     borderTopColor: colors.border.light,
+    backgroundColor: colors.neutral.white,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   periodSelectorButton: {
     flex: 1,
@@ -588,9 +605,10 @@ export const dashboardStyles = StyleSheet.create({
   fixedDateRangeSection: {
     backgroundColor: colors.background.light,
     paddingHorizontal: spacing[4],
-    paddingVertical: spacing[3],
+    paddingVertical: spacing[1],
     marginHorizontal: spacing[4],
-    marginBottom: spacing[3],
+    marginBottom: spacing[1],
+    marginTop: spacing[2],
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border.light,

@@ -1,33 +1,30 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-  Alert,
-  Image,
-  Platform,
-  ScrollView,
-  StatusBar,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    Platform,
+    ScrollView,
+    StatusBar,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import {
-  SafeAreaView,
-  useSafeAreaInsets,
+    SafeAreaView,
+    useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { useApp } from "../../src/shared/context/AppProvider";
 import { newAccountStyles } from "../../src/shared/styles/components/new-account";
 import { colors } from "../../src/shared/styles/tokens";
 
-// Mapa de íconos locales usando los mismos nombres de Ionicons
-const ICONS: Record<string, any> = {
-  "arrow-back": require("../../assets/icons/arrow-back.svg"),
-  "chevron-down": require("../../assets/icons/chevron-down.svg"),
-  checkmark: require("../../assets/icons/checkmark.svg"),
-  add: require("../../assets/icons/add.svg"),
-  close: require("../../assets/icons/close.svg"),
-  "checkmark-circle": require("../../assets/icons/checkmark-circle.svg"),
-};
+// Importar SVGs
+import AddIcon from "../../assets/icons/add.svg";
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import CheckmarkIcon from "../../assets/icons/checkmark.svg";
+import ChevronDownIcon from "../../assets/icons/chevron-down.svg";
+import CloseIcon from "../../assets/icons/close.svg";
 
 const CURRENCY_OPTIONS = [
   { code: "COP", name: "Peso Colombiano", symbol: "$" },
@@ -230,10 +227,10 @@ export default function NewAccount() {
       {/* Header */}
       <View style={newAccountStyles.header}>
         <TouchableOpacity onPress={goBack} style={newAccountStyles.backButton}>
-          <Image
-            source={ICONS["arrow-back"]}
-            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <ArrowBackIcon
+            width={28}
+            height={28}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={newAccountStyles.headerCenter}>
@@ -302,14 +299,10 @@ export default function NewAccount() {
                 <Text style={newAccountStyles.currencyButtonText}>
                   {selectedCurrency}
                 </Text>
-                <Image
-                  source={ICONS["chevron-down"]}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    tintColor: colors.primary[500],
-                  }}
-                  resizeMode="contain"
+                <ChevronDownIcon
+                  width={16}
+                  height={16}
+                  color={colors.primary[500]}
                 />
               </TouchableOpacity>
             </View>
@@ -351,14 +344,10 @@ export default function NewAccount() {
                   onPress={() => setSelectedColor(color as any)}
                 >
                   {selectedColor === color && (
-                    <Image
-                      source={ICONS["checkmark"]}
-                      style={{
-                        width: 20,
-                        height: 20,
-                        tintColor: colors.neutral.white,
-                      }}
-                      resizeMode="contain"
+                    <CheckmarkIcon
+                      width={20}
+                      height={20}
+                      color={colors.neutral.white}
                     />
                   )}
                 </TouchableOpacity>
@@ -379,14 +368,10 @@ export default function NewAccount() {
                 ]}
               >
                 {includeInTotal && (
-                  <Image
-                    source={ICONS["checkmark"]}
-                    style={{
-                      width: 16,
-                      height: 16,
-                      tintColor: colors.neutral.white,
-                    }}
-                    resizeMode="contain"
+                  <CheckmarkIcon
+                    width={16}
+                    height={16}
+                    color={colors.neutral.white}
                   />
                 )}
               </View>
@@ -418,14 +403,10 @@ export default function NewAccount() {
               <Text style={newAccountStyles.createButtonText}>
                 Crear Cuenta
               </Text>
-              <Image
-                source={ICONS["add"]}
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: colors.neutral.white,
-                }}
-                resizeMode="contain"
+              <AddIcon
+                width={20}
+                height={20}
+                fill={colors.neutral.white}
               />
             </>
           )}
@@ -444,14 +425,10 @@ export default function NewAccount() {
                 onPress={() => setShowCurrencySelector(false)}
                 style={newAccountStyles.closeButton}
               >
-                <Image
-                  source={ICONS["close"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -482,14 +459,10 @@ export default function NewAccount() {
                     </Text>
                   </View>
                   {selectedCurrency === currency.code && (
-                    <Image
-                      source={ICONS["checkmark-circle"]}
-                      style={{
-                        width: 24,
-                        height: 24,
-                        tintColor: colors.text.tertiary,
-                      }}
-                      resizeMode="contain"
+                    <CheckmarkCircleIcon
+                      width={24}
+                      height={24}
+                      color={colors.text.tertiary}
                     />
                   )}
                 </TouchableOpacity>

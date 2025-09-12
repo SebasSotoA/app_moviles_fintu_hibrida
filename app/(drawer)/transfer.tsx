@@ -4,7 +4,6 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
-  Image,
   Platform,
   ScrollView,
   StatusBar,
@@ -20,15 +19,13 @@ import {
 import { useApp } from "../../src/shared/context/AppProvider";
 import type { DatabaseAccount } from "../../src/shared/services/database";
 
-// Mapa de íconos locales con nombres exactos de Ionicons
-const ICONS: Record<string, any> = {
-  "arrow-back": require("../../assets/icons/arrow-back.svg"),
-  "arrow-forward": require("../../assets/icons/arrow-forward.svg"),
-  "chevron-down": require("../../assets/icons/chevron-down.svg"),
-  send: require("../../assets/icons/send.svg"),
-  close: require("../../assets/icons/close.svg"),
-  "checkmark-circle": require("../../assets/icons/checkmark-circle.svg"),
-};
+// Importar SVGs
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
+import ArrowForwardIcon from "../../assets/icons/arrow-forward.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import ChevronDownIcon from "../../assets/icons/chevron-down.svg";
+import CloseIcon from "../../assets/icons/close.svg";
+import SendIcon from "../../assets/icons/send.svg";
 
 export default function Transfer() {
   const { accounts, currentAccount, refreshData } = useApp();
@@ -168,11 +165,7 @@ export default function Transfer() {
   };
 
   const goBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.push("/(drawer)/accounts");
-    }
+    router.push("/(drawer)/accounts");
   };
 
   return (
@@ -188,10 +181,10 @@ export default function Transfer() {
       {/* Header */}
       <View style={transferStyles.header}>
         <TouchableOpacity onPress={goBack} style={transferStyles.backButton}>
-          <Image
-            source={ICONS["arrow-back"]}
-            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <ArrowBackIcon
+            width={28}
+            height={28}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={transferStyles.headerCenter}>
@@ -226,14 +219,10 @@ export default function Transfer() {
               </View>
 
               <View style={transferStyles.transferArrow}>
-                <Image
-                  source={ICONS["arrow-forward"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.primary[500],
-                  }}
-                  resizeMode="contain"
+                <ArrowForwardIcon
+                  width={24}
+                  height={24}
+                  color={colors.primary[500]}
                 />
               </View>
 
@@ -286,14 +275,10 @@ export default function Transfer() {
                   </Text>
                 </View>
               </View>
-              <Image
-                source={ICONS["chevron-down"]}
-                style={{
-                  width: 24,
-                  height: 24,
-                  tintColor: colors.primary[500],
-                }}
-                resizeMode="contain"
+              <ChevronDownIcon
+                width={24}
+                height={24}
+                fill={colors.primary[500]}
               />
             </TouchableOpacity>
           </View>
@@ -322,14 +307,10 @@ export default function Transfer() {
                   )}
                 </View>
               </View>
-              <Image
-                source={ICONS["chevron-down"]}
-                style={{
-                  width: 24,
-                  height: 24,
-                  tintColor: colors.primary[500],
-                }}
-                resizeMode="contain"
+              <ChevronDownIcon
+                width={24}
+                height={24}
+                fill={colors.primary[500]}
               />
             </TouchableOpacity>
           </View>
@@ -385,14 +366,10 @@ export default function Transfer() {
           ) : (
             <>
               <Text style={transferStyles.transferButtonText}>Transferir</Text>
-              <Image
-                source={ICONS["send"]}
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: colors.neutral.white,
-                }}
-                resizeMode="contain"
+              <SendIcon
+                width={20}
+                height={20}
+                color={colors.neutral.white}
               />
             </>
           )}
@@ -409,14 +386,10 @@ export default function Transfer() {
                 onPress={() => setShowFromAccountSelector(false)}
                 style={transferStyles.closeButton}
               >
-                <Image
-                  source={ICONS["close"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -453,14 +426,10 @@ export default function Transfer() {
                     </View>
                   </View>
                   {fromAccount?.id === account.id && (
-                    <Image
-                      source={ICONS["checkmark-circle"]}
-                      style={{
-                        width: 24,
-                        height: 24,
-                        tintColor: colors.primary[500],
-                      }}
-                      resizeMode="contain"
+                    <CheckmarkCircleIcon
+                      width={24}
+                      height={24}
+                      color={colors.primary[500]}
                     />
                   )}
                 </TouchableOpacity>
@@ -480,14 +449,10 @@ export default function Transfer() {
                 onPress={() => setShowToAccountSelector(false)}
                 style={transferStyles.closeButton}
               >
-                <Image
-                  source={ICONS["close"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -530,14 +495,10 @@ export default function Transfer() {
                       </View>
                     </View>
                     {toAccount?.id === account.id && (
-                      <Image
-                        source={ICONS["checkmark-circle"]}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          tintColor: colors.primary[500],
-                        }}
-                        resizeMode="contain"
+                      <CheckmarkCircleIcon
+                        width={24}
+                        height={24}
+                        color={colors.primary[500]}
                       />
                     )}
                   </TouchableOpacity>

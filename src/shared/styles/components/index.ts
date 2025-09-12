@@ -23,9 +23,7 @@ export { calculatorStyles } from "./calculator";
 export { badgeStyles, badgeTextStyles, cardStyles } from "./cards";
 export { drawerStyles, drawerTextStyles, drawerVariants } from "./drawer";
 export { editAccountModalStyles } from "./edit-account-modal";
-export { fintuLogoStyles } from "./fintu-logo";
 export { formStyles, iconStyles } from "./forms";
-export { headerLogoStyles } from "./header-logo";
 export { headerStyles } from "./headers";
 export { layoutStyles, textStyles } from "./layout";
 export { welcomeModalStyles } from "./welcome-modal";
@@ -43,9 +41,10 @@ export { categoriesStyles as categories } from "./categories";
 export { dashboardStyles as dashboard } from "./dashboard";
 export {
   drawerStyles as drawer,
-  drawerTextStyles as drawerText,
+  drawerTextStyles as drawerText
 } from "./drawer";
 export { editAccountModalStyles as editAccountModal } from "./edit-account-modal";
 export { formStyles as forms } from "./forms";
 export { headerStyles as headers } from "./headers";
 export { layoutStyles as layout } from "./layout";
+

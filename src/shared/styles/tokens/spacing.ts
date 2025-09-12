@@ -23,7 +23,6 @@ export const spacing = {
   48: 192,
   64: 256,
 
-  // Espaciados semánticos - basados en los patrones existentes
   semantic: {
     xs: 4, // padding muy pequeño
     sm: 8, // padding pequeño

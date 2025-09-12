@@ -1,8 +1,7 @@
-import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { router, usePathname } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { Text, View } from "react-native";
-import React from 'react';
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   drawerStyles,
@@ -11,13 +10,13 @@ import {
 import { colors } from "../../src/shared/styles/tokens";
 
 // Importar SVGs
-import PersonCircleOutline from "../../assets/icons/person-circle-outline.svg";
-import HomeOutline from "../../assets/icons/home-outline.svg";
-import WalletOutline from "../../assets/icons/wallet-outline.svg";
 import BarChartOutline from "../../assets/icons/bar-chart-outline.svg";
+import HomeOutline from "../../assets/icons/home-outline.svg";
 import ListOutline from "../../assets/icons/list-outline.svg";
 import NotificationsOutline from "../../assets/icons/notifications-outline.svg";
+import PersonCircleOutline from "../../assets/icons/person-circle-outline.svg";
 import SettingsOutline from "../../assets/icons/settings-outline.svg";
+import WalletOutline from "../../assets/icons/wallet-outline.svg";
 
 interface CustomDrawerContentProps {
   state: any;
@@ -28,46 +27,35 @@ interface CustomDrawerContentProps {
 function CustomDrawerContent(props: CustomDrawerContentProps) {
   const pathname = usePathname();
 
-  // Mapa de íconos locales
-  const ICONS: Record<string, any> = {
-    "person-circle-outline": PersonCircleOutline,
-    "home-outline": HomeOutline,
-    "wallet-outline": WalletOutline,
-    "bar-chart-outline": BarChartOutline,
-    "list-outline": ListOutline,
-    "notifications-outline": NotificationsOutline,
-    "settings-outline": SettingsOutline,
-  };
-
   const menuItems = [
     {
       label: "Inicio",
-      icon: "home-outline",
+      icon: HomeOutline,
       route: "/(drawer)",
     },
     {
       label: "Cuentas",
-      icon: "wallet-outline",
+      icon: WalletOutline,
       route: "/(drawer)/accounts",
     },
     {
       label: "Gráficos",
-      icon: "bar-chart-outline",
+      icon: BarChartOutline,
       route: "/(drawer)/charts",
     },
     {
       label: "Categorías",
-      icon: "list-outline",
+      icon: ListOutline,
       route: "/(drawer)/categories",
     },
     {
       label: "Recordatorios",
-      icon: "notifications-outline",
+      icon: NotificationsOutline,
       route: "/(drawer)/reminders",
     },
     {
       label: "Ajustes",
-      icon: "settings-outline",
+      icon: SettingsOutline,
       route: "/(drawer)/settings",
     },
   ];
@@ -81,42 +69,47 @@ function CustomDrawerContent(props: CustomDrawerContentProps) {
         {/* Encabezado del Drawer */}
         <View style={drawerStyles.header}>
           <View style={drawerStyles.logoContainer}>
-            {React.createElement(ICONS["person-circle-outline"], {
-              style: drawerStyles.logo,
-              fill: colors.neutral.white
-            })}
+            <PersonCircleOutline
+              style={drawerStyles.logo}
+              fill={colors.neutral.white}
+            />
             <Text style={drawerTextStyles.userText}>Usuario</Text>
           </View>
         </View>
 
-        {/* Items del menú */}
-        <View style={drawerStyles.menuItems}>
-          {menuItems.map((item, index) => (
-            <DrawerItem
-              key={index}
-              label={item.label}
-              icon={({ size }) => {
-                const IconComponent = ICONS[item.icon];
-                return (
-                  <IconComponent
-                    width={size}
-                    height={size}
-                    fill={pathname === item.route ? colors.primary[500] : colors.neutral.white}
-                  />
-                );
-              }}
-              onPress={() => router.push(item.route as any)}
-              labelStyle={[
-                drawerTextStyles.label,
-                pathname === item.route && drawerTextStyles.activeLabel,
-              ]}
-              style={[
-                drawerStyles.item,
-                pathname === item.route && drawerStyles.activeItem,
-              ]}
-            />
-          ))}
-        </View>
+         {/* Items del menú */}
+         <View style={drawerStyles.menuItems}>
+           {menuItems.map((item, index) => {
+             const IconComponent = item.icon;
+             const isActive = pathname === item.route;
+             return (
+               <TouchableOpacity
+                 key={index}
+                 style={[
+                   drawerStyles.item,
+                   isActive && drawerStyles.activeItem,
+                 ]}
+                 onPress={() => router.push(item.route as any)}
+                 activeOpacity={0.7}
+               >
+                 <IconComponent
+                   width={24}
+                   height={24}
+                   color={isActive ? colors.primary[500] : colors.neutral.white}
+                   style={drawerStyles.itemIcon}
+                 />
+                 <Text
+                   style={[
+                     drawerTextStyles.label,
+                     isActive && drawerTextStyles.activeLabel,
+                   ]}
+                 >
+                   {item.label}
+                 </Text>
+               </TouchableOpacity>
+             );
+           })}
+         </View>
       </DrawerContentScrollView>
     </SafeAreaView>
   );

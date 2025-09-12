@@ -1,8 +1,7 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
-  Image,
   ScrollView,
   StatusBar,
   Text,
@@ -17,11 +16,19 @@ import {
 // Removido DateTimePicker - no compatible con Expo Go
 import Calculator from "../../components/Calculator";
 import { useApp } from "../../src/shared/context/AppProvider";
-import { formStyles, iconStyles } from "../../src/shared/styles/components";
+import { formStyles } from "../../src/shared/styles/components";
 import { addTransactionStyles } from "../../src/shared/styles/components/add-transaction";
 import { singleDateCalendarStyles } from "../../src/shared/styles/components/single-date-calendar";
 import { colors, spacing } from "../../src/shared/styles/tokens";
 import { TransactionType } from "../../types/transaction";
+
+// Importar SVGs
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
+import ArrowForwardIcon from "../../assets/icons/arrow-forward.svg";
+import CalendarOutlineIcon from "../../assets/icons/calendar-outline.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import ChevronDownIcon from "../../assets/icons/chevron-down.svg";
+import CloseIcon from "../../assets/icons/close.svg";
 
 // Componente para renderizar un mes del calendario
 const CalendarMonth = React.memo(
@@ -237,6 +244,7 @@ SingleDateCalendar.displayName = "SingleDateCalendar";
 export default function AddTransaction() {
   const { currentAccount, accounts } = useApp();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [transactionType, setTransactionType] =
@@ -248,22 +256,37 @@ export default function AddTransaction() {
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [calcResetKey, setCalcResetKey] = useState(0);
 
+  // Restaurar datos cuando se regrese desde choose-category (solo si hay parámetros)
+  useEffect(() => {
+    const { type, amount, date, note, accountId } = params;
+
+    const hasTransactionParams = type || amount || date || note || accountId;
+
+    if (hasTransactionParams) {
+      if (type) setTransactionType(type as TransactionType);
+      if (amount) setAmount(amount as string);
+      if (date) setSelectedDate(new Date(date as string));
+      if (note) setNote(note as string);
+      if (accountId) {
+        const account = accounts.find(acc => acc.id === accountId);
+        if (account) setSelectedAccount(account);
+      }
+    } else {
+      // reset al venir del home
+      setAmount("0");
+      setNote("");
+      setSelectedDate(new Date());
+      setTransactionType("GASTO");
+      setCalcResetKey(prev => prev + 1);
+    }
+  }, [params.type, params.amount, params.date, params.note, params.accountId, accounts]);
+
   // Actualizar cuenta seleccionada cuando cambie la cuenta actual
   useEffect(() => {
-    setSelectedAccount(currentAccount);
-  }, [currentAccount]);
-
-  // Limpiar el formulario cuando cambie la cuenta
-  useEffect(() => {
-    setSelectedDate(new Date());
-    setTransactionType("GASTO");
-    setAmount("0");
-    setNote("");
-    setSelectedAccount(currentAccount);
-    setShowDatePicker(false);
-    setShowAccountSelector(false);
-    setCalcResetKey((prev) => prev + 1); // Forzar remount del componente Calculator
-  }, [currentAccount]);
+    if (selectedAccount?.id !== currentAccount?.id) {
+      setSelectedAccount(currentAccount);
+    }
+  }, [currentAccount, selectedAccount?.id]);
 
   const formatDate = (date: Date) => {
     const days = [
@@ -335,15 +358,6 @@ export default function AddTransaction() {
     }
   };
 
-  // Mapa de íconos locales (SVG) - misma lógica que en _layout.tsx
-  const ICONS: Record<string, any> = {
-    "arrow-back": require("../../assets/icons/arrow-back.svg"),
-    "calendar-outline": require("../../assets/icons/calendar-outline.svg"),
-    "chevron-down": require("../../assets/icons/chevron-down.svg"),
-    "arrow-forward": require("../../assets/icons/arrow-forward.svg"),
-    close: require("../../assets/icons/close.svg"),
-    "checkmark-circle": require("../../assets/icons/checkmark-circle.svg"),
-  };
 
   return (
     <View style={addTransactionStyles.container}>
@@ -363,10 +377,10 @@ export default function AddTransaction() {
           onPress={goBack}
           style={addTransactionStyles.backButton}
         >
-          <Image
-            source={ICONS["arrow-back"]}
-            style={[iconStyles.medium, { tintColor: colors.neutral.white }]}
-            resizeMode="contain"
+          <ArrowBackIcon
+            width={24}
+            height={24}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={addTransactionStyles.headerCenter}>
@@ -396,10 +410,10 @@ export default function AddTransaction() {
               <Text style={addTransactionStyles.dateText}>
                 {formatDate(selectedDate)}
               </Text>
-              <Image
-                source={ICONS["calendar-outline"]}
-                style={[iconStyles.primary, { tintColor: colors.primary[500] }]}
-                resizeMode="contain"
+              <CalendarOutlineIcon
+                width={20}
+                height={20}
+                color={colors.primary[500]}
               />
             </TouchableOpacity>
           </View>
@@ -426,10 +440,10 @@ export default function AddTransaction() {
                   </Text>
                 </View>
               </View>
-              <Image
-                source={ICONS["chevron-down"]}
-                style={[iconStyles.small, { tintColor: colors.neutral.white }]}
-                resizeMode="contain"
+              <ChevronDownIcon
+                width={16}
+                height={16}
+                color={colors.neutral.white}
               />
             </TouchableOpacity>
           </View>
@@ -518,10 +532,10 @@ export default function AddTransaction() {
             >
               Continuar
             </Text>
-            <Image
-              source={ICONS["arrow-forward"]}
-              style={{ width: 20, height: 20, tintColor: colors.neutral.white }}
-              resizeMode="contain"
+            <ArrowForwardIcon
+              width={20}
+              height={20}
+              color={colors.neutral.white}
             />
           </TouchableOpacity>
         </View>
@@ -539,14 +553,10 @@ export default function AddTransaction() {
                 onPress={() => setShowDatePicker(false)}
                 style={addTransactionStyles.closeButton}
               >
-                <Image
-                  source={require("../../assets/icons/close.svg")}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -562,7 +572,10 @@ export default function AddTransaction() {
                   addTransactionStyles.datePickerActionButton,
                   addTransactionStyles.todayButton,
                 ]}
-                onPress={() => setSelectedDate(new Date())}
+                onPress={() => {
+                  setSelectedDate(new Date());
+                  setShowDatePicker(false);
+                }}
               >
                 <Text style={addTransactionStyles.todayButtonText}>Hoy</Text>
               </TouchableOpacity>
@@ -595,14 +608,10 @@ export default function AddTransaction() {
                 onPress={() => setShowAccountSelector(false)}
                 style={addTransactionStyles.closeButton}
               >
-                <Image
-                  source={ICONS["close"]}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <CloseIcon
+                  width={24}
+                  height={24}
+                  color={colors.text.tertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -639,14 +648,10 @@ export default function AddTransaction() {
                     </View>
                   </View>
                   {selectedAccount?.id === account.id && (
-                    <Image
-                      source={ICONS["checkmark-circle"]}
-                      style={{
-                        width: 24,
-                        height: 24,
-                        tintColor: colors.primary[500],
-                      }}
-                      resizeMode="contain"
+                    <CheckmarkCircleIcon
+                      width={24}
+                      height={24}
+                      color={colors.primary[500]}
                     />
                   )}
                 </TouchableOpacity>

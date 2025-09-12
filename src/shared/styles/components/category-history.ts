@@ -337,6 +337,12 @@ export const categoryHistoryStyles = StyleSheet.create({
     flex: 1,
     textAlign: "right",
   },
+  detailValueContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    justifyContent: "flex-end",
+  },
   detailAmount: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,

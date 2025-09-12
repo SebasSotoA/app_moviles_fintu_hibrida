@@ -3,27 +3,23 @@ import { useEffect, useRef } from "react";
 import {
   Animated,
   Easing,
-  Image,
   Modal,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { iconStyles } from "../src/shared/styles/components";
 import { welcomeModalStyles } from "../src/shared/styles/components/welcome-modal";
 import { colors } from "../src/shared/styles/tokens";
 import FintuLogo from "./FintuLogo";
+
+// Importar SVGs
+import ArrowForwardIcon from "../assets/icons/arrow-forward.svg";
 
 interface WelcomeModalProps {
   visible: boolean;
   onClose: () => void;
 }
 
-// Mapa de íconos locales con nombres exactos de Ionicons
-const ICONS: Record<string, any> = {
-  "wallet-outline": require("../assets/icons/wallet-outline.svg"),
-  "arrow-forward": require("../assets/icons/arrow-forward.svg"),
-};
 
 export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -107,7 +103,7 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
               <View style={welcomeModalStyles.modal}>
                 {/* Logo de Fintu */}
                 <View style={welcomeModalStyles.iconContainer}>
-                  <FintuLogo size={115} />
+                  <FintuLogo size={75} />
                 </View>
 
                 {/* Título principal */}
@@ -134,13 +130,10 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
                   <Text style={welcomeModalStyles.continueButtonText}>
                     Comenzar
                   </Text>
-                  <Image
-                    source={ICONS["arrow-forward"]}
-                    style={[
-                      iconStyles.small,
-                      { tintColor: colors.neutral.white },
-                    ]}
-                    resizeMode="contain"
+                  <ArrowForwardIcon
+                    width={20}
+                    height={20}
+                    color={colors.neutral.white}
                   />
                 </TouchableOpacity>
               </View>

@@ -57,6 +57,7 @@ export const drawerStyles = StyleSheet.create({
   menuItems: {
     flex: 1,
     paddingTop: spacing[0],
+    gap: spacing[5], // Espacio entre elementos (alternativa moderna)
   },
 
   // Elemento del drawer (estado normal)

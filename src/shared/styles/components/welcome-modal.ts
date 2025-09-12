@@ -23,8 +23,8 @@ export const welcomeModalStyles = StyleSheet.create({
     ...shadows.xl,
   },
   iconContainer: {
-    width: 100,
-    height: 100,
+    width: 110, // Aumentado para acomodar logo de 85px
+    height: 110, // Aumentado para acomodar logo de 85px
     borderRadius: borders.radius.full,
     backgroundColor: colors.primary[50],
     justifyContent: "center",
@@ -32,7 +32,7 @@ export const welcomeModalStyles = StyleSheet.create({
     marginBottom: spacing[6],
     borderWidth: borders.width[2],
     borderColor: colors.primary[500],
-    overflow: "hidden",
+    // Removido overflow: "hidden" para evitar recortes
   },
   title: {
     fontSize: typography.fontSize["3xl"],

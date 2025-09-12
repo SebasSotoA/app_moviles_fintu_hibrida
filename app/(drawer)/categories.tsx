@@ -2,33 +2,55 @@ import { DrawerActions } from "@react-navigation/native";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StatusBar,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import {
-  SafeAreaView,
-  useSafeAreaInsets,
+    SafeAreaView,
+    useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { useApp } from "../../src/shared/context/AppProvider";
 
 import {
-  badgeStyles,
-  badgeTextStyles,
-  buttonStyles,
-  buttonTextStyles,
-  cardStyles,
-  categoriesStyles,
-  formStyles,
-  iconStyles,
-  layoutStyles,
-  textStyles,
+    badgeStyles,
+    badgeTextStyles,
+    buttonStyles,
+    buttonTextStyles,
+    cardStyles,
+    categoriesStyles,
+    formStyles,
+    layoutStyles,
+    textStyles,
 } from "../../src/shared/styles/components";
 import { colors, spacing } from "../../src/shared/styles/tokens";
+
+// Importar SVGs
+import AddCircleOutlineIcon from "../../assets/icons/add-circle-outline.svg";
+import AirplaneOutlineIcon from "../../assets/icons/airplane-outline.svg";
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
+import BriefcaseOutlineIcon from "../../assets/icons/briefcase-outline.svg";
+import BusOutlineIcon from "../../assets/icons/bus-outline.svg";
+import CarOutlineIcon from "../../assets/icons/car-outline.svg";
+import CartOutlineIcon from "../../assets/icons/cart-outline.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import CheckmarkIcon from "../../assets/icons/checkmark.svg";
+import ChevronForwardIcon from "../../assets/icons/chevron-forward.svg";
+import GameControllerOutlineIcon from "../../assets/icons/game-controller-outline.svg";
+import GiftOutlineIcon from "../../assets/icons/gift-outline.svg";
+import HomeOutlineIcon from "../../assets/icons/home-outline.svg";
+import LaptopOutlineIcon from "../../assets/icons/laptop-outline.svg";
+import ListOutlineIcon from "../../assets/icons/list-outline.svg";
+import MedicalOutlineIcon from "../../assets/icons/medical-outline.svg";
+import MenuIcon from "../../assets/icons/menu.svg";
+import ReceiptOutlineIcon from "../../assets/icons/receipt-outline.svg";
+import RemoveCircleOutlineIcon from "../../assets/icons/remove-circle-outline.svg";
+import RestaurantOutlineIcon from "../../assets/icons/restaurant-outline.svg";
+import TrendingUpOutlineIcon from "../../assets/icons/trending-up-outline.svg";
+import WalletOutlineIcon from "../../assets/icons/wallet-outline.svg";
 
 export default function Categories() {
   const navigation = useNavigation();
@@ -38,30 +60,30 @@ export default function Categories() {
   const [expenseCategories, setExpenseCategories] = useState<any[]>([]);
   const [incomeCategories, setIncomeCategories] = useState<any[]>([]);
 
-  // Mapa de íconos locales
-  const ICONS: Record<string, any> = {
-    "list-outline": require("../../assets/icons/list-outline.svg"),
-    menu: require("../../assets/icons/menu.svg"),
-    "chevron-forward": require("../../assets/icons/chevron-forward.svg"),
-    "add-circle-outline": require("../../assets/icons/add-circle-outline.svg"),
-    "remove-circle-outline": require("../../assets/icons/remove-circle-outline.svg"),
-    "arrow-back": require("../../assets/icons/arrow-back.svg"),
-    "checkmark-circle": require("../../assets/icons/checkmark-circle.svg"),
-    "game-controller-outline": require("../../assets/icons/game-controller-outline.svg"),
-    "receipt-outline": require("../../assets/icons/receipt-outline.svg"),
-    "briefcase-outline": require("../../assets/icons/briefcase-outline.svg"),
-    "laptop-outline": require("../../assets/icons/laptop-outline.svg"),
-    "trending-up-outline": require("../../assets/icons/trending-up-outline.svg"),
-    "gift-outline": require("../../assets/icons/gift-outline.svg"),
-    checkmark: require("../../assets/icons/checkmark.svg"),
-    "wallet-outline": require("../../assets/icons/wallet-outline.svg"),
-    "cart-outline": require("../../assets/icons/cart-outline.svg"),
-    "car-outline": require("../../assets/icons/car-outline.svg"),
-    "home-outline": require("../../assets/icons/home-outline.svg"),
-    "restaurant-outline": require("../../assets/icons/restaurant-outline.svg"),
-    "medical-outline": require("../../assets/icons/medical-outline.svg"),
-    "bus-outline": require("../../assets/icons/bus-outline.svg"),
-    "airplane-outline": require("../../assets/icons/airplane-outline.svg"),
+  // Mapa de componentes SVG
+  const ICON_COMPONENTS: Record<string, any> = {
+    "list-outline": ListOutlineIcon,
+    menu: MenuIcon,
+    "chevron-forward": ChevronForwardIcon,
+    "add-circle-outline": AddCircleOutlineIcon,
+    "remove-circle-outline": RemoveCircleOutlineIcon,
+    "arrow-back": ArrowBackIcon,
+    "checkmark-circle": CheckmarkCircleIcon,
+    "game-controller-outline": GameControllerOutlineIcon,
+    "receipt-outline": ReceiptOutlineIcon,
+    "briefcase-outline": BriefcaseOutlineIcon,
+    "laptop-outline": LaptopOutlineIcon,
+    "trending-up-outline": TrendingUpOutlineIcon,
+    "gift-outline": GiftOutlineIcon,
+    checkmark: CheckmarkIcon,
+    "wallet-outline": WalletOutlineIcon,
+    "cart-outline": CartOutlineIcon,
+    "car-outline": CarOutlineIcon,
+    "home-outline": HomeOutlineIcon,
+    "restaurant-outline": RestaurantOutlineIcon,
+    "medical-outline": MedicalOutlineIcon,
+    "bus-outline": BusOutlineIcon,
+    "airplane-outline": AirplaneOutlineIcon,
   };
 
   useEffect(() => {
@@ -104,48 +126,52 @@ export default function Categories() {
     });
   };
 
-  const renderCategoryItem = (category: any, isLast: boolean = false) => (
-    <TouchableOpacity
-      key={category.id}
-      style={[categoriesStyles.categoryItem]}
-      onPress={() => handleEditCategory(category)}
-    >
-      <View
-        style={[
-          categoriesStyles.categoryIcon,
-          { backgroundColor: category.color },
-        ]}
+  const renderCategoryItem = (category: any, isLast: boolean = false) => {
+    const IconComponent = ICON_COMPONENTS[category.icon] || ListOutlineIcon;
+    
+    return (
+      <TouchableOpacity
+        key={category.id}
+        style={[categoriesStyles.categoryItem]}
+        onPress={() => handleEditCategory(category)}
       >
-        <Image
-          source={ICONS[category.icon] || ICONS["list-outline"]}
-          style={[iconStyles.white, { tintColor: colors.neutral.white }]}
-          resizeMode="contain"
-        />
-      </View>
+        <View
+          style={[
+            categoriesStyles.categoryIcon,
+            { backgroundColor: category.color },
+          ]}
+        >
+          <IconComponent
+            width={24}
+            height={24}
+            color={colors.neutral.white}
+          />
+        </View>
 
-      <View style={categoriesStyles.categoryInfo}>
-        <Text style={categoriesStyles.categoryName}>{category.name}</Text>
-        {category.isMonthlyExpense && category.monthlyAmount && (
-          <Text style={formStyles.helperText}>
-            {category.monthlyAmount.toLocaleString("es-CO")} COP/mes
-          </Text>
-        )}
-      </View>
+        <View style={categoriesStyles.categoryInfo}>
+          <Text style={categoriesStyles.categoryName}>{category.name}</Text>
+          {category.isMonthlyExpense && category.monthlyAmount && (
+            <Text style={formStyles.helperText}>
+              {category.monthlyAmount.toLocaleString("es-CO")} COP/mes
+            </Text>
+          )}
+        </View>
 
-      <View style={layoutStyles.row}>
-        {category.isMonthlyExpense && (
-          <View style={badgeStyles.primary}>
-            <Text style={badgeTextStyles.primary}>Mensual</Text>
-          </View>
-        )}
-        <Image
-          source={ICONS["chevron-forward"]}
-          style={[iconStyles.tertiary, { tintColor: colors.text.tertiary }]}
-          resizeMode="contain"
-        />
-      </View>
-    </TouchableOpacity>
-  );
+        <View style={layoutStyles.row}>
+          {category.isMonthlyExpense && (
+            <View style={badgeStyles.primary}>
+              <Text style={badgeTextStyles.primary}>Mensual</Text>
+            </View>
+          )}
+          <ChevronForwardIcon
+            width={16}
+            height={16}
+            color={colors.text.tertiary}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderCategorySection = (
     title: string,
@@ -171,25 +197,30 @@ export default function Categories() {
             style={[buttonStyles.outline, { marginTop: spacing[2] }]}
             onPress={() => handleCreateCategory(type)}
           >
-            <Image
-              source={ICONS["add-circle-outline"]}
-              style={[iconStyles.primary, { marginRight: spacing[2] }]}
-              resizeMode="contain"
+            <AddCircleOutlineIcon
+              width={20}
+              height={20}
+              color={colors.primary[500]}
+              style={{ marginRight: spacing[2] }}
             />
             <Text style={buttonTextStyles.outline}>Crear nueva categoría</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={categoriesStyles.emptyState}>
-          <Image
-            source={
-              type === "GASTO"
-                ? ICONS["remove-circle-outline"]
-                : ICONS["add-circle-outline"]
-            }
-            style={[iconStyles.large, { tintColor: colors.text.tertiary }]}
-            resizeMode="contain"
-          />
+          {type === "GASTO" ? (
+            <RemoveCircleOutlineIcon
+              width={60}
+              height={60}
+              color={colors.text.tertiary}
+            />
+          ) : (
+            <AddCircleOutlineIcon
+              width={60}
+              height={60}
+              color={colors.text.tertiary}
+            />
+          )}
           <Text style={categoriesStyles.emptyStateText}>
             No tienes categorías de {type.toLowerCase()} creadas
           </Text>
@@ -231,13 +262,10 @@ export default function Categories() {
           onPress={openDrawer}
           style={categoriesStyles.menuButton}
         >
-          <Image
-            source={ICONS["menu"]}
-            style={[
-              iconStyles.medium,
-              { width: 35, height: 35, tintColor: colors.neutral.white },
-            ]}
-            resizeMode="contain"
+          <MenuIcon
+            width={35}
+            height={35}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={categoriesStyles.headerCenter}>

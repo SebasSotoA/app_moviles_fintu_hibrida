@@ -15,8 +15,7 @@ export const calculatorStyles = StyleSheet.create({
   },
   displayContainer: {
     backgroundColor: colors.neutral.white,
-    borderRadius: borders.radius.none,
-    paddingVertical: spacing[0],
+    borderRadius: borders.radius.lg,
     paddingHorizontal: spacing[3],
     marginBottom: spacing[2],
     marginTop: -spacing[5], // Mueve el display hacia arriba para alinearse con el input

@@ -44,3 +44,4 @@ yarn-error.*
 
 app-example
 src/shared/styles/README.md
+README-SVG-transformer.md

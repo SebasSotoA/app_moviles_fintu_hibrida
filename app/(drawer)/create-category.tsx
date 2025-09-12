@@ -2,7 +2,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
-  Image,
   Platform,
   ScrollView,
   StatusBar,
@@ -19,20 +18,18 @@ import { useApp } from "../../src/shared/context/AppProvider";
 import { createCategoryStyles } from "../../src/shared/styles/components/create-category";
 import { colors } from "../../src/shared/styles/tokens";
 
-// Mapa de íconos locales (SVG) siguiendo el patrón de add-transaction.tsx
-const ICONS_MAP: Record<string, any> = {
-  "arrow-back": require("../../assets/icons/arrow-back.svg"),
-  checkmark: require("../../assets/icons/checkmark.svg"),
-  "wallet-outline": require("../../assets/icons/wallet-outline.svg"),
-  "cart-outline": require("../../assets/icons/cart-outline.svg"),
-  "car-outline": require("../../assets/icons/car-outline.svg"),
-  "home-outline": require("../../assets/icons/home-outline.svg"),
-  "restaurant-outline": require("../../assets/icons/restaurant-outline.svg"),
-  "medical-outline": require("../../assets/icons/medical-outline.svg"),
-  "bus-outline": require("../../assets/icons/bus-outline.svg"),
-  "airplane-outline": require("../../assets/icons/airplane-outline.svg"),
-  "list-outline": require("../../assets/icons/list-outline.svg"),
-};
+// Importar SVGs
+import AirplaneOutlineIcon from "../../assets/icons/airplane-outline.svg";
+import ArrowBackIcon from "../../assets/icons/arrow-back.svg";
+import BusOutlineIcon from "../../assets/icons/bus-outline.svg";
+import CarOutlineIcon from "../../assets/icons/car-outline.svg";
+import CartOutlineIcon from "../../assets/icons/cart-outline.svg";
+import CheckmarkIcon from "../../assets/icons/checkmark.svg";
+import HomeOutlineIcon from "../../assets/icons/home-outline.svg";
+import ListOutlineIcon from "../../assets/icons/list-outline.svg";
+import MedicalOutlineIcon from "../../assets/icons/medical-outline.svg";
+import RestaurantOutlineIcon from "../../assets/icons/restaurant-outline.svg";
+import WalletOutlineIcon from "../../assets/icons/wallet-outline.svg";
 
 // Colores de categorías.
 const COLORS = [
@@ -51,6 +48,21 @@ export default function CreateCategory() {
 
   // Obtener paddings para una pantalla de celular.
   const insets = useSafeAreaInsets();
+
+  // Mapa de componentes SVG
+  const ICON_COMPONENTS: Record<string, any> = {
+    "arrow-back": ArrowBackIcon,
+    checkmark: CheckmarkIcon,
+    "wallet-outline": WalletOutlineIcon,
+    "cart-outline": CartOutlineIcon,
+    "car-outline": CarOutlineIcon,
+    "home-outline": HomeOutlineIcon,
+    "restaurant-outline": RestaurantOutlineIcon,
+    "medical-outline": MedicalOutlineIcon,
+    "bus-outline": BusOutlineIcon,
+    "airplane-outline": AirplaneOutlineIcon,
+    "list-outline": ListOutlineIcon,
+  };
 
   // Inicialización de estados para el formulario
   const [name, setName] = useState("");
@@ -127,11 +139,25 @@ export default function CreateCategory() {
   const goBack = useCallback(() => {
     const returnPath = params.returnPath as string | undefined;
     if (returnPath) {
-      router.push({ pathname: returnPath });
+      // Si el returnPath es choose-category, preservar los parámetros de la transacción
+      if (returnPath === "/(drawer)/choose-category") {
+        router.push({
+          pathname: returnPath,
+          params: {
+            type: params.type,
+            amount: params.amount,
+            date: params.date,
+            note: params.note,
+            accountId: params.accountId,
+          },
+        });
+      } else {
+        router.push({ pathname: returnPath });
+      }
     } else {
       router.back();
     }
-  }, [params.returnPath]);
+  }, [params.returnPath, params.type, params.amount, params.date, params.note, params.accountId]);
 
   const handleCreate = async () => {
     if (!validateForm()) return;
@@ -213,10 +239,10 @@ export default function CreateCategory() {
           onPress={goBack}
           style={createCategoryStyles.backButton}
         >
-          <Image
-            source={ICONS_MAP["arrow-back"]}
-            style={{ width: 28, height: 28, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <ArrowBackIcon
+            width={28}
+            height={28}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={createCategoryStyles.headerCenter}>
@@ -301,30 +327,31 @@ export default function CreateCategory() {
                   "bus-outline",
                   "airplane-outline",
                 ] as string[]
-              ).map((icon: string) => (
-                <TouchableOpacity
-                  key={icon}
-                  style={[
-                    createCategoryStyles.iconButton,
-                    selectedIcon === icon &&
-                      createCategoryStyles.selectedIconButton,
-                  ]}
-                  onPress={() => setSelectedIcon(icon)}
-                >
-                  <Image
-                    source={ICONS_MAP[icon] || ICONS_MAP["list-outline"]}
-                    style={{
-                      width: 24,
-                      height: 24,
-                      tintColor:
+              ).map((icon: string) => {
+                const IconComponent = ICON_COMPONENTS[icon] || ListOutlineIcon;
+                
+                return (
+                  <TouchableOpacity
+                    key={icon}
+                    style={[
+                      createCategoryStyles.iconButton,
+                      selectedIcon === icon &&
+                        createCategoryStyles.selectedIconButton,
+                    ]}
+                    onPress={() => setSelectedIcon(icon)}
+                  >
+                    <IconComponent
+                      width={24}
+                      height={24}
+                      fill={
                         selectedIcon === icon
                           ? colors.neutral.white
-                          : colors.background.dark,
-                    }}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
-              ))}
+                          : colors.background.dark
+                      }
+                    />
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
           </View>
 
@@ -342,14 +369,10 @@ export default function CreateCategory() {
                   onPress={() => setSelectedColor(color)}
                 >
                   {selectedColor === color && (
-                    <Image
-                      source={ICONS_MAP["checkmark"]}
-                      style={{
-                        width: 24,
-                        height: 24,
-                        tintColor: colors.neutral.white,
-                      }}
-                      resizeMode="contain"
+                    <CheckmarkIcon
+                      width={24}
+                      height={24}
+                      color={colors.neutral.white}
                     />
                   )}
                 </TouchableOpacity>
@@ -360,20 +383,6 @@ export default function CreateCategory() {
 
         {/* Contenedor de botones */}
         <View style={createCategoryStyles.buttonsContainer}>
-          {/* Botón crear categoría */}
-          <TouchableOpacity
-            style={[
-              createCategoryStyles.createButton,
-              !name && createCategoryStyles.disabledButton,
-            ]}
-            onPress={handleCreate}
-            disabled={!name}
-          >
-            <Text style={createCategoryStyles.createButtonText}>
-              {params.categoryId ? "Guardar" : "Crear"}
-            </Text>
-          </TouchableOpacity>
-
           {/* Botón eliminar categoría en caso de que se esté editando*/}
           {editingId && (
             <TouchableOpacity
@@ -385,6 +394,20 @@ export default function CreateCategory() {
               </Text>
             </TouchableOpacity>
           )}
+
+          {/* Botón crear categoría */}
+          <TouchableOpacity
+            style={[
+              createCategoryStyles.createButton,
+              !name && createCategoryStyles.disabledButton,
+            ]}
+            onPress={handleCreate}
+            disabled={!name}
+          >
+            <Text style={createCategoryStyles.createButtonText}>
+              {params.categoryId ? "Guardar" : "+ Crear"}
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
 

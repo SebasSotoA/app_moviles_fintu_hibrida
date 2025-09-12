@@ -3,7 +3,7 @@ import { colors, spacing, typography } from "../tokens";
 
 export const dateRangeCalendarStyles = StyleSheet.create({
   calendarContainer: {
-    marginBottom: spacing[4],
+    marginBottom: spacing[2], // Reducido de spacing[4] a spacing[2]
   },
   calendarHeader: {
     alignItems: "center",
@@ -47,7 +47,7 @@ export const dateRangeCalendarStyles = StyleSheet.create({
     backgroundColor: colors.primary[500],
   },
   calendarDayInRange: {
-    backgroundColor: colors.primary[50],
+    backgroundColor: colors.primary[100], // Color más visible pero sutil
   },
   calendarDayStart: {
     backgroundColor: colors.primary[500],
@@ -64,6 +64,10 @@ export const dateRangeCalendarStyles = StyleSheet.create({
   } as any,
   calendarDayTextSelected: {
     color: colors.neutral.white,
+  } as any,
+  calendarDayTextInRange: {
+    color: colors.primary[700], // Color más oscuro para mejor contraste
+    fontWeight: typography.fontWeight.medium,
   } as any,
   calendarScrollView: {
     maxHeight: 400,

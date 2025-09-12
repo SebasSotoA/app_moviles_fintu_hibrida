@@ -48,7 +48,7 @@ export const chooseCategoryStyles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
   },
   categoriesGrid: {
-    gap: spacing.component.listItemGap,
+    gap: spacing[1],
   },
   categoryItem: {
     flexDirection: "row",

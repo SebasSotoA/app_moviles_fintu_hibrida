@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   StatusBar,
   Text,
@@ -22,17 +21,15 @@ import { DatabaseAccount } from "../../src/shared/services/database";
 import { accountsStyles } from "../../src/shared/styles/components/accounts";
 import { colors } from "../../src/shared/styles/tokens";
 
-// Mapa de íconos locales siguiendo el patrón de add-transaction.tsx
-const ICONS: Record<string, any> = {
-  menu: require("../../assets/icons/menu.svg"),
-  "checkmark-circle": require("../../assets/icons/checkmark-circle.svg"),
-  "eye-off-outline": require("../../assets/icons/eye-off-outline.svg"),
-  "swap-horizontal": require("../../assets/icons/swap-horizontal.svg"),
-  "add-circle": require("../../assets/icons/add-circle.svg"),
-  "wallet-outline": require("../../assets/icons/wallet-outline.svg"),
-  "create-outline": require("../../assets/icons/create-outline.svg"),
-  "remove-circle-outline": require("../../assets/icons/remove-circle-outline.svg"),
-};
+// Importar SVGs
+import AddCircleIcon from "../../assets/icons/add-circle.svg";
+import CheckmarkCircleIcon from "../../assets/icons/checkmark-circle.svg";
+import CreateOutlineIcon from "../../assets/icons/create-outline.svg";
+import EyeOffOutlineIcon from "../../assets/icons/eye-off-outline.svg";
+import MenuIcon from "../../assets/icons/menu.svg";
+import RemoveCircleOutlineIcon from "../../assets/icons/remove-circle-outline.svg";
+import SwapHorizontalIcon from "../../assets/icons/swap-horizontal.svg";
+import WalletOutlineIcon from "../../assets/icons/wallet-outline.svg";
 
 export default function Accounts() {
   const navigation = useNavigation();
@@ -192,24 +189,20 @@ export default function Accounts() {
             style={accountsStyles.editButton}
             onPress={() => handleEditAccount(account)}
           >
-            <Image
-              source={ICONS["create-outline"]}
-              style={{ width: 20, height: 20, tintColor: colors.primary[500] }}
-              resizeMode="contain"
+            <CreateOutlineIcon
+              width={20}
+              height={20}
+              color={colors.primary[500]}
             />
           </TouchableOpacity>
           <TouchableOpacity
             style={accountsStyles.deleteButton}
             onPress={() => handleDeleteAccount(account)}
           >
-            <Image
-              source={ICONS["remove-circle-outline"]}
-              style={{
-                width: 20,
-                height: 20,
-                tintColor: colors.semantic.error,
-              }}
-              resizeMode="contain"
+            <RemoveCircleOutlineIcon
+              width={20}
+              height={20}
+              color={colors.semantic.error}
             />
           </TouchableOpacity>
           <View style={accountsStyles.accountBalance}>
@@ -230,10 +223,10 @@ export default function Accounts() {
 
       {currentAccount?.id === account.id && (
         <View style={accountsStyles.activeIndicator}>
-          <Image
-            source={ICONS["checkmark-circle"]}
-            style={{ width: 20, height: 20, tintColor: colors.primary[500] }}
-            resizeMode="contain"
+          <CheckmarkCircleIcon
+            width={20}
+            height={20}
+            fill={colors.primary[500]}
           />
           <Text style={accountsStyles.activeText}>Cuenta activa</Text>
         </View>
@@ -241,10 +234,10 @@ export default function Accounts() {
 
       {!account.includeInTotal && (
         <View style={accountsStyles.excludedIndicator}>
-          <Image
-            source={ICONS["eye-off-outline"]}
-            style={{ width: 16, height: 16, tintColor: colors.text.tertiary }}
-            resizeMode="contain"
+          <EyeOffOutlineIcon
+            width={16}
+            height={16}
+            color={colors.text.tertiary}
           />
           <Text style={accountsStyles.excludedText}>Excluida del total</Text>
         </View>
@@ -277,10 +270,10 @@ export default function Accounts() {
           onPress={openDrawer}
           style={accountsStyles.menuButton}
         >
-          <Image
-            source={ICONS["menu"]}
-            style={{ width: 35, height: 35, tintColor: colors.neutral.white }}
-            resizeMode="contain"
+          <MenuIcon
+            width={35}
+            height={35}
+            color={colors.neutral.white}
           />
         </TouchableOpacity>
         <View style={accountsStyles.headerCenter}>
@@ -317,14 +310,10 @@ export default function Accounts() {
               ]}
               onPress={handleTransfer}
             >
-              <Image
-                source={ICONS["swap-horizontal"]}
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: colors.neutral.white,
-                }}
-                resizeMode="contain"
+              <SwapHorizontalIcon
+                width={20}
+                height={20}
+                color={colors.neutral.white}
               />
               <Text style={accountsStyles.actionButtonText}>Transferir</Text>
             </TouchableOpacity>
@@ -333,14 +322,10 @@ export default function Accounts() {
               style={[accountsStyles.actionButton, accountsStyles.addButton]}
               onPress={handleAddAccount}
             >
-              <Image
-                source={ICONS["add-circle"]}
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: colors.neutral.white,
-                }}
-                resizeMode="contain"
+              <AddCircleIcon
+                width={20}
+                height={20}
+                fill={colors.neutral.white}
               />
               <Text style={accountsStyles.newButtonText}>Añadir</Text>
             </TouchableOpacity>
@@ -356,14 +341,10 @@ export default function Accounts() {
               </View>
             ) : (
               <View style={accountsStyles.emptyState}>
-                <Image
-                  source={ICONS["wallet-outline"]}
-                  style={{
-                    width: 60,
-                    height: 60,
-                    tintColor: colors.text.tertiary,
-                  }}
-                  resizeMode="contain"
+                <WalletOutlineIcon
+                  width={60}
+                  height={60}
+                  color={colors.text.tertiary}
                 />
                 <Text style={accountsStyles.emptyStateText}>
                   No tienes cuentas creadas

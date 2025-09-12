@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { layoutStyles } from "../src/shared/styles/components";
-import { colors, legacyColors } from "../src/shared/styles/tokens";
+import { colors } from "../src/shared/styles/tokens";
 
 export default function Index() {
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function Index() {
         },
       ]}
     >
-      <ActivityIndicator size="large" color={legacyColors.primary} />
+      <ActivityIndicator size="large" color={colors.primary[500]} />
     </View>
   );
 }

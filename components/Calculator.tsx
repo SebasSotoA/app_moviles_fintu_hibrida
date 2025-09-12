@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { iconStyles } from "../src/shared/styles/components";
 import { calculatorStyles } from "../src/shared/styles/components/calculator";
 import { colors } from "../src/shared/styles/tokens";
 import { CalculatorState } from "../types/transaction";
 
+// Importar SVGs
+import BackspaceOutlineIcon from "../assets/icons/backspace-outline.svg";
+
 const { width } = Dimensions.get("window");
 
 const isTablet = width >= 768;
-
-// Mapa de íconos locales con nombres exactos de Ionicons
-const ICONS: Record<string, any> = {
-  "backspace-outline": require("../assets/icons/backspace-outline.svg"),
-};
 
 interface CalculatorProps {
   onAmountChange: (amount: string) => void;
@@ -136,12 +134,23 @@ export default function Calculator({
     }));
   };
 
+  // Sincronizar el estado interno con initialValue cuando cambie
+  React.useEffect(() => {
+    setState(prev => ({
+      ...prev,
+      display: initialValue,
+      previousValue: null,
+      currentOperation: null,
+      waitingForOperand: false,
+    }));
+  }, [initialValue]);
+
   // Actualizar el valor cuando cambie el display
   React.useEffect(() => {
     if (!state.waitingForOperand) {
       onAmountChange(state.display);
     }
-  }, [state.display, state.waitingForOperand, onAmountChange]);
+  }, [state.display, state.waitingForOperand]);
 
   const CalculatorButton = ({
     onPress,
@@ -183,10 +192,10 @@ export default function Calculator({
           onPress={handleBackspace}
           style={calculatorStyles.backspaceButton}
         >
-          <Image
-            source={ICONS["backspace-outline"]}
-            style={[iconStyles.medium, { tintColor: colors.border.dark }]}
-            resizeMode="contain"
+          <BackspaceOutlineIcon
+            width={iconStyles.medium.width}
+            height={iconStyles.medium.height}
+            fill={colors.border.dark}
           />
         </TouchableOpacity>
       </View>
