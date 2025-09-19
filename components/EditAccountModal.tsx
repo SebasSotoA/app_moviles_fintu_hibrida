@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import {
-  Alert,
-  Modal,
-  Platform,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    Modal,
+    Platform,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { DatabaseAccount } from "../src/shared/services/database";
 import { editAccountModalStyles } from "../src/shared/styles/components/edit-account-modal";
@@ -155,6 +155,8 @@ export default function EditAccountModal({
       transparent
       animationType="fade"
       onRequestClose={handleClose}
+      accessibilityViewIsModal={true}
+      accessibilityLabel="Modal de editar cuenta"
     >
       <View style={editAccountModalStyles.overlay}>
         <View style={editAccountModalStyles.modalContainer}>

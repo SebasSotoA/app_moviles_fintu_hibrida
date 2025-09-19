@@ -1,12 +1,12 @@
 import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import {
-  Animated,
-  Easing,
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Easing,
+    Modal,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { welcomeModalStyles } from "../src/shared/styles/components/welcome-modal";
 import { colors } from "../src/shared/styles/tokens";
@@ -81,6 +81,8 @@ export default function WelcomeModal({ visible, onClose }: WelcomeModalProps) {
       transparent
       animationType="none"
       statusBarTranslucent
+      accessibilityViewIsModal={true}
+      accessibilityLabel="Modal de bienvenida"
     >
       {/* Fondo borroso */}
       <BlurView intensity={20} style={welcomeModalStyles.blurContainer}>
